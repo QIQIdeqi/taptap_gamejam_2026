@@ -76,20 +76,22 @@ function M.BuildLocationUI()
         top = 0, left = 0, right = 0, bottom = 0,
     }
 
-    M.ui.timeLabel = M.ui.root:AddChild(UI.Label {
+    M.ui.timeLabel = UI.Label {
         text = opening.time or "",
         fontSize = 34,
         fontColor = { 230, 225, 215, 255 },
         fontWeight = "bold",
         textAlign = "center",
-    })
+    }
+    M.ui.root:AddChild(M.ui.timeLabel)
 
-    M.ui.locationLabel = M.ui.root:AddChild(UI.Label {
+    M.ui.locationLabel = UI.Label {
         text = opening.location or "",
         fontSize = 22,
         fontColor = { 180, 175, 165, 255 },
         textAlign = "center",
-    })
+    }
+    M.ui.root:AddChild(M.ui.locationLabel)
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end

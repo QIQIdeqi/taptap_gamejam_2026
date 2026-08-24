@@ -95,7 +95,7 @@ function M.BuildUI()
 
     -- ===== 可交互物件按钮 =====
     for _, obj in ipairs(M.currentObjects) do
-        local btn = M.ui.root:AddChild(UI.Button {
+        local btn = UI.Button {
             text = "",
             variant = "secondary",
             position = "absolute",
@@ -116,14 +116,15 @@ function M.BuildUI()
             onPointerLeave = function(_, widget)
                 M.OnObjectHover(obj, widget, false)
             end,
-        })
+        }
+        M.ui.root:AddChild(btn)
 
         M.ui.objectButtons[obj.id] = btn
     end
 
     -- ===== 场景出口（导航） =====
     for _, exit in ipairs(M.currentExits) do
-        local btn = M.ui.root:AddChild(UI.Button {
+        local btn = UI.Button {
             text = exit.label or "→",
             fontSize = 14,
             variant = "secondary",
@@ -139,13 +140,14 @@ function M.BuildUI()
             onClick = function()
                 M.EnterScene(exit.targetScene, nil)
             end,
-        })
+        }
+        M.ui.root:AddChild(btn)
 
         M.ui.exitButtons[exit.id] = btn
     end
 
     -- ===== 线索收集提示横幅 =====
-    M.ui.clueBanner = M.ui.root:AddChild(UI.Panel {
+    M.ui.clueBanner = UI.Panel {
         position = "absolute",
         left = "25%", top = "12%",
         width = "50%",
@@ -158,17 +160,19 @@ function M.BuildUI()
         alignItems = "center",
         padding = 10,
         visible = false,
-    })
+    }
+    M.ui.root:AddChild(M.ui.clueBanner)
 
-    M.ui.clueBannerText = M.ui.clueBanner:AddChild(UI.Label {
+    M.ui.clueBannerText = UI.Label {
         text = "",
         fontSize = 20,
         fontColor = { 255, 230, 100, 255 },
         textAlign = "center",
-    })
+    }
+    M.ui.clueBanner:AddChild(M.ui.clueBannerText)
 
     -- ===== 悬停名称提示（右侧） =====
-    M.ui.hoverNameLabel = M.ui.root:AddChild(UI.Label {
+    M.ui.hoverNameLabel = UI.Label {
         text = "",
         fontSize = 18,
         fontColor = { 255, 240, 180, 255 },
@@ -178,7 +182,8 @@ function M.BuildUI()
         borderRadius = 6,
         padding = 8,
         visible = false,
-    })
+    }
+    M.ui.root:AddChild(M.ui.hoverNameLabel)
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end

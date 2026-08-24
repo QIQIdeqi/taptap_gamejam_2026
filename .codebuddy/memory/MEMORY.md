@@ -32,6 +32,7 @@
 - 长度单位米、Y-up 左手坐标系
 - `graphics:SetMode()` 已禁用，用 `graphics:GetWidth()/GetHeight()/GetDPR()`
 - UI 组件支持 `onPointerEnter`/`onPointerLeave`（签名 `(event, widget)`）、`borderWidth`/`borderColor`、`SetStyle({...})`
+- **改字体颜色用 `SetStyle({ fontColor = {r,g,b,a} })`**；无 `SetFontColor`/`SetTextColor` 方法（只有 `SetBackgroundColor`/`SetBorderColor` 两个 alias）
 - 键盘：`input:GetKeyPress(KEY_*)` 单次按下，`input:GetKeyDown(KEY_*)` 持续按住
 - Button 文本始终居中（不支持 textAlign）
 - **事件驱动主循环**：UrhoX 无 `engine:GetFrameTime()/IsExiting()/FrameNext()`，勿手写 while。用 `Start()` + `SubscribeToEvent("Update","HandleUpdate")`，帧时间取 `eventData["TimeStep"]:GetFloat()`

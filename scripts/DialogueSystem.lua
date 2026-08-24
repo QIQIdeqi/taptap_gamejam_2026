@@ -75,7 +75,7 @@ function M.BuildUI()
     }
 
     -- 底部对话面板
-    local panel = M.ui.root:AddChild(UI.Panel {
+    local panel = UI.Panel {
         width = "100%",
         height = 180,
         backgroundColor = { 15, 12, 25, 220 },
@@ -84,34 +84,38 @@ function M.BuildUI()
         flexDirection = "column",
         padding = { 30, 40, 30, 40 },
         gap = 10,
-    })
+    }
+    M.ui.root:AddChild(panel)
 
     -- 点击区域（整个面板可点击推进对话）
     panel.onClick = function()
         M.OnClick()
     end
 
-    M.ui.nameLabel = panel:AddChild(UI.Label {
+    M.ui.nameLabel = UI.Label {
         text = "",
         fontSize = 22,
         fontColor = { 220, 200, 160, 255 },
         fontWeight = "bold",
-    })
+    }
+    panel:AddChild(M.ui.nameLabel)
 
-    M.ui.textLabel = panel:AddChild(UI.Label {
+    M.ui.textLabel = UI.Label {
         text = "",
         fontSize = 18,
         fontColor = { 240, 240, 240, 255 },
         whiteSpace = "normal",
         flexGrow = 1,
-    })
+    }
+    panel:AddChild(M.ui.textLabel)
 
-    M.ui.continueHint = panel:AddChild(UI.Label {
+    M.ui.continueHint = UI.Label {
         text = "▼ 点击继续",
         fontSize = 14,
         fontColor = { 180, 180, 180, 200 },
         textAlign = "right",
-    })
+    }
+    panel:AddChild(M.ui.continueHint)
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end

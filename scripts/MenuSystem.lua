@@ -86,12 +86,13 @@ function M.ShowMainMenu()
     })
 
     -- 按钮容器
-    local btnContainer = M.ui.root:AddChild(UI.Panel {
+    local btnContainer = UI.Panel {
         width = 300,
         flexDirection = "column",
         gap = 12,
         padding = 20,
-    })
+    }
+    M.ui.root:AddChild(btnContainer)
 
     btnContainer:AddChild(UI.Button {
         text = "开始新游戏",
@@ -155,12 +156,13 @@ function M.ShowPauseMenu()
         textAlign = "center",
     })
 
-    local btnContainer = M.ui.root:AddChild(UI.Panel {
+    local btnContainer = UI.Panel {
         width = 280,
         flexDirection = "column",
         gap = 10,
         padding = 15,
-    })
+    }
+    M.ui.root:AddChild(btnContainer)
 
     btnContainer:AddChild(UI.Button {
         text = "继续游戏",
@@ -245,18 +247,20 @@ function M.ShowSaveMenu()
     })
 
     -- 可滚动列表
-    local scroll = M.ui.root:AddChild(UI.ScrollView {
+    local scroll = UI.ScrollView {
         width = "100%",
         flexGrow = 1,
         flexBasis = 0,
         scrollY = true,
-    })
+    }
+    M.ui.root:AddChild(scroll)
 
-    local listPanel = scroll:AddChild(UI.Panel {
+    local listPanel = UI.Panel {
         width = "100%",
         flexDirection = "column",
         gap = 8,
-    })
+    }
+    scroll:AddChild(listPanel)
 
     local slots = SaveSystem.GetAllSlotsInfo()
     for _, info in ipairs(slots) do
@@ -298,18 +302,20 @@ function M.ShowLoadMenu()
         textAlign = "center",
     })
 
-    local scroll = M.ui.root:AddChild(UI.ScrollView {
+    local scroll = UI.ScrollView {
         width = "100%",
         flexGrow = 1,
         flexBasis = 0,
         scrollY = true,
-    })
+    }
+    M.ui.root:AddChild(scroll)
 
-    local listPanel = scroll:AddChild(UI.Panel {
+    local listPanel = UI.Panel {
         width = "100%",
         flexDirection = "column",
         gap = 8,
-    })
+    }
+    scroll:AddChild(listPanel)
 
     local slots = SaveSystem.GetAllSlotsInfo()
     for _, info in ipairs(slots) do
@@ -413,7 +419,7 @@ function M.ShowConfirmDialog(message, onConfirm, onCancel)
         alignItems = "center",
     }
 
-    local panel = M.ui.root:AddChild(UI.Panel {
+    local panel = UI.Panel {
         width = 400,
         backgroundColor = { 30, 25, 40, 255 },
         borderRadius = 12,
@@ -424,7 +430,8 @@ function M.ShowConfirmDialog(message, onConfirm, onCancel)
         padding = 25,
         shadowBlur = 20,
         shadowColor = { 0, 0, 0, 100 },
-    })
+    }
+    M.ui.root:AddChild(panel)
 
     panel:AddChild(UI.Label {
         text = message,
@@ -434,11 +441,12 @@ function M.ShowConfirmDialog(message, onConfirm, onCancel)
         textAlign = "center",
     })
 
-    local btnRow = panel:AddChild(UI.Panel {
+    local btnRow = UI.Panel {
         flexDirection = "row",
         gap = 20,
         justifyContent = "center",
-    })
+    }
+    panel:AddChild(btnRow)
 
     btnRow:AddChild(UI.Button {
         text = "确认",
@@ -480,12 +488,13 @@ function M.ShowSettingsMenu()
         textAlign = "center",
     })
 
-    local volPanel = M.ui.root:AddChild(UI.Panel {
+    local volPanel = UI.Panel {
         flexDirection = "row",
         gap = 20,
         alignItems = "center",
         padding = 10,
-    })
+    }
+    M.ui.root:AddChild(volPanel)
 
     volPanel:AddChild(UI.Label {
         text = "音量",

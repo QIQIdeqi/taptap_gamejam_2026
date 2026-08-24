@@ -141,7 +141,7 @@ function M.BuildUI()
     }
 
     -- ===== 顶部标题栏 =====
-    local titleBar = M.ui.root:AddChild(UI.Panel {
+    local titleBar = UI.Panel {
         width = "100%",
         flexDirection = "row",
         alignItems = "center",
@@ -149,7 +149,8 @@ function M.BuildUI()
         padding = { 24, 30, 16, 30 },
         borderBottomWidth = 1,
         borderBottomColor = { 120, 110, 90, 120 },
-    })
+    }
+    M.ui.root:AddChild(titleBar)
 
     titleBar:AddChild(UI.Label {
         text = "🔍 侦探笔记",
@@ -171,13 +172,14 @@ function M.BuildUI()
     })
 
     -- ===== 分类标签栏 =====
-    local tabBar = M.ui.root:AddChild(UI.Panel {
+    local tabBar = UI.Panel {
         width = "100%",
         flexDirection = "row",
         alignItems = "center",
         gap = 10,
         padding = { 10, 30, 10, 30 },
-    })
+    }
+    M.ui.root:AddChild(tabBar)
 
     for i, cat in ipairs(GameData.ClueCategories) do
         local unreadCount = M.CountUnreadInCategory(cat.id)
@@ -185,7 +187,7 @@ function M.BuildUI()
         if unreadCount > 0 then
             label = cat.name .. "  [" .. unreadCount .. "]"
         end
-        local btn = tabBar:AddChild(UI.Button {
+        local btn = UI.Button {
             text = label,
             fontSize = 16,
             width = 140, height = 40,
@@ -193,13 +195,14 @@ function M.BuildUI()
             onClick = function()
                 M.SelectCategory(i)
             end,
-        })
+        }
+        tabBar:AddChild(btn)
         M.ui.tabButtons[i] = btn
     end
 
     -- 只看标记⭐ 过滤按钮
     local filterText = M.state.filterStarredOnly and "⭐ 只看标记 [开]" or "⭐ 只看标记"
-    M.ui.filterButton = tabBar:AddChild(UI.Button {
+    M.ui.filterButton = UI.Button {
         text = filterText,
         fontSize = 15,
         width = 150, height = 40,
@@ -210,38 +213,43 @@ function M.BuildUI()
             M.RefreshVisibleList()
             M.BuildUI()
         end,
-    })
+    }
+    tabBar:AddChild(M.ui.filterButton)
 
     -- ===== 主体：左侧列表 + 右侧详情 =====
-    local body = M.ui.root:AddChild(UI.Panel {
+    local body = UI.Panel {
         width = "100%",
         flexGrow = 1,
         flexBasis = 0,
         flexDirection = "row",
         padding = { 0, 30, 0, 30 },
         gap = 16,
-    })
+    }
+    M.ui.root:AddChild(body)
 
     -- 左侧列表（35%）
-    local leftPanel = body:AddChild(UI.Panel {
+    local leftPanel = UI.Panel {
         width = "35%",
         height = "100%",
         flexDirection = "column",
         gap = 8,
-    })
+    }
+    body:AddChild(leftPanel)
 
-    local scroll = leftPanel:AddChild(UI.ScrollView {
+    local scroll = UI.ScrollView {
         width = "100%",
         flexGrow = 1,
         flexBasis = 0,
         scrollY = true,
-    })
+    }
+    leftPanel:AddChild(scroll)
 
-    M.ui.listContainer = scroll:AddChild(UI.Panel {
+    M.ui.listContainer = UI.Panel {
         width = "100%",
         flexDirection = "column",
         gap = 6,
-    })
+    }
+    scroll:AddChild(M.ui.listContainer)
 
     if #M.state.visibleClues == 0 then
         local emptyText = M.state.filterStarredOnly and "该分类下没有已标记的线索" or "该分类下暂无已发现的线索"
@@ -261,7 +269,7 @@ function M.BuildUI()
             if isUnread then prefix = prefix .. "🔴 " end
             if isStarred then prefix = prefix .. "⭐ " end
 
-            local btn = M.ui.listContainer:AddChild(UI.Button {
+            local btn = UI.Button {
                 text = prefix .. clue.name,
                 fontSize = 16,
                 width = "100%",
@@ -272,13 +280,14 @@ function M.BuildUI()
                 onClick = function()
                     M.SelectClue(idx)
                 end,
-            })
+            }
+            M.ui.listContainer:AddChild(btn)
             M.ui.listItems[idx] = btn
         end
     end
 
     -- 右侧详情（65%）
-    local rightPanel = body:AddChild(UI.Panel {
+    local rightPanel = UI.Panel {
         width = "65%",
         height = "100%",
         backgroundColor = { 26, 22, 40, 255 },
@@ -288,7 +297,8 @@ function M.BuildUI()
         flexDirection = "column",
         padding = 24,
         gap = 14,
-    })
+    }
+    body:AddChild(rightPanel)
 
     local selectedClue = M.GetSelectedClue()
     if selectedClue then
@@ -296,43 +306,48 @@ function M.BuildUI()
         local isUnread = (GameData.GameState.readClues[selectedClue.id] ~= true)
         local isStarred = GameData.GameState.starredClues[selectedClue.id]
 
-        M.ui.detailName = rightPanel:AddChild(UI.Label {
+        M.ui.detailName = UI.Label {
             text = selectedClue.name,
             fontSize = 24,
             fontColor = { 240, 235, 225, 255 },
             fontWeight = "bold",
-        })
+        }
+        rightPanel:AddChild(M.ui.detailName)
 
         local catColor = cat and cat.color or { 180, 180, 180, 255 }
-        M.ui.detailCategory = rightPanel:AddChild(UI.Label {
+        M.ui.detailCategory = UI.Label {
             text = "【" .. (cat and cat.name or selectedClue.category) .. "】" .. (isStarred and "  ⭐已标记" or ""),
             fontSize = 15,
             fontColor = { catColor[1], catColor[2], catColor[3], 255 },
-        })
+        }
+        rightPanel:AddChild(M.ui.detailCategory)
 
-        M.ui.detailText = rightPanel:AddChild(UI.Label {
+        M.ui.detailText = UI.Label {
             text = selectedClue.detail or selectedClue.description or "",
             fontSize = 17,
             fontColor = { 210, 205, 200, 255 },
             whiteSpace = "normal",
-        })
+        }
+        rightPanel:AddChild(M.ui.detailText)
 
-        M.ui.detailHint = rightPanel:AddChild(UI.Label {
+        M.ui.detailHint = UI.Label {
             text = isUnread and "【新线索】已自动标记为已读" or "按 F 键标记 / 取消标记",
             fontSize = 13,
             fontColor = { 150, 150, 150, 255 },
-        })
+        }
+        rightPanel:AddChild(M.ui.detailHint)
 
         -- 选中后自动标记为已读
         if isUnread then
             GameData.MarkClueRead(selectedClue.id)
         end
     else
-        M.ui.detailName = rightPanel:AddChild(UI.Label {
+        M.ui.detailName = UI.Label {
             text = "暂无内容",
             fontSize = 22,
             fontColor = { 150, 150, 150, 255 },
-        })
+        }
+        rightPanel:AddChild(M.ui.detailName)
     end
 
     -- ===== 底部操作提示 =====
