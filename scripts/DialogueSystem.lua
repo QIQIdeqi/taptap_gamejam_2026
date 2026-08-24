@@ -21,7 +21,18 @@ M.state = {
 }
 
 M.onComplete = nil
-M.ui = { root = nil, textLabel = nil, nameLabel = nil, continueHint = nil }
+M.ui = { root = nil, textLabel = nil, nameLabel = nil, continueHint = nil, portrait = nil }
+
+-- 角色立绘映射（对话 speaker key -> 图片资源路径）
+M.portraitMap = {
+    LiZhi = "assets/image/char_lizhi.png",
+    ChenWenyin = "assets/image/char_wenyin.png",
+    XuQinglan = "assets/image/char_xuqinglan.png",
+    YanChengfeng = "assets/image/char_yanchengfeng.png",
+    ZhaoHeng = "assets/image/char_zhaoheng.png",
+    ZhouWen = "assets/image/char_zhouwen.png",
+    ZhangChengyu = "assets/image/char_zhangchengyu.png",
+}
 
 -- ============================================================================
 -- 开始对话
@@ -117,6 +128,22 @@ function M.BuildUI()
     }
     panel:AddChild(M.ui.continueHint)
 
+    -- 角色立绘（左下角，透明背景，绝对定位堆叠在对话框之上）
+    M.ui.portrait = UI.Panel {
+        id = "dialoguePortrait",
+        width = 220,
+        height = 340,
+        position = "absolute",
+        left = 40,
+        bottom = 170,
+        backgroundColor = { 0, 0, 0, 0 },
+        backgroundFit = "contain",
+        backgroundImageOpacity = 1,
+        visible = false,
+        pointerEvents = false,
+    }
+    M.ui.root:AddChild(M.ui.portrait)
+
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
@@ -149,8 +176,16 @@ function M.StartLine(index)
         else
             M.ui.nameLabel:SetText(line.speaker)
         end
+        local portraitPath = M.portraitMap[line.speaker]
+        if portraitPath and M.ui.portrait then
+            M.ui.portrait:SetBackgroundImage(portraitPath)
+            M.ui.portrait:SetVisible(true)
+        elseif M.ui.portrait then
+            M.ui.portrait:SetVisible(false)
+        end
     else
         M.ui.nameLabel:SetText("")
+        if M.ui.portrait then M.ui.portrait:SetVisible(false) end
     end
 
     M.ui.continueHint:SetVisible(false)
@@ -214,6 +249,7 @@ function M.End()
     if M.ui.root then
         M.ui.root:Destroy()
         M.ui.root = nil
+        M.ui.portrait = nil
     end
     if M.onComplete then
         local cb = M.onComplete
