@@ -63,7 +63,7 @@ end
 function M.BuildLocationUI()
     M.DestroyUI()
 
-    local opening = M.state.opening
+    local opening = M.state.opening or { time = "", location = "" }
 
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",

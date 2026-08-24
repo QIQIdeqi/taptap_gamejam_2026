@@ -504,8 +504,8 @@ function M.ShowSettingsMenu()
     volPanel:AddChild(UI.Slider {
         value = 70, min = 0, max = 100,
         width = 200, height = 20,
-        onChange = function(self, value)
-            audio:SetMasterGain(value / 100)
+        onChange = function(_self, value)
+            audio:SetMasterGain(SOUND_MASTER, value / 100)
         end,
     })
 
