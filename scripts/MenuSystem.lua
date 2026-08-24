@@ -130,7 +130,8 @@ function M.ShowMainMenu()
         onClick = function() if M.callbacks.onExitGame then M.callbacks.onExitGame() end end,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================
@@ -217,7 +218,8 @@ function M.ShowPauseMenu()
         onClick = function() if M.callbacks.onExitGame then M.callbacks.onExitGame() end end,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================
@@ -270,7 +272,8 @@ function M.ShowSaveMenu()
         end,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================
@@ -322,7 +325,8 @@ function M.ShowLoadMenu()
         end,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================
@@ -451,7 +455,8 @@ function M.ShowConfirmDialog(message, onConfirm, onCancel)
         onClick = function() if onCancel then onCancel() end end,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================
@@ -504,7 +509,8 @@ function M.ShowSettingsMenu()
         end,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================

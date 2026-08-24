@@ -345,7 +345,8 @@ function M.BuildUI()
         width = "100%",
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================

@@ -35,6 +35,18 @@ local AUTO_SAVE_INTERVAL = 60
 -- ============================================================================
 
 function Start()
+    -- UI 库初始化（自动订阅输入/更新/渲染事件，默认 MiSans 字体）
+    UI.Init({ scale = UI.Scale.DEFAULT })
+
+    -- 总渲染根节点：全屏黑色背景，各系统 Panel 挂载其下
+    local uiRoot = UI.Panel({
+        width = "100%",
+        height = "100%",
+        backgroundColor = { 0, 0, 0, 255 },
+        pointerEvents = "box-none",
+    })
+    UI.SetRoot(uiRoot)
+
     SaveSystem.Init()
     NoteSystem.Init({})
 
@@ -57,6 +69,9 @@ function Start()
     SceneManager.onSpecialInteract = function(obj, onComplete)
         HandleSpecialInteract(obj, onComplete)
     end
+
+    -- 事件驱动主循环：引擎每帧调用 HandleUpdate
+    SubscribeToEvent("Update", "HandleUpdate")
 
     EnterMainMenu()
 end
@@ -226,7 +241,8 @@ end
 -- 更新循环
 -- ============================================================================
 
-function Update(deltaTime)
+function HandleUpdate(eventType, eventData)
+    local deltaTime = eventData["TimeStep"]:GetFloat()
     HandleInput()
 
     if currentMode == GameMode.Playing then
@@ -251,23 +267,5 @@ function Update(deltaTime)
     end
 end
 
--- ============================================================================
--- 主循环
--- ============================================================================
-
-function Run()
-    while not engine:IsExiting() do
-        local deltaTime = engine:GetFrameTime()
-        Update(deltaTime)
-
-        if currentMode == GameMode.Playing or currentMode == GameMode.Paused then
-            SceneManager.DrawBackground()
-        end
-
-        engine:FrameNext()
-    end
-end
-
--- 启动
-Start()
-Run()
+-- 注意：UrhoX 为事件驱动架构，无需手写 while 主循环。
+-- 引擎启动时自动调用全局 Start()，之后每帧通过 Update 事件调用 HandleUpdate()。

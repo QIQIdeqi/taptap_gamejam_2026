@@ -91,7 +91,8 @@ function M.BuildLocationUI()
         textAlign = "center",
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 function M.DestroyUI()

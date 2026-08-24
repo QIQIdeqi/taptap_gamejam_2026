@@ -15,6 +15,14 @@ M.sceneBackgrounds = {
     crime_scene = "assets/image/bg_crime_scene.png",
 }
 
+M.sceneColors = {
+    office = { 45, 40, 55, 255 },
+    hotel_lobby = { 35, 45, 65, 255 },
+    hotel_courtyard = { 40, 55, 45, 255 },
+    hotel_corridor = { 50, 45, 40, 255 },
+    crime_scene = { 30, 25, 35, 255 },
+}
+
 M.currentScene = nil
 M.currentObjects = {}
 M.currentExits = {}
@@ -69,7 +77,7 @@ function M.BuildUI()
 
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
-        backgroundColor = { 0, 0, 0, 0 },
+        backgroundColor = M.sceneColors[M.currentScene] or { 40, 40, 40, 255 },
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
     }
@@ -172,7 +180,8 @@ function M.BuildUI()
         visible = false,
     })
 
-    M.ui.root:Show()
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
 
 -- ============================================================================
@@ -282,46 +291,6 @@ function M.ExitScene()
     M.currentScene = nil
     M.currentObjects = {}
     M.currentExits = {}
-end
-
--- ============================================================================
--- 场景背景渲染
--- ============================================================================
-
-function M.DrawBackground()
-    if not M.currentScene then return end
-
-    local screenW = graphics:GetWidth()
-    local screenH = graphics:GetHeight()
-    local dpr = graphics:GetDPR()
-    local logicalW = screenW / dpr
-    local logicalH = screenH / dpr
-
-    local bgPath = M.sceneBackgrounds[M.currentScene]
-    if bgPath then
-        local texture = cache:GetTexture(bgPath)
-        if texture then
-            local sprite = Sprite()
-            sprite:SetTexture(texture)
-            sprite:Draw(Vector2(0, 0), Vector2(logicalW, logicalH))
-            return
-        end
-    end
-
-    local sceneColors = {
-        office = { 45, 40, 55, 255 },
-        hotel_lobby = { 35, 45, 65, 255 },
-        hotel_courtyard = { 40, 55, 45, 255 },
-        hotel_corridor = { 50, 45, 40, 255 },
-        crime_scene = { 30, 25, 35, 255 },
-    }
-    local bgColor = sceneColors[M.currentScene] or { 40, 40, 40, 255 }
-
-    nvgBeginFrame(logicalW, logicalH)
-    nvgFillColor(bgColor)
-    nvgRect(0, 0, logicalW, logicalH)
-    nvgFill()
-    nvgEndFrame()
 end
 
 return M
