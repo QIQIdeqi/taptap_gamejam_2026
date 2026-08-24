@@ -141,7 +141,7 @@ function M.StartLine(index)
         local char = GameData.GetCharacter(line.speaker)
         if char then
             M.ui.nameLabel:SetText(char.name)
-            M.ui.nameLabel:SetFontColor({ char.color[1], char.color[2], char.color[3], 255 })
+            M.ui.nameLabel:SetStyle({ fontColor = { char.color[1], char.color[2], char.color[3], 255 } })
         else
             M.ui.nameLabel:SetText(line.speaker)
         end

@@ -124,10 +124,10 @@ function M.Update(deltaTime)
             if alpha < 0 then alpha = 0 end
             if alpha > 255 then alpha = 255 end
             if M.ui.timeLabel then
-                M.ui.timeLabel:SetFontColor({ 230, 225, 215, alpha })
+                M.ui.timeLabel:SetStyle({ fontColor = { 230, 225, 215, math.floor(alpha) } })
             end
             if M.ui.locationLabel then
-                M.ui.locationLabel:SetFontColor({ 180, 175, 165, alpha })
+                M.ui.locationLabel:SetStyle({ fontColor = { 180, 175, 165, math.floor(alpha) } })
             end
         end
 

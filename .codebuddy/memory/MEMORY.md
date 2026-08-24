@@ -34,6 +34,8 @@
 - UI 组件支持 `onPointerEnter`/`onPointerLeave`（签名 `(event, widget)`）、`borderWidth`/`borderColor`、`SetStyle({...})`
 - 键盘：`input:GetKeyPress(KEY_*)` 单次按下，`input:GetKeyDown(KEY_*)` 持续按住
 - Button 文本始终居中（不支持 textAlign）
+- **事件驱动主循环**：UrhoX 无 `engine:GetFrameTime()/IsExiting()/FrameNext()`，勿手写 while。用 `Start()` + `SubscribeToEvent("Update","HandleUpdate")`，帧时间取 `eventData["TimeStep"]:GetFloat()`
+- **UI 渲染挂载**：必须 `UI.Init({ scale = UI.Scale.DEFAULT })` + `UI.SetRoot(root)` 才会渲染；`Widget:Show()` 仅 SetVisible(true)，需 `UI.GetRoot():AddChild(widget)` 挂到渲染树；`Destroy()` 自动从 parent 移除
 
 ## 待办（后续开发）
 - 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
