@@ -30,7 +30,7 @@
 
 ## 关键约定
 - 长度单位米、Y-up 左手坐标系
-- `graphics:SetMode()` 已禁用，用 `graphics:GetWidth()/GetHeight()/GetDPR()`
+- 屏幕尺寸：`graphics` 是引擎**全局变量**（非模块，勿 `require("Graphics")`，否则 Module not found），可用 `graphics:GetWidth()/GetHeight()/GetDPR()`；`graphics:SetMode()` 已禁用。SceneManager 用它取逻辑分辨率，全局不存在时回退默认 1280x720。
 - UI 组件支持 `onPointerEnter`/`onPointerLeave`（签名 `(event, widget)`）、`borderWidth`/`borderColor`、`SetStyle({...})`
 - **改字体颜色用 `SetStyle({ fontColor = {r,g,b,a} })`**；无 `SetFontColor`/`SetTextColor` 方法（只有 `SetBackgroundColor`/`SetBorderColor` 两个 alias）
 - 键盘输入：引擎以**全局变量** `input` 注入（不是模块！勿 `require("Input")`，会报 Module not found 并连带 main.lua 解析失败）。可用方法只有 `input:GetKeyPress(KEY_*)`（按住时每帧返回 true，可当持续状态用）和 `input:GetMouseButtonPress(MOUSEB_*)`。**不存在** `GetKeyDown`、`GetMousePosition`，也没有鼠标移动事件（无 onMouseMove），故鼠标坐标不可得——场景镜头滚动只能用方向键 `KEY_LEFT/KEY_RIGHT`。按键常量 KEY_LEFT/RIGHT/UP/DOWN/ESCAPE/TAB/Q/W/S/F 等为全局。
