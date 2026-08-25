@@ -76,11 +76,17 @@ function M.EnterScene(sceneId, onExit)
     M.currentExits = sceneData.exits or {}
     M.onExit = onExit
 
-    -- 取屏幕逻辑尺寸
-    local graphics = require("Graphics")
-    local dpr = graphics:GetDPR() or 1
-    M.screenW = math.floor(graphics:GetWidth() / dpr)
-    M.screenH = math.floor(graphics:GetHeight() / dpr)
+    -- 取屏幕逻辑尺寸：
+    -- 引擎以全局变量 `graphics` 注入（不存在 "Graphics" 模块，勿 require）。
+    -- 若引擎未提供该全局，回退到默认 1280x720 以免崩溃。
+    local sw, sh = 1280, 720
+    if graphics then
+        local dpr = graphics:GetDPR() or 1
+        sw = math.floor(graphics:GetWidth() / dpr)
+        sh = math.floor(graphics:GetHeight() / dpr)
+    end
+    M.screenW = sw
+    M.screenH = sh
 
     -- 初始镜头：让角色位于画面左侧约 1/3 处
     local worldW = sceneData.worldWidth or M.screenW
