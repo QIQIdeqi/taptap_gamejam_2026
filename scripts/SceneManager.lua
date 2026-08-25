@@ -78,6 +78,8 @@ function M.BuildUI()
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = M.sceneColors[M.currentScene] or { 40, 40, 40, 255 },
+        backgroundImage = M.sceneBackgrounds[M.currentScene],
+        backgroundFit = "cover",
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
     }
