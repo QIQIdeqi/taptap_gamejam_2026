@@ -38,6 +38,8 @@
 - **事件驱动主循环**：UrhoX 无 `engine:GetFrameTime()/IsExiting()/FrameNext()`，勿手写 while。用 `Start()` + `SubscribeToEvent("Update","HandleUpdate")`，帧时间取 `eventData["TimeStep"]:GetFloat()`
 - **UI 渲染挂载**：必须 `UI.Init({ scale = UI.Scale.DEFAULT })` + `UI.SetRoot(root)` 才会渲染；`Widget:Show()` 仅 SetVisible(true)，需 `UI.GetRoot():AddChild(widget)` 挂到渲染树；`Destroy()` 自动从 parent 移除
 - **`Widget:AddChild(child)` 返回 `self`（父节点）用于链式调用，不是 child**！要引用子节点必须 `local x = UI.xxx{...}; parent:AddChild(x)`，绝不能写 `local x = parent:AddChild(...)`（否则 x 指向父节点，缺子类方法如 SetText 会报 nil）
+- **美术风格偏好**：用户于 08-25 明确要求**日系二次元动漫风格**（参考图为干净线条+赛璐璐上色+修长比例+暖调低饱和），而非 08-24 批次使用的"现代写实插画"。后续生成图片应统一为此风格。
+- **AI图像Prompt文档**：`docs/ai-image-prompts.md` 包含完整12个场景/角色的中文prompt（基于wolai文案提取+日系风格适配），可直接用于 `batch_generate_images` 调用。
 - **图片资源生成（taptap-maker）**：`batch_generate_images`（2-10张并行）/`generate_image` 下载到 `assets/image/`，文件名**自动加时间戳后缀**（如 `bg_office_20260824xxxx.png`），生成后需 `Rename-Item` 重命名为代码引用名（`bg_office.png` 等）；人物立绘传 `transparent:true` 得透明背景 PNG，`aspect_ratio`/`target_size`/`resolution` 控制画幅。
 - **显示图片**：用 `Widget:SetBackgroundImage("assets/image/xxx.png")` 或构造 `backgroundImage = "assets/image/xxx.png"` + `backgroundFit`（"fill"/"contain"/"cover"）+ `backgroundImageOpacity`；**只接受项目相对路径**（如 `assets/image/...`），不接受绝对路径或 Texture 对象。
 - **中文路径坑（execute_command）**：PowerShell 传入含中文的绝对路径会乱码（`Set-Location : 找不到路径…鐙珛娓告垙`）。规避：(a) 用通配符 `03_*` 匹配 `03_独立游戏` 目录；(b) git 命令不带 `-C` 直接用 cwd（shell 工作目录已是项目根）。
