@@ -48,6 +48,7 @@
 - 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
 - 第二阶段探索后的推理/结案流程
 - 场景背景图 ✅ 已生成5张并接入 SceneManager；08-25用户已用日系二次元风格重生成覆盖。**关键bug修复**：SceneManager.BuildUI 的 root panel 此前只设 backgroundColor（纯色），从未加载 backgroundImage，导致背景一直空；已加 `backgroundImage = M.sceneBackgrounds[sceneId]` + `backgroundFit="cover"`（commit 010e574）显示正常。
+- 场景交互物件坐标 ✅ 已按 `docs/ai-image-prompts.md` 各场景构图 prompt 推断并重排 `GameData.M.SceneObjects` 的 items/exits（commit ebef964），对齐背景图物件。UI库不支持 aspectRatio 固定比例舞台，以16:9为基准+cover，需在16:9预览确认（非16:9按钮按屏缩放偏移）；坐标基于prompt推断非逐像素视觉判断，可能需微调。
 - 角色立绘 ⚠️ 7主角立绘仍是08-24"现代写实插画"风格，与背景的日系二次元风格**不一致**；待用户用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成并同名覆盖 `char_*.png`
 - 次要角色（姐姐/前台/磐安员工/平板新闻）立绘未生成
 - 开场动画点击跳过、笔记图片放大等细节
