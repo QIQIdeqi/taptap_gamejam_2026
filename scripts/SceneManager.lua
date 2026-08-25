@@ -13,7 +13,9 @@
 -- ============================================================================
 
 local UI = require("urhox-libs.UI")
-local input = require("Input")
+-- 输入接口由引擎以全局变量 `input` 注入（提供 input:GetKeyPress(KEY_*) /
+-- input:GetMouseButtonPress(MOUSEB_*)），以及全局按键常量 KEY_LEFT 等；
+-- 不存在 "Input" 模块，不可 require。
 
 local M = {}
 
@@ -302,20 +304,10 @@ function M.Update(dt)
     local bgP = (layers.background and layers.background.parallax) or 0.35
     local fgP = (layers.foreground and layers.foreground.parallax) or 1.4
 
-    -- ── 1. 滚动输入 ──
+    -- ── 1. 滚动输入（方向键；引擎全局 input:GetKeyPress）──
     local dir = 0
-
-    -- 方向键
-    if input:GetKeyDown(KEY_LEFT) then dir = dir - 1 end
-    if input:GetKeyDown(KEY_RIGHT) then dir = dir + 1 end
-
-    -- 鼠标边缘（尝试取鼠标 X；不可用时仅靠方向键）
-    local mousePos = input:GetMousePosition()
-    if mousePos then
-        local mx = mousePos:x()
-        if mx < M.edgeMargin then dir = dir - 1 end
-        if mx > M.screenW - M.edgeMargin then dir = dir + 1 end
-    end
+    if input:GetKeyPress(KEY_LEFT) then dir = dir - 1 end
+    if input:GetKeyPress(KEY_RIGHT) then dir = dir + 1 end
 
     -- ── 2. 应用 & clamp ──
     if dir ~= 0 then
