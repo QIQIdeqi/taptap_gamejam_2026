@@ -23,7 +23,7 @@
 - `GameData.lua`：角色/章节/线索（四大分类）/对话/开场动画/场景物件
 - `NoteSystem.lua`：侦探笔记（Tab呼出、四大分类、状态机、F标记、红点）
 - `OpeningSystem.lua`：开场动画（黑屏时间地点3秒 + 分镜对话）
-- `SceneManager.lua`：场景UI、物件交互、悬停描边+名称提示、场景导航exits
+- `SceneManager.lua` v2：**视差横版场景系统**（三层 BG/MID/FG 视差滚动 + 人物固定站立 + 鼠标边缘/方向键控制镜头 + 物件点击交互）
 - `DialogueSystem.lua`：打字机对话（Start 支持字符串id和table）
 - `MenuSystem.lua`：主菜单/暂停/存档/读档/设置
 - `SaveSystem.lua`：10槽+自动存档（含 readClues/starredClues 笔记状态）
@@ -45,10 +45,18 @@
 - **中文路径坑（execute_command）**：PowerShell 传入含中文的绝对路径会乱码（`Set-Location : 找不到路径…鐙珛娓告垙`）。规避：(a) 用通配符 `03_*` 匹配 `03_独立游戏` 目录；(b) git 命令不带 `-C` 直接用 cwd（shell 工作目录已是项目根）。
 
 ## 待办（后续开发）
+- **场景图片资源**：`docs/ai-image-prompts.md` 已重写为**侧视横版+视差三层**规格（每场景 BG/MID/FG 三张，高1080px，宽2240~3360px）。**尚未生成**，当前 SceneManager 用 backgroundColor 色块占位。需用 prompt 文档批量生成并放入 `assets/image/`。
+- 角色立绘 ⚠️ 7主角立绘仍是08-24"现代写实插画"风格，与背景的日系二次元风格**不一致**；待用户用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成并同名覆盖 `char_*.png`
+- 场景物件坐标基于 prompt 构图推断（非逐像素视觉），出图后可能需微调
 - 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
 - 第二阶段探索后的推理/结案流程
-- 场景背景图 ✅ 已生成5张并接入 SceneManager；08-25用户已用日系二次元风格重生成覆盖。**关键bug修复**：SceneManager.BuildUI 的 root panel 此前只设 backgroundColor（纯色），从未加载 backgroundImage，导致背景一直空；已加 `backgroundImage = M.sceneBackgrounds[sceneId]` + `backgroundFit="cover"`（commit 010e574）显示正常。
-- 场景交互物件坐标 ✅ 已按 `docs/ai-image-prompts.md` 各场景构图 prompt 推断并重排 `GameData.M.SceneObjects` 的 items/exits（commit ebef964），对齐背景图物件。UI库不支持 aspectRatio 固定比例舞台，以16:9为基准+cover，需在16:9预览确认（非16:9按钮按屏缩放偏移）；坐标基于prompt推断非逐像素视觉判断，可能需微调。
-- 角色立绘 ⚠️ 7主角立绘仍是08-24"现代写实插画"风格，与背景的日系二次元风格**不一致**；待用户用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成并同名覆盖 `char_*.png`
 - 次要角色（姐姐/前台/磐安员工/平板新闻）立绘未生成
 - 开场动画点击跳过、笔记图片放大等细节
+
+## 场景架构（08-25 重构后）
+- **视角**：侧视横版 side-view（非等距俯视），类似视觉小说/Galgame 场景展示
+- **视差**：三层滚动（BG 0.35x / MID 1.0x / FG 1.4x），通过 Panel left 偏移实现
+- **镜头控制**：鼠标移到屏幕边缘(80px内) 或 左右方向键 → cameraX 平移
+- **人物**：固定在世界 spawnX 位置，随 MID 层一起滚动（不独立移动）
+- **坐标混合**：x/w = 世界像素（横向绝对），y/h = 屏幕高比例（纵向自适应）
+- **场景宽度**：office/crime_scene=2240px, lobby/courtyard/corridor=3360px
