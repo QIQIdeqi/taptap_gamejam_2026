@@ -33,7 +33,7 @@
 - `graphics:SetMode()` 已禁用，用 `graphics:GetWidth()/GetHeight()/GetDPR()`
 - UI 组件支持 `onPointerEnter`/`onPointerLeave`（签名 `(event, widget)`）、`borderWidth`/`borderColor`、`SetStyle({...})`
 - **改字体颜色用 `SetStyle({ fontColor = {r,g,b,a} })`**；无 `SetFontColor`/`SetTextColor` 方法（只有 `SetBackgroundColor`/`SetBorderColor` 两个 alias）
-- 键盘：`input:GetKeyPress(KEY_*)` 单次按下，`input:GetKeyDown(KEY_*)` 持续按住
+- 键盘输入：引擎以**全局变量** `input` 注入（不是模块！勿 `require("Input")`，会报 Module not found 并连带 main.lua 解析失败）。可用方法只有 `input:GetKeyPress(KEY_*)`（按住时每帧返回 true，可当持续状态用）和 `input:GetMouseButtonPress(MOUSEB_*)`。**不存在** `GetKeyDown`、`GetMousePosition`，也没有鼠标移动事件（无 onMouseMove），故鼠标坐标不可得——场景镜头滚动只能用方向键 `KEY_LEFT/KEY_RIGHT`。按键常量 KEY_LEFT/RIGHT/UP/DOWN/ESCAPE/TAB/Q/W/S/F 等为全局。
 - Button 文本始终居中（不支持 textAlign）
 - **事件驱动主循环**：UrhoX 无 `engine:GetFrameTime()/IsExiting()/FrameNext()`，勿手写 while。用 `Start()` + `SubscribeToEvent("Update","HandleUpdate")`，帧时间取 `eventData["TimeStep"]:GetFloat()`
 - **UI 渲染挂载**：必须 `UI.Init({ scale = UI.Scale.DEFAULT })` + `UI.SetRoot(root)` 才会渲染；`Widget:Show()` 仅 SetVisible(true)，需 `UI.GetRoot():AddChild(widget)` 挂到渲染树；`Destroy()` 自动从 parent 移除
@@ -56,7 +56,7 @@
 ## 场景架构（08-25 重构后）
 - **视角**：侧视横版 side-view（非等距俯视），类似视觉小说/Galgame 场景展示
 - **视差**：三层滚动（BG 0.35x / MID 1.0x / FG 1.4x），通过 Panel left 偏移实现
-- **镜头控制**：鼠标移到屏幕边缘(80px内) 或 左右方向键 → cameraX 平移
+- **镜头控制**：左右方向键（`input:GetKeyPress(KEY_LEFT/RIGHT)`）驱动 cameraX 平移。**鼠标边缘滚动未实现**（引擎无鼠标坐标 API，无 GetMousePosition/onMouseMove），M.edgeMargin 字段已弃用。
 - **人物**：固定在世界 spawnX 位置，随 MID 层一起滚动（不独立移动）
 - **坐标混合**：x/w = 世界像素（横向绝对），y/h = 屏幕高比例（纵向自适应）
 - **场景宽度**：office/crime_scene=2240px, lobby/courtyard/corridor=3360px
