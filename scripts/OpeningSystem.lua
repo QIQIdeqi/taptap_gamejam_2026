@@ -65,10 +65,13 @@ function M.BuildLocationUI()
     M.DestroyUI()
 
     local opening = M.state.opening or { time = "", location = "" }
+    local firstBg = M.GetOpeningDialogueBackground(1)
 
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
-        backgroundColor = { 0, 0, 0, 255 },
+        backgroundColor = { 6, 5, 12, 255 },
+        backgroundImage = firstBg,
+        backgroundFit = "cover",
         flexDirection = "column",
         alignItems = "center",
         justifyContent = "center",
@@ -76,6 +79,15 @@ function M.BuildLocationUI()
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
     }
+
+    -- 暗化遮罩：保证时间/地点文字可读
+    local overlay = UI.Panel {
+        width = "100%", height = "100%",
+        backgroundColor = { 0, 0, 0, 150 },
+        position = "absolute",
+        top = 0, left = 0, right = 0, bottom = 0,
+    }
+    M.ui.root:AddChild(overlay)
 
     M.ui.timeLabel = UI.Label {
         text = opening.time or "",
@@ -111,14 +123,55 @@ function M.DestroyUI()
     M.ui.locationLabel = nil
 end
 
--- 对话阶段暗色背景（覆盖全屏，避免透出旧场景）
-function M.BuildBackdrop()
-    M.ui.backdrop = UI.Panel {
+-- 创建带背景图与暗化遮罩的全屏面板（保证文字可读）
+function M.CreateBackdropPanel(imagePath)
+    local panel = UI.Panel {
         width = "100%", height = "100%",
-        backgroundColor = { 8, 6, 14, 240 },
+        backgroundColor = { 6, 5, 12, 255 },
+        backgroundImage = imagePath,
+        backgroundFit = "cover",
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
     }
+    local overlay = UI.Panel {
+        width = "100%", height = "100%",
+        backgroundColor = { 0, 0, 0, 150 },
+        position = "absolute",
+        top = 0, left = 0, right = 0, bottom = 0,
+    }
+    panel:AddChild(overlay)
+    return panel
+end
+
+-- 读取当前过场分镜（按 dialogueIndex）对应的背景图
+function M.GetCurrentDialogueBackground()
+    local GameData = require("scripts.GameData")
+    local dialogues = (M.state.opening and M.state.opening.dialogues) or {}
+    local id = dialogues[M.state.dialogueIndex]
+    if not id then return nil end
+    local dlg = GameData.GetDialogue(id)
+    if dlg and dlg.background and dlg.background ~= "" then
+        return dlg.background
+    end
+    return nil
+end
+
+-- 读取指定序号过场分镜的背景图（用于 location 阶段显示首图）
+function M.GetOpeningDialogueBackground(index)
+    local GameData = require("scripts.GameData")
+    local dialogues = (M.state.opening and M.state.opening.dialogues) or {}
+    local id = dialogues[index]
+    if not id then return nil end
+    local dlg = GameData.GetDialogue(id)
+    if dlg and dlg.background and dlg.background ~= "" then
+        return dlg.background
+    end
+    return nil
+end
+
+-- 对话阶段背景：显示当前分镜的背景图（覆盖全屏，避免透出旧场景）
+function M.BuildBackdrop()
+    M.ui.backdrop = M.CreateBackdropPanel(M.GetCurrentDialogueBackground())
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.backdrop) end
 end
@@ -171,6 +224,7 @@ end
 -- ============================================================================
 function M.PlayNextDialogue()
     local DialogueSystem = require("scripts.DialogueSystem")
+    local GameData = require("scripts.GameData")
 
     local dialogues = M.state.opening.dialogues or {}
     if M.state.dialogueIndex > #dialogues then
@@ -181,6 +235,12 @@ function M.PlayNextDialogue()
 
     local dialogueId = dialogues[M.state.dialogueIndex]
     M.state.dialogueIndex = M.state.dialogueIndex + 1
+
+    -- 切换到该分镜对应的背景图（pcall 防止背景图缺失导致崩溃）
+    local dlg = GameData.GetDialogue(dialogueId)
+    if M.ui.backdrop and dlg and dlg.background and dlg.background ~= "" then
+        pcall(function() M.ui.backdrop:SetBackgroundImage(dlg.background) end)
+    end
 
     DialogueSystem.Start(dialogueId, function()
         M.PlayNextDialogue()

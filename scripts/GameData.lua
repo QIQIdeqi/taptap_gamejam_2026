@@ -402,6 +402,7 @@ M.Dialogues = {
     -- ===== 第一段开场动画（5个序列） =====
     opening_prologue_1 = {
         id = "opening_prologue_1",
+        background = "assets/image/bg_office.png",
         lines = {
             { speaker = "", text = "男女主在事务所内，李志正睡在地铺上。已是下午13点，陈雯音坐在李志身上打了他一个耳光，李志被吓醒坐起，陈雯音已坐到了一旁的凳子上。" },
             { speaker = "LiZhi", text = "几点了？" },
@@ -412,6 +413,7 @@ M.Dialogues = {
     },
     opening_prologue_2 = {
         id = "opening_prologue_2",
+        background = "assets/image/bg_office.png",
         lines = {
             { speaker = "", text = "镜头切换，李志站在厨台前煮着泡面，陈雯音在一旁看着。" },
             { speaker = "LiZhi", text = "你说热水器就在这里，你为什么就不能自己用来泡面呢？" },
@@ -422,6 +424,7 @@ M.Dialogues = {
     },
     opening_prologue_3 = {
         id = "opening_prologue_3",
+        background = "assets/image/bg_office.png",
         lines = {
             { speaker = "", text = "（画面切入回忆，黑屏显示：2036年8月8日 14:20）" },
             { speaker = "", text = "李志在房间门内，李志姐姐和陈雯音在房间门外。" },
@@ -440,6 +443,7 @@ M.Dialogues = {
     },
     opening_prologue_4 = {
         id = "opening_prologue_4",
+        background = "assets/image/bg_office.png",
         lines = {
             { speaker = "", text = "切回原场景。两人坐在桌前吃泡面，桌子中间放着一台播放AI新闻的平板。" },
             { speaker = "NewsAnchor", text = "据悉，这是近10年来第一次出现AI错误，目前磐安智能正在全力排查故障原因。" },
@@ -453,6 +457,7 @@ M.Dialogues = {
     },
     opening_prologue_5 = {
         id = "opening_prologue_5",
+        background = "assets/image/bg_office.png",
         lines = {
             { speaker = "", text = "切换到事务所卧室，李志正对着衣柜翻找着什么。" },
             { speaker = "LiZhi", text = "雯雯，有看到我的袜子吗？" },
@@ -479,6 +484,7 @@ M.Dialogues = {
     },
     opening_chapter1_2 = {
         id = "opening_chapter1_2",
+        background = "assets/image/bg_hotel_lobby.png",
         lines = {
             { speaker = "", text = "镜头向右移动，许晴岚登场，递上一张卡片示意李志佩戴上。" },
             { speaker = "XuQinglan", text = "辛苦了。这是澜星科技特聘高级安全顾问'李志'先生的参会凭证，身份备案已经同步到峰会主控系统了，麻烦直接激活房卡吧。" },
@@ -494,6 +500,7 @@ M.Dialogues = {
     },
     opening_chapter1_3 = {
         id = "opening_chapter1_3",
+        background = "assets/image/bg_hotel_lobby.png",
         lines = {
             { speaker = "", text = "镜头朝左移动至酒店入口。左侧进来5人，严成峰和赵恒并列走在最前面，磐安员工甲、乙跟在身后，周文最后提着大小包，唯唯诺诺不敢看众人。" },
             { speaker = "PanganEmployee", text = "周文，你能不能走快点？严总和赵总在前面，你缩在后面像个贼一样！等会儿进了套房，立刻把演示系统连上专线，要是峰会交流环节有投资人问起底层逻辑你答不上来，回公司有你好看的！" },
@@ -510,6 +517,7 @@ M.Dialogues = {
     },
     opening_chapter1_4 = {
         id = "opening_chapter1_4",
+        background = "assets/image/bg_hotel_lobby.png",
         lines = {
             { speaker = "", text = "画面切换，刚才5人已离开大厅。陈雯音目视电梯的方向。" },
             { speaker = "LiZhi", text = "啧啧，许大助理，战力不减当年呐。" },
@@ -526,6 +534,7 @@ M.Dialogues = {
     },
     opening_chapter1_5 = {
         id = "opening_chapter1_5",
+        background = "assets/image/bg_hotel_room.png",
         lines = {
             { speaker = "", text = "（画面切换，黑屏显示：2036年8月13日 10:17，万丽海湾大酒店 2510房）" },
             { speaker = "", text = "李志在房间里拿着手机与姐姐通话。" },
