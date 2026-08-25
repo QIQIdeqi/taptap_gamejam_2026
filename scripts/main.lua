@@ -134,6 +134,9 @@ end
 function EnterChapter1()
     GameData.GameState.currentChapter = "chapter1"
 
+    -- 退出当前场景，避免过场期间旧场景背景透出
+    SceneManager.ExitScene()
+
     -- 收集第二章人物与证词线索
     local clueIds = {
         "char_xuqinglan", "char_yanchengfeng", "char_zhaoheng", "char_zhouwen",

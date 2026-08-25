@@ -624,35 +624,35 @@ M.SceneObjects = {
     hotel_lobby = {
         title = "酒店大堂与前台区",
         exits = {
-            { id = "to_courtyard", label = "露天庭院入口", targetScene = "hotel_courtyard", x = 0.04, y = 0.28, w = 0.08, h = 0.26 },
-            { id = "to_corridor", label = "电梯", targetScene = "hotel_corridor", x = 0.88, y = 0.26, w = 0.08, h = 0.30 },
+            { id = "to_courtyard", label = "露天庭院入口", targetScene = "hotel_courtyard", x = 0.18, y = 0.42, w = 0.12, h = 0.36 },
+            { id = "to_corridor", label = "电梯", targetScene = "hotel_corridor", x = 0.86, y = 0.32, w = 0.08, h = 0.24 },
         },
         items = {
             {
                 id = "fountain",
                 name = "室内流水假山",
-                x = 0.40, y = 0.40, w = 0.20, h = 0.42,
+                x = 0.32, y = 0.38, w = 0.22, h = 0.44,
                 clueId = "lobby_fountain",
                 interactText = "大堂正中一座由整块太湖石与循环水景雕琢的华丽假山，流水潺潺。",
             },
             {
                 id = "stand",
                 name = "峰会展架",
-                x = 0.18, y = 0.42, w = 0.12, h = 0.40,
+                x = 0.55, y = 0.40, w = 0.12, h = 0.42,
                 clueId = "lobby_stand",
                 interactText = "展架上是磐安智能的Logo和严成峰的商务肖像。",
             },
             {
                 id = "delivery",
                 name = "外卖暂存柜",
-                x = 0.04, y = 0.62, w = 0.12, h = 0.30,
+                x = 0.01, y = 0.44, w = 0.11, h = 0.44,
                 clueId = "lobby_delivery",
                 interactText = "蜂巢式恒温配送柜，扫码屏上残留着几条取件记录。",
             },
             {
                 id = "signbook",
                 name = "VIP签到簿",
-                x = 0.74, y = 0.62, w = 0.16, h = 0.24,
+                x = 0.70, y = 0.58, w = 0.30, h = 0.42,
                 clueId = "lobby_signbook",
                 interactText = "前台礼貌地表示，您并不能查看这些内容。",
             },

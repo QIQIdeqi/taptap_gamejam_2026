@@ -21,6 +21,7 @@ M.ui = {
     root = nil,
     timeLabel = nil,
     locationLabel = nil,
+    backdrop = nil,   -- 对话阶段的暗色背景
 }
 
 -- ============================================================================
@@ -102,8 +103,24 @@ function M.DestroyUI()
         M.ui.root:Destroy()
         M.ui.root = nil
     end
+    if M.ui.backdrop then
+        M.ui.backdrop:Destroy()
+        M.ui.backdrop = nil
+    end
     M.ui.timeLabel = nil
     M.ui.locationLabel = nil
+end
+
+-- 对话阶段暗色背景（覆盖全屏，避免透出旧场景）
+function M.BuildBackdrop()
+    M.ui.backdrop = UI.Panel {
+        width = "100%", height = "100%",
+        backgroundColor = { 8, 6, 14, 240 },
+        position = "absolute",
+        top = 0, left = 0, right = 0, bottom = 0,
+    }
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(M.ui.backdrop) end
 end
 
 -- ============================================================================
@@ -134,8 +151,9 @@ function M.Update(deltaTime)
         end
 
         if M.state.timer >= duration then
-            -- 进入对话阶段
+            -- 进入对话阶段：显示暗色背景避免透出旧场景
             M.DestroyUI()
+            M.BuildBackdrop()
             M.state.phase = "dialogue"
             M.PlayNextDialogue()
         end
