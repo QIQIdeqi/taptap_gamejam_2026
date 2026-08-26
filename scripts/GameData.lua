@@ -563,6 +563,36 @@ M.Dialogues = {
             { speaker = "ZhangChengyu", text = "死者严成峰，51岁，磐安智能原始股东董事。被发现倒在客房内。" },
             { speaker = "LiZhi", text = "有意思。让我看看……" },
         },
+
+    -- ===== 结案推理：推理独白 =====
+    crime_deduction = {
+        id = "crime_deduction",
+        lines = {
+            { speaker = "LiZhi", text = "把线索串起来。" },
+            { speaker = "LiZhi", text = "温控面板记录：凌晨3点，房间温度被远程骤降到16度。" },
+            { speaker = "LiZhi", text = "一个重度哮喘病人，在16度的房间里，急救吸入器却不见踪影。" },
+            { speaker = "LiZhi", text = "床头柜空空如也——本该不离身的吸入器，被人提前拿走了。" },
+            { speaker = "LiZhi", text = "而他的测试服系统里，有一份凌晨推送的数据包，签名是内部技术账号。" },
+            { speaker = "LiZhi", text = "能远程改温控、能往测试服塞指令、又能神不知鬼不觉拿走吸入器的人……" },
+            { speaker = "LiZhi", text = "不是外人。是这栋楼里、有权限、也最有动机的那个。" },
+            { speaker = "LiZhi", text = "凶手，就是你。" },
+        },
+    },
+
+    -- ===== 结案：真结局（指认周文）=====
+    crime_ending_true = {
+        id = "crime_ending_true",
+        lines = {
+            { speaker = "LiZhi", text = "周文。" },
+            { speaker = "ZhouWen", text = "……你凭什么这么说？" },
+            { speaker = "LiZhi", text = "凌晨3点，你用技术账号把房间温控降到16度，又往严成峰的测试服推了条指令。" },
+            { speaker = "LiZhi", text = "他哮喘发作，摸向床头柜——吸入器早被你拿走。他跌跌撞撞想去开窗，却从25楼坠了下去。" },
+            { speaker = "ZhangChengyu", text = "……严成峰昨天放话，'明天让你卷铺盖滚蛋'。" },
+            { speaker = "ZhangChengyu", text = "你赌他一倒，你那些事就没人追究了？" },
+            { speaker = "ZhouWen", text = "我只是……不想连累家里人……" },
+            { speaker = "ZhangChengyu", text = "带走。剩下的交给法院。" },
+            { speaker = "LiZhi", text = "（黄昏事务所的灯，今晚可以早点熄了。）" },
+        },
     },
 }
 
@@ -891,6 +921,8 @@ M.SceneObjects = {
                 items = {
                     { id = "body", name = "尸体位置", x = 0.40, y = 0.58, w = 0.24, h = 0.20,
                       clueId = "body_position", interactText = "严成峰面部朝下倒在地板，身体无明显外伤。" },
+                    { id = "deduce", name = "整理线索 · 进行推理", x = 0.70, y = 0.28, w = 0.24, h = 0.18,
+                      onInteract = "deduce" },
                 },
             },
         },

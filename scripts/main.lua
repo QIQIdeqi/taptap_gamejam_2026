@@ -138,6 +138,60 @@ local function countClues()
     return n
 end
 
+-- 结案推理：播放推理独白后弹出嫌疑人选择
+local function ShowSuspectChoice()
+    local root = UI.GetRoot()
+    local sw, sh = graphics:GetWidth(), graphics:GetHeight()
+    -- 半透明覆盖层（拦截点击，防止误触场景）
+    local overlay = UI.Button(root, {
+        left = 0, top = 0, width = sw, height = sh,
+        backgroundColor = "rgba(0,0,0,150)", zorder = 200, borderWidth = 0,
+    })
+    -- 选择面板
+    local panel = UI.Panel(root, {
+        left = sw / 2 - 230, top = sh / 2 - 170, width = 460, height = 340,
+        backgroundColor = "rgba(20,22,38,240)", borderRadius = 14,
+        borderWidth = 2, borderColor = "rgba(255,255,255,60)", zorder = 201,
+    })
+    UI.Label(panel, {
+        left = 0, top = 20, width = 460, height = 36,
+        text = "指认真凶", fontSize = 24, color = "rgba(255,255,255,245)", textAlign = "center",
+    })
+    local hint = UI.Label(panel, {
+        left = 30, top = 64, width = 400, height = 28,
+        text = "根据线索，谁是凶手？", fontSize = 16, color = "rgba(255,220,120,255)", textAlign = "center",
+    })
+    local suspects = {
+        { key = "ZhaoHeng",  label = "赵恒（副总）" },
+        { key = "ZhouWen",   label = "周文（技术骨干）" },
+        { key = "XuQinglan", label = "许晴岚（高管）" },
+        { key = "external",  label = "外部人员" },
+    }
+    for i, s in ipairs(suspects) do
+        local b = UI.Button(panel, {
+            left = 50, top = 104 + (i - 1) * 52, width = 360, height = 44,
+            text = s.label, fontSize = 18, color = "rgba(255,255,255,235)",
+            backgroundColor = "rgba(60,82,132,210)", borderRadius = 8,
+            borderWidth = 1, borderColor = "rgba(255,255,255,40)",
+        })
+        b:onClick(function()
+            if s.key == "ZhouWen" then
+                panel:Destroy(); overlay:Destroy()
+                GameData.SetFlag("case_solved", true)
+                DialogueSystem.Start("crime_ending_true", nil)
+            else
+                hint:SetText("证据不足，再想想……")
+            end
+        end)
+    end
+end
+
+local function StartDeduction()
+    DialogueSystem.Start("crime_deduction", function()
+        ShowSuspectChoice()
+    end)
+end
+
 function HandleSpecialInteract(obj, onComplete)
     -- 序章引导：点衣柜推进
     if obj.onInteract == "wardrobe" then
@@ -159,6 +213,14 @@ function HandleSpecialInteract(obj, onComplete)
                     SceneManager.EnterScene("crime_scene")
                 end)
             end
+        end
+    elseif obj.onInteract == "deduce" then
+        if GameData.GetFlag("case_solved") then
+            DialogueSystem.Start("crime_ending_true", nil)
+        elseif not (GameData.GetFlag("clue_smart_device") and GameData.GetFlag("clue_inhaler") and GameData.GetFlag("clue_body_position")) then
+            SceneManager:ShowClueBanner("整理线索", "先调查完现场的三处线索，再下结论。")
+        else
+            StartDeduction()
         end
     else
         if onComplete then onComplete() end
