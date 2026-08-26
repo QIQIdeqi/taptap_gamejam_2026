@@ -88,7 +88,7 @@ function M.EnterScene(sceneId, onExit)
         left = 0, top = sh - 40, width = sw, height = 28,
         text = "", fontSize = 16, color = "rgba(255,255,255,240)", textAlign = "center",
     })
-    M.hoverNameLabel:SetStyle("visible", false)
+    M.hoverNameLabel:SetStyle({ visible = false })
 
     if sceneData.mode == "screens" then
         M:_EnterScreens(sceneData, root, sw, sh)
@@ -171,11 +171,11 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     btn:onPointerEnter(function()
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(item.name)
-            M.hoverNameLabel:SetStyle("visible", true)
+            M.hoverNameLabel:SetStyle({ visible = true })
         end
     end)
     btn:onPointerLeave(function()
-        if M.hoverNameLabel then M.hoverNameLabel:SetStyle("visible", false) end
+        if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end)
     btn:onClick(function() M:_onItemInteract(item) end)
     return btn
@@ -196,11 +196,11 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     btn:onPointerEnter(function()
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(ex.label or "前往")
-            M.hoverNameLabel:SetStyle("visible", true)
+            M.hoverNameLabel:SetStyle({ visible = true })
         end
     end)
     btn:onPointerLeave(function()
-        if M.hoverNameLabel then M.hoverNameLabel:SetStyle("visible", false) end
+        if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end)
     btn:onClick(function()
         if M.onExit then M.onExit(ex.targetScene) end
@@ -267,8 +267,8 @@ function M:_BuildScreenContent(screenId)
     local sw, sh = M.screenW, M.screenH
 
     -- 整图背景（兜底底色 + 真实图若存在）
-    M._screenPanel:SetStyle("backgroundColor", _rgba(screen.bgColor))
-    M._screenPanel:SetStyle("backgroundImage", screen.image or "")
+    M._screenPanel:SetStyle({ backgroundColor = _rgba(screen.bgColor) })
+    M._screenPanel:SetStyle({ backgroundImage = screen.image or "" })
 
     -- 重建承载层
     if M._screenLayer then M._screenLayer:Destroy() end
@@ -320,24 +320,24 @@ function M:_SwitchScreen(dir)
     -- 新手引导 Step2：首次翻页后小地图脉冲
     if not M._tutorial.minimap and M._minimap then
         M._tutorial.minimap = true
-        M._minimap:SetStyle("borderColor", "rgba(255,200,80,255)")
-        M._minimap:SetStyle("borderWidth", 2)
+        M._minimap:SetStyle({ borderColor = "rgba(255,200,80,255)" })
+        M._minimap:SetStyle({ borderWidth = 2 })
     end
 end
 
 function M:_RefreshNavButtons(screen)
     if M._btnLeft then
         if screen.left then
-            M._btnLeft:SetStyle("opacity", 1)
+            M._btnLeft:SetStyle({ opacity = 1 })
         else
-            M._btnLeft:SetStyle("opacity", 0.2)
+            M._btnLeft:SetStyle({ opacity = 0.2 })
         end
     end
     if M._btnRight then
         if screen.right then
-            M._btnRight:SetStyle("opacity", 1)
+            M._btnRight:SetStyle({ opacity = 1 })
         else
-            M._btnRight:SetStyle("opacity", 0.2)
+            M._btnRight:SetStyle({ opacity = 0.2 })
         end
     end
 end
@@ -374,9 +374,9 @@ function M:_RefreshMinimap(screenId)
     if not M._minimap then return end
     for id, n in pairs(M._mmNodes) do
         if id == screenId then
-            n.dot:SetStyle("backgroundColor", "rgba(255,180,60,255)")
+            n.dot:SetStyle({ backgroundColor = "rgba(255,180,60,255)" })
         else
-            n.dot:SetStyle("backgroundColor", "rgba(255,255,255,120)")
+            n.dot:SetStyle({ backgroundColor = "rgba(255,255,255,120)" })
         end
     end
 end
@@ -429,8 +429,8 @@ end
 function M:ShowClueBanner(name, text)
     if M.hoverNameLabel then
         M.hoverNameLabel:SetText(name .. "：" .. text)
-        M.hoverNameLabel:SetStyle("visible", true)
-        M.hoverNameLabel:SetStyle("opacity", 1)
+        M.hoverNameLabel:SetStyle({ visible = true })
+        M.hoverNameLabel:SetStyle({ opacity = 1 })
     end
 end
 
@@ -438,11 +438,11 @@ function M:_ApplyCamera()
     for _, layer in pairs(M.layers) do
         if layer.img then
             local px = layer.parallax or 1.0
-            layer.img:SetStyle("left", -M.cameraX * px)
+            layer.img:SetStyle({ left = -M.cameraX * px })
         end
     end
     if M.charSprite then
-        M.charSprite:SetStyle("left", M.spawnX - M.cameraX)
+        M.charSprite:SetStyle({ left = M.spawnX - M.cameraX })
     end
 end
 
