@@ -43,7 +43,7 @@
 - **美术风格偏好**：用户于 08-25 明确要求**日系二次元动漫风格**（参考图为干净线条+赛璐璐上色+修长比例+暖调低饱和），而非 08-24 批次使用的"现代写实插画"。后续生成图片应统一为此风格。
 - **AI图像Prompt文档**：`docs/ai-image-prompts.md`(v2.1 整图切换·多屏循环箱庭版) 含 17 张 Screen + 7 角色 + 5 UI 元素 + 开场背景的完整中文 prompt，可直接用于 `batch_generate_images`。
 - **图片资源生成（taptap-maker）**：`batch_generate_images`（2-10张并行）/`generate_image` 下载到 `assets/image/`，文件名**自动加时间戳后缀**（如 `bg_office_20260824xxxx.png`），生成后需 `Rename-Item` 重命名为代码引用名（`bg_office.png` 等）；人物立绘传 `transparent:true` 得透明背景 PNG，`aspect_ratio`/`target_size`/`resolution` 控制画幅。
-- **显示图片**：用 `Widget:SetBackgroundImage("assets/image/xxx.png")` 或构造 `backgroundImage = "assets/image/xxx.png"` + `backgroundFit`（"fill"/"contain"/"cover"）+ `backgroundImageOpacity`；**只接受项目相对路径**（如 `assets/image/...`），不接受绝对路径或 Texture 对象。
+- **显示图片**：用 `Widget:SetBackgroundImage("assets/image/xxx.png")` 或构造 `backgroundImage = "assets/image/xxx.png"` + `backgroundFit`（"fill"/"contain"/"cover"）+ `backgroundImageOpacity`；**只接受项目相对路径**（如 `assets/image/...`），不接受绝对路径或 Texture 对象。⚠️ **不存在 `UI.Image` 构造器**（2026-08-26 误用 `UI.Image(...)` 导致 SceneManager `_BuildScreenContent` 运行时报 `attempt to call a nil value (field 'Image')`）；显示图片一律用 `UI.Panel` + `backgroundImage`（参考 DialogueSystem 立绘面板），且字段名是 `backgroundImage` 而非 `image`；角色立绘加 `backgroundColor = "rgba(0,0,0,0)"` 透明 + `backgroundFit = "contain"` 避免变形。可用 UI 构造器仅 `UI.Panel` / `UI.Label` / `UI.Button`。
 - **中文路径坑（execute_command）**：PowerShell 传入含中文的绝对路径会乱码（`Set-Location : 找不到路径…鐙珛娓告垙`）。规避：(a) 用通配符 `03_*` 匹配 `03_独立游戏` 目录；(b) git 命令不带 `-C` 直接用 cwd（shell 工作目录已是项目根）。
 
 ## 待办（后续开发）

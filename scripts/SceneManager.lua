@@ -171,16 +171,16 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(255,255,255,0)", borderWidth = 0,
     })
-    btn:onPointerEnter(function()
+    btn.props.onPointerEnter = function(event, widget)
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(item.name)
             M.hoverNameLabel:SetStyle({ visible = true })
         end
-    end)
-    btn:onPointerLeave(function()
+    end
+    btn.props.onPointerLeave = function(event, widget)
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
-    end)
-    btn.onClick = function() M:_onItemInteract(item) end
+    end
+    btn.props.onClick = function() M:_onItemInteract(item) end
     return btn
 end
 
@@ -196,16 +196,16 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(120,200,255,18)", borderWidth = 0,
     })
-    btn:onPointerEnter(function()
+    btn.props.onPointerEnter = function(event, widget)
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(ex.label or "前往")
             M.hoverNameLabel:SetStyle({ visible = true })
         end
-    end)
-    btn:onPointerLeave(function()
+    end
+    btn.props.onPointerLeave = function(event, widget)
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
-    end)
-    btn.onClick = function()
+    end
+    btn.props.onClick = function()
         if M.onExit then M.onExit(ex.targetScene) end
     end
     return btn
@@ -234,13 +234,13 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         text = "◀", fontSize = 22, color = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
-    M._btnLeft.onClick = function() M:_SwitchScreen("left") end
+    M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
     M._btnRight = UI.Button(root, {
         left = sw - 24 - 48, top = sh / 2 - 24, width = 48, height = 48,
         text = "▶", fontSize = 22, color = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
-    M._btnRight.onClick = function() M:_SwitchScreen("right") end
+    M._btnRight.props.onClick = function() M:_SwitchScreen("right") end
 
     -- 小地图
     M:_BuildMinimap(sceneData, root, sw, sh)
@@ -402,7 +402,7 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
         left = 0, top = 0, width = sw, height = sh,
         backgroundColor = "rgba(0,0,0,0)", zorder = 99, borderWidth = 0,
     })
-    overlay.onClick = function()
+    overlay.props.onClick = function()
         overlay:Destroy()
         if M._tutPanel then M._tutPanel:Destroy() end
         M._tutPanel = nil
