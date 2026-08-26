@@ -102,19 +102,19 @@ function M.EnterScene(sceneId, onExit)
     M.screenW = sw
     M.screenH = sh
 
-    -- 公共 HUD：标题 + 悬停名称
+    -- 公共 HUD：标题（右上角，避开 DialogueSystem 跳过按钮）+ 悬停名称
     M.titleLabel = Label(root, {
-        left = 12, top = 10, width = sw - 180, height = 32,
+        right = 12, top = 10, width = sw - 180, height = 32,
         text = sceneData.title or sceneId, fontSize = 16,
         fontColor = "rgba(255,255,255,230)",
         backgroundColor = "rgba(0,0,0,140)",
         borderRadius = 6,
         padding = { 6, 10, 4, 10 },
-        textAlign = "left",
+        textAlign = "right",
     })
     M.hoverNameLabel = Label(root, {
         left = 0, top = sh - 40, width = sw, height = 28,
-        text = "", fontSize = 16, color = "rgba(255,255,255,240)", textAlign = "center",
+        text = "", fontSize = 16, fontColor = "rgba(255,255,255,240)", textAlign = "center",
     })
     M.hoverNameLabel:SetStyle({ visible = false })
 
@@ -180,7 +180,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     -- 滚动提示
     M.scrollHint = Label(root, {
         left = 0, top = sh - 40, width = sw, height = 24,
-        text = "◀ ← 移动视角 → ▶", fontSize = 14, color = "rgba(255,255,255,170)", textAlign = "center",
+        text = "◀ ← 移动视角 → ▶", fontSize = 14, fontColor = "rgba(255,255,255,170)", textAlign = "center",
     })
 
     M.cameraX = 0
@@ -259,13 +259,13 @@ function M:_EnterScreens(sceneData, root, sw, sh)
     -- 翻页按钮（◀ ▶）
     M._btnLeft = Button(root, {
         left = 24, top = sh / 2 - 24, width = 48, height = 48,
-        text = "◀", fontSize = 22, color = "rgba(255,255,255,220)",
+        text = "◀", fontSize = 22, fontColor = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
     M._btnRight = Button(root, {
         left = sw - 24 - 48, top = sh / 2 - 24, width = 48, height = 48,
-        text = "▶", fontSize = 22, color = "rgba(255,255,255,220)",
+        text = "▶", fontSize = 22, fontColor = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
     M._btnRight.props.onClick = function() M:_SwitchScreen("right") end
@@ -307,17 +307,18 @@ function M:_BuildScreenContent(screenId)
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
     })
 
-    -- 主角（放大，按 charPos 站位）
+    -- 主角（默认隐藏；2D 横板推理探索模式不显示角色立绘，避免遮挡交互 UI）
     local cp = screen.charPos or { x = 0.5, y = 0.78, scale = 0.58 }
     local charH = sh * (cp.scale or 0.58)
     local charX = cp.x * sw - charH * 0.25
-    local charY = sh * cp.y - charH  -- 脚底站在屏幕 cp.y 比例高度处
+    local charY = sh * cp.y - charH
     M.charSprite = Panel(M._screenLayer, {
         backgroundImage = "assets/image/char_lizhi.png",
         backgroundFit = "contain",
         backgroundColor = "rgba(0,0,0,0)",
         left = charX, top = charY, width = charH * 0.5, height = charH,
         zorder = 5,
+        visible = false,
     })
 
     -- 物件
@@ -397,7 +398,7 @@ function M:_BuildMinimap(sceneData, root, sw, sh)
         })
         local lbl = Label(M._minimap, {
             left = nx - 24, top = ny + 6, width = 48, height = 16,
-            text = node.label or "", fontSize = 10, color = "rgba(255,255,255,160)", textAlign = "center",
+            text = node.label or "", fontSize = 10, fontColor = "rgba(255,255,255,160)", textAlign = "center",
         })
         M._mmNodes[node.id] = { dot = dot, lbl = lbl }
     end
@@ -424,7 +425,7 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
     })
     local tip = Label(M._tutPanel, {
         left = 16, top = 16, width = 368, height = 68,
-        text = text, fontSize = 15, color = "rgba(255,255,255,235)", textAlign = "center",
+        text = text, fontSize = 15, fontColor = "rgba(255,255,255,235)", textAlign = "center",
     })
     local overlay = Button(root, {
         left = 0, top = 0, width = sw, height = sh,
