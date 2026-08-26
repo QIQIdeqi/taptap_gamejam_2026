@@ -465,8 +465,11 @@ function M:_onItemInteract(item)
     end
     if item.onInteract then
         if M.onSpecialInteract then M.onSpecialInteract(item) end
-    end
-    if item.interactText then
+    elseif item.dialogueId then
+        -- 普通/误导物件：弹出角色独白对话（替代金边横幅）
+        local DialogueSystem = require("scripts.DialogueSystem")
+        DialogueSystem.Start(item.dialogueId, nil)
+    elseif item.interactText then
         M:ShowClueBanner(item.name, item.interactText)
     end
 end

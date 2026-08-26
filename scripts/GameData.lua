@@ -593,8 +593,40 @@ M.Dialogues = {
             { speaker = "ZhouWen", text = "我只是……不想连累家里人……" },
             { speaker = "ZhangChengyu", text = "带走。剩下的交给法院。" },
             { speaker = "LiZhi", text = "（黄昏事务所的灯，今晚可以早点熄了。）" },
-        },
-    },
+            },
+
+            -- ===== 序章办公室：普通物件调查独白（点击弹对话，替代横幅） =====
+            of_bookshelf = {
+            id = "of_bookshelf",
+            lines = {
+                { speaker = "LiZhi", text = "书柜里几乎被一位名叫'秋白'的作者填满。封皮起了毛边，显然被反复翻阅过。" },
+                { speaker = "LiZhi", text = "'秋白'……这名字有点耳熟。陈姐生前啃这些推理小说，对密室和不在场证明的套路，怕是比我还熟。" },
+            },
+            },
+            of_desk = {
+            id = "of_desk",
+            lines = {
+                { speaker = "LiZhi", text = "桌上散落着未结案的委托档案，还有几个空泡面杯——陈姐最近接的活儿不少。" },
+                { speaker = "LiZhi", text = "这些案子大多不了了之。她总说，有些真相，当事人并不想知道。" },
+            },
+            },
+            of_bed = {
+            id = "of_bed",
+            lines = {
+                { speaker = "LiZhi", text = "这张地铺很小，这段时间都由雯音睡在这里。" },
+                { speaker = "LiZhi", text = "我这个当舅舅的，连张像样的床都给不了她……等这案子了了，带她离开这个破地方。" },
+            },
+            },
+            -- 误导物件：台灯（非线索，触发"错误方向"对话，引导玩家去正确线索——衣柜）
+            of_lamp_mislead = {
+            id = "of_lamp_mislead",
+            lines = {
+                { speaker = "LiZhi", text = "暖黄的灯光，是这间事务所唯一的温度。" },
+                { speaker = "LiZhi", text = "（戳了戳灯罩）可惜这玩意儿和案子八竿子打不着。" },
+                { speaker = "LiZhi", text = "线索不会藏在'舒服'的地方。我得去翻翻别处——比如那个衣柜。" },
+            },
+            },
+            },
 }
 
 -- ============================================================================
@@ -653,7 +685,7 @@ M.SceneObjects = {
                 left = nil, right = "s2",
                 items = {
                     { id = "bookshelf", name = "书柜", x = 0.10, y = 0.18, w = 0.30, h = 0.60,
-                      clueId = "bookshelf", interactText = "书柜里摆满了侦探小说，大多都是一名叫'秋白'的作者写的。" },
+                      clueId = "bookshelf", dialogueId = "of_bookshelf", interactText = "书柜里摆满了侦探小说，大多都是一名叫'秋白'的作者写的。" },
                 },
             },
             {
@@ -664,9 +696,9 @@ M.SceneObjects = {
                 left = "s1", right = "s3",
                 items = {
                     { id = "desk", name = "办公桌", x = 0.40, y = 0.50, w = 0.30, h = 0.30,
-                      clueId = "desk", interactText = "桌上散落着未结案的委托档案和空泡面杯。" },
+                      clueId = "desk", dialogueId = "of_desk", interactText = "桌上散落着未结案的委托档案和空泡面杯。" },
                     { id = "lamp", name = "台灯", x = 0.74, y = 0.44, w = 0.10, h = 0.24,
-                      interactText = "暖黄灯光是这间事务所唯一的温度。" },
+                      dialogueId = "of_lamp_mislead", misleading = true },
                 },
             },
             {
@@ -679,7 +711,7 @@ M.SceneObjects = {
                     { id = "wardrobe", name = "衣柜", x = 0.58, y = 0.20, w = 0.30, h = 0.58,
                       clueId = "wardrobe", interactText = "衣柜里堆满了深色的衣服，衣服堆下面似乎埋着李志的袜子。", onInteract = "wardrobe" },
                     { id = "bed", name = "床铺", x = 0.10, y = 0.62, w = 0.30, h = 0.28,
-                      clueId = "bed", interactText = "这段时间都由陈雯音睡在这张床上。" },
+                      clueId = "bed", dialogueId = "of_bed", interactText = "这段时间都由陈雯音睡在这张床上。" },
                 },
             },
         },
