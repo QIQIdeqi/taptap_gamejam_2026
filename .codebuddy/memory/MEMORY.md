@@ -32,7 +32,8 @@
 - 长度单位米、Y-up 左手坐标系
 - 屏幕尺寸：`graphics` 是引擎**全局变量**（非模块，勿 `require("Graphics")`，否则 Module not found），可用 `graphics:GetWidth()/GetHeight()/GetDPR()`；`graphics:SetMode()` 已禁用。SceneManager 用它取逻辑分辨率，全局不存在时回退默认 1280x720。
 - UI 组件支持 `onPointerEnter`/`onPointerLeave`（签名 `(event, widget)`）、`borderWidth`/`borderColor`、`SetStyle({...})`
-- **改字体颜色用 `SetStyle({ fontColor = {r,g,b,a} })`**；无 `SetFontColor`/`SetTextColor` 方法（只有 `SetBackgroundColor`/`SetBorderColor` 两个 alias）
+- **`SetStyle` 只接受单个 table 参数**，必须写 `widget:SetStyle({ key = value })`，**绝不能**写 `SetStyle("key", value)`——后者会把第一个参数（字符串）当 props 传入 `NormalizeColorProps`，导致 `pairs(string)` 崩溃（`bad argument #1 to 'for iterator' (table expected, got string)`）。改字体颜色用 `SetStyle({ fontColor = {r,g,b,a} })`（table 值范围 0~255，或传 `"rgba(...)"` 字符串引擎会自动 ParseColor）；无 `SetFontColor`/`SetTextColor` 方法（只有 `SetBackgroundColor`/`SetBorderColor` 两个 alias）。颜色属性值既可传 table 也可传 `"rgba(...)"` 字符串。
+- **`UI:Init()` 重复调用警告**：`EnterScene` 每次调用 `UI:Init()`，若之前未 `UI.Shutdown()` 会打印 `UI.Init() called twice ... ignored` 警告（非 ERROR，引擎忽略，不影响渲染）。保持现状即可，无需特意加 Shutdown。
 - 键盘输入：引擎以**全局变量** `input` 注入（不是模块！勿 `require("Input")`，会报 Module not found 并连带 main.lua 解析失败）。可用方法只有 `input:GetKeyPress(KEY_*)`（按住时每帧返回 true，可当持续状态用）和 `input:GetMouseButtonPress(MOUSEB_*)`。**不存在** `GetKeyDown`、`GetMousePosition`，也没有鼠标移动事件（无 onMouseMove），故鼠标坐标不可得——场景镜头滚动只能用方向键 `KEY_LEFT/KEY_RIGHT`。按键常量 KEY_LEFT/RIGHT/UP/DOWN/ESCAPE/TAB/Q/W/S/F 等为全局。
 - Button 文本始终居中（不支持 textAlign）
 - **事件驱动主循环**：UrhoX 无 `engine:GetFrameTime()/IsExiting()/FrameNext()`，勿手写 while。用 `Start()` + `SubscribeToEvent("Update","HandleUpdate")`，帧时间取 `eventData["TimeStep"]:GetFloat()`
