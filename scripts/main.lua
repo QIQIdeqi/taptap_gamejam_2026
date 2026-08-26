@@ -119,12 +119,47 @@ function EnterPrologueScene()
 end
 
 -- 特殊交互处理（衣柜触发剧情推进）
+-- 统计玩家在场景中主动探索收录的线索数量（基于 flags["clue_<id>"]，排除开场赠予线索）
+local GRANTED_CLUES = {
+    char_lizhi = true, char_wenyin = true,
+    char_xuqinglan = true, char_yanchengfeng = true, char_zhaoheng = true, char_zhouwen = true,
+    xu_intro_panan = true, sister_call = true, frontdesk_statement = true,
+}
+local function countClues()
+    local gs = GameData.GameState or {}
+    local flags = gs.flags or {}
+    local n = 0
+    for k, v in pairs(flags) do
+        if type(k) == "string" and k:sub(1, 5) == "clue_" and v then
+            local id = k:sub(6)
+            if not GRANTED_CLUES[id] then n = n + 1 end
+        end
+    end
+    return n
+end
+
 function HandleSpecialInteract(obj, onComplete)
+    -- 序章引导：点衣柜推进
     if obj.onInteract == "wardrobe" then
         DialogueSystem.Start("opening_prologue_5_after", function()
             GameData.SetFlag("prologue_done", true)
             EnterChapter1()
         end)
+    -- 命案发现：收录足够探索线索后，点 2501 房门触发
+    elseif obj.onInteract == "enter_crime" then
+        if GameData.GetFlag("crime_discovered") then
+            SceneManager.EnterScene("crime_scene")
+        else
+            local n = countClues()
+            if n < 5 then
+                SceneManager:ShowClueBanner("2501 房门", "房门紧锁，似乎还进不去。先多点几处线索调查吧。")
+            else
+                GameData.SetFlag("crime_discovered", true)
+                DialogueSystem.Start("crime_found", function()
+                    SceneManager.EnterScene("crime_scene")
+                end)
+            end
+        end
     else
         if onComplete then onComplete() end
     end

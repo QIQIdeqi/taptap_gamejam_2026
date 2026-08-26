@@ -47,7 +47,7 @@
 
 ## 待办（后续开发）
 - **场景图片资源**：`docs/ai-image-prompts.md`(v2.1) 已定义 **17 张 Screen 整图 + 开场背景**，引用名 lobby/courtyard/corridor/crime_scene + office_screen1/2/3.png 等。**已于 2026-08-26 全部生成**（1920×1080 日系二次元）并放入 `assets/image/`，Maker 自动生成 `.meta`。当前场景已显示真实整图。视差三图(bg_office_bg/mid/fg)已弃用；旧 `bg_hotel_lobby.png`/`bg_hotel_courtyard.png`/`bg_hotel_corridor.png`/`bg_crime_scene.png` 为遗留视差背景（代码 screens 模式未引用，可清理或保留）。
-- 角色立绘 ⚠️ 7主角立绘仍是08-24"现代写实插画"风格，与背景的日系二次元风格**不一致**；待用户用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成并同名覆盖 `char_*.png`
+- 角色立绘 ✅ 7 主角立绘已于 2026-08-26 用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成为**日系二次元透明背景**(800×1200 PNG)，同名覆盖 `char_*.png`（李志/陈雯音/许晴岚/严成峰/赵恒/周文/张承宇）。commit 445abeb 构建成功，运行日志无 ERROR。现在背景(17张Screen)与立绘风格统一。
 - 场景物件坐标基于 prompt 构图推断（非逐像素视觉），出图后可能需微调
 - 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
 - 第二阶段探索后的推理/结案流程
