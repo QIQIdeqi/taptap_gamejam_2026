@@ -266,7 +266,7 @@ function M.PlayNextDialogue()
 
     DialogueSystem.Start(dialogueId, function()
         M.PlayNextDialogue()
-    end)
+    end, false)
 end
 
 -- ============================================================================

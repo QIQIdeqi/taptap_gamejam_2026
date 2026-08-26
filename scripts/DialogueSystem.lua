@@ -38,7 +38,7 @@ M.portraitMap = {
 -- 开始对话
 -- ============================================================================
 
-function M.Start(dialogueId, onComplete)
+function M.Start(dialogueId, onComplete, showSkip)
     local GameData = require("scripts.GameData")
     local dialogue
     if type(dialogueId) == "table" then
@@ -66,7 +66,7 @@ function M.Start(dialogueId, onComplete)
     M.state.isLineComplete = false
     M.onComplete = onComplete
 
-    M.BuildUI()
+    M.BuildUI(showSkip ~= false)
     M.StartLine(1)
 end
 
@@ -74,7 +74,7 @@ end
 -- 构建UI
 -- ============================================================================
 
-function M.BuildUI()
+function M.BuildUI(showSkip)
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = { 0, 0, 0, 0 },
@@ -144,22 +144,24 @@ function M.BuildUI()
     }
     M.ui.root:AddChild(M.ui.portrait)
 
-    -- 跳过按钮：点击直接结束整段对话并进入下一节点
-    local skipBtn = UI.Button {
-        position = "absolute",
-        top = 16, left = 16,
-        width = 64, height = 34,
-        backgroundColor = { 0, 0, 0, 130 },
-        borderWidth = 1, borderColor = { 255, 255, 255, 100 },
-        borderRadius = 6,
-        text = "跳过 ›",
-        fontColor = { 255, 255, 255, 230 },
-        fontSize = 16,
-        onClick = function(self, event)
-            M.End()
-        end,
-    }
-    M.ui.root:AddChild(skipBtn)
+    -- 跳过按钮：点击直接结束整段对话并进入下一节点（showSkip=false 时不创建，避免与 OpeningSystem 跳过重复）
+    if showSkip then
+        local skipBtn = UI.Button {
+            position = "absolute",
+            top = 16, left = 16,
+            width = 64, height = 34,
+            backgroundColor = { 0, 0, 0, 130 },
+            borderWidth = 1, borderColor = { 255, 255, 255, 100 },
+            borderRadius = 6,
+            text = "跳过 ›",
+            fontColor = { 255, 255, 255, 230 },
+            fontSize = 16,
+            onClick = function(self, event)
+                M.End()
+            end,
+        }
+        M.ui.root:AddChild(skipBtn)
+    end
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
