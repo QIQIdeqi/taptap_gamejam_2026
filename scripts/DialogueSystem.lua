@@ -144,6 +144,23 @@ function M.BuildUI()
     }
     M.ui.root:AddChild(M.ui.portrait)
 
+    -- 跳过按钮：点击直接结束整段对话并进入下一节点
+    local skipBtn = UI.Button {
+        position = "absolute",
+        top = 16, left = 16,
+        width = 64, height = 34,
+        backgroundColor = { 0, 0, 0, 130 },
+        borderWidth = 1, borderColor = { 255, 255, 255, 100 },
+        borderRadius = 6,
+        text = "跳过 ›",
+        fontColor = { 255, 255, 255, 230 },
+        fontSize = 16,
+        onClick = function(self, event)
+            M.End()
+        end,
+    }
+    M.ui.root:AddChild(skipBtn)
+
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
 end
