@@ -23,7 +23,7 @@
 - `GameData.lua`：角色/章节/线索（四大分类）/对话/开场动画/场景物件
 - `NoteSystem.lua`：侦探笔记（Tab呼出、四大分类、状态机、F标记、红点）
 - `OpeningSystem.lua`：开场动画（黑屏时间地点3秒 + 分镜对话）
-- `SceneManager.lua` v2：**视差横版场景系统**（三层 BG/MID/FG 视差滚动 + 人物固定站立 + 鼠标边缘/方向键控制镜头 + 物件点击交互）
+- `SceneManager.lua` v3：**整图切换多屏场景系统**（screens 模式：翻页按钮 + 小地图 + 新手引导 + 物件交互 + 主角放大站位；parallax 分支保留但已无场景使用）
 - `DialogueSystem.lua`：打字机对话（Start 支持字符串id和table）
 - `MenuSystem.lua`：主菜单/暂停/存档/读档/设置
 - `SaveSystem.lua`：10槽+自动存档（含 readClues/starredClues 笔记状态）
@@ -40,13 +40,13 @@
 - **UI 渲染挂载**：必须 `UI.Init({ scale = UI.Scale.DEFAULT })` + `UI.SetRoot(root)` 才会渲染；`Widget:Show()` 仅 SetVisible(true)，需 `UI.GetRoot():AddChild(widget)` 挂到渲染树；`Destroy()` 自动从 parent 移除
 - **`Widget:AddChild(child)` 返回 `self`（父节点）用于链式调用，不是 child**！要引用子节点必须 `local x = UI.xxx{...}; parent:AddChild(x)`，绝不能写 `local x = parent:AddChild(...)`（否则 x 指向父节点，缺子类方法如 SetText 会报 nil）
 - **美术风格偏好**：用户于 08-25 明确要求**日系二次元动漫风格**（参考图为干净线条+赛璐璐上色+修长比例+暖调低饱和），而非 08-24 批次使用的"现代写实插画"。后续生成图片应统一为此风格。
-- **AI图像Prompt文档**：`docs/ai-image-prompts.md` 包含完整12个场景/角色的中文prompt（基于wolai文案提取+日系风格适配），可直接用于 `batch_generate_images` 调用。
+- **AI图像Prompt文档**：`docs/ai-image-prompts.md`(v2.1 整图切换·多屏循环箱庭版) 含 17 张 Screen + 7 角色 + 5 UI 元素 + 开场背景的完整中文 prompt，可直接用于 `batch_generate_images`。
 - **图片资源生成（taptap-maker）**：`batch_generate_images`（2-10张并行）/`generate_image` 下载到 `assets/image/`，文件名**自动加时间戳后缀**（如 `bg_office_20260824xxxx.png`），生成后需 `Rename-Item` 重命名为代码引用名（`bg_office.png` 等）；人物立绘传 `transparent:true` 得透明背景 PNG，`aspect_ratio`/`target_size`/`resolution` 控制画幅。
 - **显示图片**：用 `Widget:SetBackgroundImage("assets/image/xxx.png")` 或构造 `backgroundImage = "assets/image/xxx.png"` + `backgroundFit`（"fill"/"contain"/"cover"）+ `backgroundImageOpacity`；**只接受项目相对路径**（如 `assets/image/...`），不接受绝对路径或 Texture 对象。
 - **中文路径坑（execute_command）**：PowerShell 传入含中文的绝对路径会乱码（`Set-Location : 找不到路径…鐙珛娓告垙`）。规避：(a) 用通配符 `03_*` 匹配 `03_独立游戏` 目录；(b) git 命令不带 `-C` 直接用 cwd（shell 工作目录已是项目根）。
 
 ## 待办（后续开发）
-- **场景图片资源**：`docs/ai-image-prompts.md` 已重写为**侧视横版+视差三层**规格（每场景 BG/MID/FG 三张，高1080px，宽2240~3360px）。**尚未生成**，当前 SceneManager 用 backgroundColor 色块占位。需用 prompt 文档批量生成并放入 `assets/image/`。
+- **场景图片资源**：`docs/ai-image-prompts.md`(v2.1) 已定义 **17 张 Screen 整图 + 开场背景**，引用名 lobby/courtyard/corridor/crime_scene + office_screen1/2/3.png 等。**尚未生成**，当前以 backgroundColor 色块占位；生成后放入 `assets/image/`。视差三图(bg_office_bg/mid/fg)已弃用。
 - 角色立绘 ⚠️ 7主角立绘仍是08-24"现代写实插画"风格，与背景的日系二次元风格**不一致**；待用户用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成并同名覆盖 `char_*.png`
 - 场景物件坐标基于 prompt 构图推断（非逐像素视觉），出图后可能需微调
 - 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
@@ -54,19 +54,18 @@
 - 次要角色（姐姐/前台/磐安员工/平板新闻）立绘未生成
 - 开场动画点击跳过、笔记图片放大等细节
 
-## 场景架构（08-26 重构后：双模式）
+## 场景架构（08-26 重构后：全模式 B 多图切换）
 - **视角**：侧视横版 side-view（非等距俯视），类似视觉小说/Galgame 场景展示
-- **双模式架构**：
-  - **模式 A · 过场场景（仅 S1 黄昏事务所）**：视差三层（BG 0.35x / MID 1.0x / FG 1.4x），方向键控制 cameraX 平移。用于序章/动画背景。
-  - **模式 B · 解密关卡（P1-P5，核心）**：**整图切换 + 多屏循环箱庭**（Zelda dungeon 风格）。每个关卡由 N 张 1920×1080 全屏整图（Screen）组成，玩家通过**左右翻页按钮**在 Screen 间切换浏览。交互物件分散隐藏在各张图中。
-    - P1 事务所：3 屏线性（书柜→办公桌→衣柜）
-    - P2 大堂：4 屏环形（旋转门→假山→前台→闸机→循环）
-    - P3 庭院：3 屏线性（入口→茶歇桌→喷泉海景）
-    - P4 走廊：4 屏线性（电梯厅→2501→2502-03→2504-05+沙发）
-    - P5 案发现场：3 屏线性（门廊→床头+衣柜→大床+坠落点）
+- **统一模式 B · 解密关卡（整图切换 + 多屏循环箱庭）**：每个关卡由 N 张 1920×1080 全屏整图（Screen）组成，玩家通过左右翻页按钮在 Screen 间切换。交互物件分散隐藏。
+  - **office 事务所（序章）**：3 屏线性（s1书柜区→s2办公桌区→s3衣柜地铺区），衣柜 `onInteract="wardrobe"` 触发序章推进
+  - P2 大堂：4 屏环形（旋转门→假山→前台→闸机→循环）
+  - P3 庭院：3 屏线性（入口→茶歇桌→喷泉海景）
+  - P4 走廊：4 屏线性（电梯厅→2501→2502-03→2504-05+沙发）
+  - P5 案发现场：3 屏线性（门廊→床头+衣柜→大床+坠落点）
+- **模式 A · 视差三层（⚠️ 已弃用）**：原仅 office 使用，2026-08-26 office 已改模式B。bg_office_bg/mid/fg.png 不再被引用。
 - **解密关卡 UI**：右上角小地图（140×100px 拓扑缩略图 + 当前位置高亮）、左右翻页按钮（48×48px 半透明箭头）、页码指示器
-- **新手引导**：4 步渐进式非阻塞引导（进入提示→翻页教学→物件聚焦→线索收录提示），一次性存档记录 `tutorial_completed`
-- **主角比例放大**：占屏幕高度 55%~65%（约 600~700px @1080p），不再是小人；每关每屏有独立剧情站位表
-- **全贴图覆盖**：所有状态（过渡/弹窗/引导）均有贴图或纯色填充，禁止黑屏/空白/透明穿透
-- **资源总量**：3 张过场景图层 + 17 张解密 Screen + 7 张角色立绘 + 5 张 UI 元素 = **32 张**
-- **Prompt 文档**：`docs/ai-image-prompts.md` 已更新为 v2 整图切换·多屏循环箱庭版，含全部 17 张 Screen 的中文 AI prompt + UI 元素 prompt + 站位配置表 + 贴图覆盖检查清单
+- **新手引导**：4 步渐进式非阻塞引导，首次进入 screens 场景触发（序章 office 即触发），一次性存档 `tutorial_completed`
+- **主角比例放大**：占屏幕高度 55%~65%，每屏独立 charPos 站位
+- **全贴图覆盖**：所有状态有贴图或纯色填充
+- **资源总量**：17 张解密 Screen + 7 张角色立绘 + 5 张 UI 元素 + 1 张开场背景(bg_office.png) = 30 张有效（另 3 张视差图层弃用）
+- **Prompt 文档**：`docs/ai-image-prompts.md` 已更新为 v2.1（整图切换·多屏循环箱庭版，office 归模式B、模式A 视差标注弃用）
