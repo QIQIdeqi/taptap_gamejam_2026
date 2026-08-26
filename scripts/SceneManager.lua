@@ -149,7 +149,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
                 backgroundImage = ld.def.image,
                 backgroundFit = "cover",
                 left = 0, top = 0, width = M.worldWidth, height = sh,
-                zorder = ld.z,
+                zIndex = ld.z,
             })
             M.layers[ld.key] = { img = img, parallax = ld.def.parallax or 1.0, baseLeft = 0 }
             if M.bgFixed[ld.key] == nil then M.bgFixed[ld.key] = false end
@@ -164,7 +164,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
         backgroundFit = "contain",
         backgroundColor = "rgba(0,0,0,0)",
         left = M.spawnX, top = charY, width = charH * 0.5, height = charH,
-        zorder = 5,
+        zIndex = 5,
     })
 
     -- 交互物件
@@ -327,7 +327,7 @@ function M:_BuildScreenContent(screenId)
         backgroundFit = "contain",
         backgroundColor = "rgba(0,0,0,0)",
         left = charX, top = charY, width = charH * 0.5, height = charH,
-        zorder = 5,
+        zIndex = 5,
         visible = false,
     })
 
@@ -431,7 +431,7 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
     M._tutPanel = Panel(root, {
         left = sw / 2 - 200, top = sh / 2 - 50, width = 400, height = 100,
         backgroundColor = "rgba(20,18,30,235)", borderRadius = 12,
-        borderWidth = 1, borderColor = "rgba(255,255,255,30)", zorder = 100,
+        borderWidth = 1, borderColor = "rgba(255,255,255,30)", zIndex = 100,
     })
     local tip = Label(M._tutPanel, {
         left = 16, top = 16, width = 368, height = 68,
@@ -439,7 +439,7 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
     })
     local overlay = Button(root, {
         left = 0, top = 0, width = sw, height = sh,
-        backgroundColor = "rgba(0,0,0,0)", zorder = 99, borderWidth = 0,
+        backgroundColor = "rgba(0,0,0,0)", zIndex = 99, borderWidth = 0,
     })
     overlay.props.onClick = function()
         overlay:Destroy()
@@ -453,6 +453,7 @@ end
 -- 交互逻辑（两模式共用）
 -- ============================================================
 function M:_onItemInteract(item)
+    print("[SM DEBUG] _onItemInteract: id=" .. (item.id or "?") .. " hasInteract=" .. tostring(not not item.onInteract))
     if item.clueId then
         local gs = GameData.GameState or {}
         gs.collectedClues = gs.collectedClues or {}
@@ -471,27 +472,30 @@ function M:_onItemInteract(item)
 end
 
 function M:ShowClueBanner(name, text)
-    -- 居中弹窗提示（比底部 hoverNameLabel 更醒目）
-    local root = M.ui.root
+    print("[SM DEBUG] ShowClueBanner: name=" .. tostring(name) .. " root=" .. tostring(M.ui.root)
+        .. " sw=" .. tostring(M.screenW) .. " sh=" .. tostring(M.screenH))
+    -- 挂到绝对根，确保永远在 UI 最上层（不受 scene root 的 overflow 裁剪）
+    local root = UI.GetRoot() or M.ui.root
     if not root then return end
-    local sw, sh = M.screenW, M.screenH
+    local sw, sh = M.screenW or 1280, M.screenH or 720
 
     local banner = Panel(root, {
-        left = sw / 2 - 220, top = sh / 2 - 60, width = 440, height = 120,
-        backgroundColor = "rgba(15,15,25,230)", borderRadius = 12,
-        borderWidth = 2, borderColor = "rgba(255,200,80,200)", zorder = 150,
+        left = sw / 2 - 260, top = sh / 2 - 80, width = 520, height = 160,
+        backgroundColor = "rgba(20,16,8,245)", borderRadius = 14,
+        borderWidth = 3, borderColor = "rgba(255,200,80,255)", zIndex = 99999,
+    })
+    print("[SM DEBUG] ShowClueBanner: banner created=" .. tostring(banner))
+    Label(banner, {
+        left = 0, top = 22, width = 520, height = 36,
+        text = "【" .. (name or "") .. "】", fontSize = 22, fontColor = "rgba(255,200,80,255)", textAlign = "center",
     })
     Label(banner, {
-        left = 0, top = 20, width = 440, height = 32,
-        text = "🔍 " .. (name or ""), fontSize = 20, fontColor = "rgba(255,200,80,255)", textAlign = "center",
-    })
-    Label(banner, {
-        left = 20, top = 56, width = 400, height = 48,
-        text = text or "", fontSize = 16, fontColor = "rgba(230,230,230,255)", textAlign = "center",
+        left = 24, top = 70, width = 472, height = 64,
+        text = text or "", fontSize = 17, fontColor = "rgba(255,245,225,255)", textAlign = "center",
     })
 
-    -- 2.5 秒后自动消失 + 点击立即关闭
-    local ttl = 2.5
+    -- 3 秒后自动消失 + 淡出
+    local ttl = 3.0
     local closeTimer = nil
     closeTimer = function()
         ttl = ttl - (1 / 60)
@@ -499,12 +503,10 @@ function M:ShowClueBanner(name, text)
             if banner and banner.Destroy then banner:Destroy() end
             return
         end
-        -- 淡出效果
-        if ttl < 0.5 then
-            banner:SetStyle({ opacity = ttl / 0.5 })
+        if ttl < 0.6 then
+            banner:SetStyle({ opacity = ttl / 0.6 })
         end
     end
-    -- 注册到更新循环（用 _bannerTimers 表管理）
     M._bannerTimers = M._bannerTimers or {}
     table.insert(M._bannerTimers, { fn = closeTimer, banner = banner })
 end
