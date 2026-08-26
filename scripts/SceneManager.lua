@@ -402,7 +402,7 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
         if M._tutPanel then M._tutPanel:Destroy() end
         M._tutPanel = nil
         if onClose then onClose() end
-    end)
+    end
 end
 
 -- ============================================================
