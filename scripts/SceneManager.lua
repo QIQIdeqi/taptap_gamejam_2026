@@ -83,6 +83,7 @@ function M.EnterScene(sceneId, onExit)
     local root = Panel(nil, {
         left = 0, top = 0, width = "100%", height = "100%",
         overflow = "hidden", backgroundColor = "rgba(0,0,0,255)",
+        enableDrag = false,
     })
     M.ui.root = root
 
@@ -148,6 +149,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
                 backgroundFit = "cover",
                 left = 0, top = 0, width = M.worldWidth, height = sh,
                 zorder = ld.z,
+                enableDrag = false,
             })
             M.layers[ld.key] = { img = img, parallax = ld.def.parallax or 1.0, baseLeft = 0 }
             if M.bgFixed[ld.key] == nil then M.bgFixed[ld.key] = false end
@@ -250,23 +252,27 @@ function M:_EnterScreens(sceneData, root, sw, sh)
     M._screenPanel = Panel(root, {
         left = 0, top = 0, width = sw, height = sh,
         backgroundImage = "", backgroundColor = "rgba(20,20,30,255)", overflow = "hidden",
+        enableDrag = false,
     })
     -- 承载当前 screen 的物件/出口/主角
     M._screenLayer = Panel(M._screenPanel, {
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+        enableDrag = false,
     })
 
-    -- 翻页按钮（◀ ▶）
+    -- 翻页按钮（◀ ▶）— 增强可见性
     M._btnLeft = Button(root, {
-        left = 24, top = sh / 2 - 24, width = 48, height = 48,
-        text = "◀", fontSize = 22, fontColor = "rgba(255,255,255,220)",
-        backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
+        left = 20, top = sh / 2 - 26, width = 52, height = 52,
+        text = "◀", fontSize = 24, fontColor = "rgba(255,255,255,255)",
+        backgroundColor = "rgba(0,0,0,170)", borderRadius = 10,
+        borderWidth = 1, borderColor = "rgba(255,255,255,80)",
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
     M._btnRight = Button(root, {
-        left = sw - 24 - 48, top = sh / 2 - 24, width = 48, height = 48,
-        text = "▶", fontSize = 22, fontColor = "rgba(255,255,255,220)",
-        backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
+        left = sw - 20 - 52, top = sh / 2 - 26, width = 52, height = 52,
+        text = "▶", fontSize = 24, fontColor = "rgba(255,255,255,255)",
+        backgroundColor = "rgba(0,0,0,170)", borderRadius = 10,
+        borderWidth = 1, borderColor = "rgba(255,255,255,80)",
     })
     M._btnRight.props.onClick = function() M:_SwitchScreen("right") end
 
@@ -305,6 +311,7 @@ function M:_BuildScreenContent(screenId)
     if M._screenLayer then M._screenLayer:Destroy() end
     M._screenLayer = Panel(M._screenPanel, {
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+        enableDrag = false,
     })
 
     -- 主角（默认隐藏；2D 横板推理探索模式不显示角色立绘，避免遮挡交互 UI）
@@ -380,9 +387,9 @@ end
 function M:_BuildMinimap(sceneData, root, sw, sh)
     local mmData = sceneData.minimap
     if not mmData then return end
-    local mw, mh = 140, 100
+    local mw, mh = 130, 90
     M._minimap = Panel(root, {
-        right = 16, top = 16, width = mw, height = mh,
+        right = 12, top = 48, width = mw, height = mh,
         backgroundColor = "rgba(12,10,20,200)", borderRadius = 8,
         borderWidth = 1, borderColor = "rgba(255,255,255,38)", overflow = "hidden",
     })
