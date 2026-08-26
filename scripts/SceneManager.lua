@@ -115,8 +115,9 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     }
     for _, ld in ipairs(layerDefs) do
         if ld.def and ld.def.image then
-            local img = UI.Image(root, {
-                image = ld.def.image,
+            local img = UI.Panel(root, {
+                backgroundImage = ld.def.image,
+                backgroundFit = "cover",
                 left = 0, top = 0, width = M.worldWidth, height = sh,
                 zorder = ld.z,
             })
@@ -128,8 +129,10 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     -- 主角
     local charH = sh * 0.52
     local charY = (1 - M.groundY) * sh - charH
-    M.charSprite = UI.Image(root, {
-        image = "assets/image/char_lizhi.png",
+    M.charSprite = UI.Panel(root, {
+        backgroundImage = "assets/image/char_lizhi.png",
+        backgroundFit = "contain",
+        backgroundColor = "rgba(0,0,0,0)",
         left = M.spawnX, top = charY, width = charH * 0.5, height = charH,
         zorder = 5,
     })
@@ -281,8 +284,10 @@ function M:_BuildScreenContent(screenId)
     local charH = sh * (cp.scale or 0.58)
     local charX = cp.x * sw - charH * 0.25
     local charY = (1 - cp.y) * sh - charH
-    M.charSprite = UI.Image(M._screenLayer, {
-        image = "assets/image/char_lizhi.png",
+    M.charSprite = UI.Panel(M._screenLayer, {
+        backgroundImage = "assets/image/char_lizhi.png",
+        backgroundFit = "contain",
+        backgroundColor = "rgba(0,0,0,0)",
         left = charX, top = charY, width = charH * 0.5, height = charH,
         zorder = 5,
     })
