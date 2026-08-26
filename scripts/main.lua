@@ -182,7 +182,7 @@ local function ShowSuspectChoice()
             else
                 hint:SetText("证据不足，再想想……")
             end
-        end)
+        end
     end
 end
 
