@@ -563,6 +563,7 @@ M.Dialogues = {
             { speaker = "ZhangChengyu", text = "死者严成峰，51岁，磐安智能原始股东董事。被发现倒在客房内。" },
             { speaker = "LiZhi", text = "有意思。让我看看……" },
         },
+    },
 
     -- ===== 结案推理：推理独白 =====
     crime_deduction = {
