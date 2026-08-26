@@ -199,15 +199,18 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     end
     local btn = Button(parent, {
         left = left, top = top, width = w, height = h,
-        backgroundColor = "rgba(255,255,255,0)", borderWidth = 0,
+        backgroundColor = "rgba(255,255,255,0)",
+        borderWidth = 2, borderColor = "rgba(255,255,255,55)",
     })
     btn.props.onPointerEnter = function(event, widget)
+        btn:SetStyle({ borderColor = "rgba(255,220,120,255)", borderWidth = 3, backgroundColor = "rgba(255,220,120,28)" })
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(item.name)
             M.hoverNameLabel:SetStyle({ visible = true })
         end
     end
     btn.props.onPointerLeave = function(event, widget)
+        btn:SetStyle({ borderColor = "rgba(255,255,255,55)", borderWidth = 2, backgroundColor = "rgba(255,255,255,0)" })
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end
     btn.props.onClick = function() M:_onItemInteract(item) end
@@ -224,15 +227,18 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     end
     local btn = Button(parent, {
         left = left, top = top, width = w, height = h,
-        backgroundColor = "rgba(120,200,255,18)", borderWidth = 0,
+        backgroundColor = "rgba(120,200,255,18)",
+        borderWidth = 2, borderColor = "rgba(120,200,255,55)",
     })
     btn.props.onPointerEnter = function(event, widget)
+        btn:SetStyle({ borderColor = "rgba(120,200,255,255)", borderWidth = 3, backgroundColor = "rgba(120,200,255,45)" })
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(ex.label or "前往")
             M.hoverNameLabel:SetStyle({ visible = true })
         end
     end
     btn.props.onPointerLeave = function(event, widget)
+        btn:SetStyle({ borderColor = "rgba(120,200,255,55)", borderWidth = 2, backgroundColor = "rgba(120,200,255,18)" })
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end
     btn.props.onClick = function()
