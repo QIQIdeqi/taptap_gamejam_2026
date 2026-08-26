@@ -603,6 +603,7 @@ M.SceneObjects = {
     -- 坐标说明：x/w 为「世界像素」（横向滚动用绝对像素），y/h 为「屏幕高比例」（自适应）
     office = {
         title = "黄昏事务所",
+        mode = "parallax",
         worldWidth = 2240,
         groundY = 0.78,
         spawnX = 520,
@@ -638,187 +639,244 @@ M.SceneObjects = {
         },
     },
 
-    -- ===== 第二段：1F 酒店大堂与前台区 · 侧视横版 =====
+    -- ===== 第二段：1F 酒店大堂与前台区 · 整图切换（环形4屏）=====
     hotel_lobby = {
         title = "酒店大堂与前台区",
-        worldWidth = 3360,
-        groundY = 0.78,
-        spawnX = 560,
-        layers = {
-            background = { image = "assets/image/bg_hotel_lobby_bg.png",  parallax = 0.35 },
-            midground  = { image = "assets/image/bg_hotel_lobby_mid.png", parallax = 1.0  },
-            foreground = { image = "assets/image/bg_hotel_lobby_fg.png",  parallax = 1.4  },
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "旋转门", nx = 0.18, ny = 0.55 },
+                { id = "s2", label = "外卖柜", nx = 0.42, ny = 0.35 },
+                { id = "s3", label = "前台",   nx = 0.66, ny = 0.55 },
+                { id = "s4", label = "闸机",   nx = 0.86, ny = 0.72 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" }, { "s3", "s4" }, { "s4", "s1" } },
+            start = "s1",
         },
-        exits = {
-            { id = "to_courtyard", label = "露天庭院入口", targetScene = "hotel_courtyard", x = 180,  y = 0.30, w = 340, h = 0.48 },
-            { id = "to_corridor", label = "电梯",         targetScene = "hotel_corridor", x = 3000, y = 0.24, w = 300, h = 0.50 },
-        },
-        items = {
+        screens = {
             {
-                id = "delivery",
-                name = "外卖暂存柜",
-                x = 60,   y = 0.32, w = 340, h = 0.46,
-                clueId = "lobby_delivery",
-                interactText = "蜂巢式恒温配送柜，扫码屏上残留着几条取件记录。",
+                id = "s1", title = "旋转门入口",
+                image = "assets/image/lobby_screen1.png",
+                bgColor = { 150, 120, 70, 255 },
+                charPos = { x = 0.62, y = 0.78, scale = 0.60 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "umbrella", name = "雨伞架", x = 0.10, y = 0.45, w = 0.10, h = 0.40,
+                      interactText = "门前雨伞架里插着几把长伞。" },
+                },
+                exits = {
+                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.04, y = 0.30, w = 0.14, h = 0.45 },
+                },
             },
             {
-                id = "fountain",
-                name = "室内流水假山",
-                x = 1100, y = 0.28, w = 580, h = 0.50,
-                clueId = "lobby_fountain",
-                interactText = "大堂正中一座由整块太湖石与循环水景雕琢的华丽假山，流水潺潺。",
+                id = "s2", title = "外卖柜与假山",
+                image = "assets/image/lobby_screen2.png",
+                bgColor = { 140, 115, 65, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "delivery", name = "外卖暂存柜", x = 0.06, y = 0.32, w = 0.18, h = 0.46,
+                      clueId = "lobby_delivery", interactText = "蜂巢式恒温配送柜，扫码屏残留取件记录。" },
+                    { id = "fountain", name = "室内流水假山", x = 0.44, y = 0.28, w = 0.30, h = 0.50,
+                      clueId = "lobby_fountain", interactText = "太湖石循环水景，水声足以掩盖低声交谈。" },
+                },
             },
             {
-                id = "stand",
-                name = "峰会展架",
-                x = 1820, y = 0.30, w = 380, h = 0.48,
-                clueId = "lobby_stand",
-                interactText = "展架上是磐安智能的Logo和严成峰的商务肖像。",
+                id = "s3", title = "展架与前台",
+                image = "assets/image/lobby_screen3.png",
+                bgColor = { 160, 130, 75, 255 },
+                charPos = { x = 0.60, y = 0.78, scale = 0.58 },
+                left = "s2", right = "s4",
+                items = {
+                    { id = "stand", name = "峰会展架", x = 0.06, y = 0.30, w = 0.20, h = 0.48,
+                      clueId = "lobby_stand", interactText = "磐安智能峰会特制展架。" },
+                    { id = "signbook", name = "VIP签到簿", x = 0.56, y = 0.46, w = 0.30, h = 0.32,
+                      clueId = "lobby_signbook", interactText = "前台礼貌表示无法查看。" },
+                },
             },
             {
-                id = "signbook",
-                name = "VIP签到簿",
-                x = 2360, y = 0.46, w = 900, h = 0.32,
-                clueId = "lobby_signbook",
-                interactText = "前台礼貌地表示，您并不能查看这些内容。",
+                id = "s4", title = "安检闸机",
+                image = "assets/image/lobby_screen4.png",
+                bgColor = { 120, 100, 60, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s3", right = "s1",
+                items = {},
+                exits = {
+                    { id = "to_corridor", label = "电梯→25F", targetScene = "hotel_corridor", x = 0.10, y = 0.30, w = 0.16, h = 0.45 },
+                },
             },
         },
     },
 
-    -- ===== 第二段：1F 露天庭院连廊与茶歇区 · 侧视横版 =====
+    -- ===== 第二段：1F 露天庭院连廊与茶歇区 · 整图切换（线性3屏）=====
     hotel_courtyard = {
         title = "露天庭院连廊与茶歇区",
-        worldWidth = 3360,
-        groundY = 0.78,
-        spawnX = 420,
-        layers = {
-            background = { image = "assets/image/bg_hotel_courtyard_bg.png",  parallax = 0.35 },
-            midground  = { image = "assets/image/bg_hotel_courtyard_mid.png", parallax = 1.0  },
-            foreground = { image = "assets/image/bg_hotel_courtyard_fg.png",  parallax = 1.4  },
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "入口", nx = 0.15, ny = 0.50 },
+                { id = "s2", label = "茶歇", nx = 0.50, ny = 0.35 },
+                { id = "s3", label = "喷泉", nx = 0.85, ny = 0.55 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" } },
+            start = "s1",
         },
-        exits = {
-            { id = "to_lobby", label = "回到大堂", targetScene = "hotel_lobby", x = 3050, y = 0.24, w = 280, h = 0.50 },
-        },
-        items = {
+        screens = {
             {
-                id = "plant",
-                name = "罗马柱与盆栽",
-                x = 60,   y = 0.20, w = 440, h = 0.58,
-                clueId = "court_plant",
-                interactText = "茂密的盆栽形成视线死角，似乎有人曾在这里压低声音打电话。",
+                id = "s1", title = "推拉门入口",
+                image = "assets/image/courtyard_screen1.png",
+                bgColor = { 90, 130, 110, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "plant", name = "罗马柱与盆栽", x = 0.08, y = 0.20, w = 0.22, h = 0.58,
+                      clueId = "court_plant", interactText = "茂密盆栽形成视线死角，有人曾压低声音打电话。" },
+                },
+                exits = {
+                    { id = "to_lobby", label = "回到大堂", targetScene = "hotel_lobby", x = 0.04, y = 0.30, w = 0.14, h = 0.45 },
+                },
             },
             {
-                id = "wifi",
-                name = "Wi-Fi 8 路由",
-                x = 1000, y = 0.08, w = 320, h = 0.14,
-                clueId = "court_wifi",
-                interactText = "路由器指示灯规律闪烁，记录着每台设备的接入日志。",
+                id = "s2", title = "茶歇长桌与盲区",
+                image = "assets/image/courtyard_screen2.png",
+                bgColor = { 100, 140, 115, 255 },
+                charPos = { x = 0.30, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "table", name = "茶歇长桌", x = 0.10, y = 0.56, w = 0.30, h = 0.22,
+                      clueId = "court_table", interactText = "甜点几乎没动，黑咖啡壶已空一半。" },
+                    { id = "wifi", name = "Wi-Fi 8 路由", x = 0.46, y = 0.08, w = 0.16, h = 0.14,
+                      clueId = "court_wifi", interactText = "路由器指示灯规律闪烁，记录设备接入日志。" },
+                    { id = "power", name = "公共电源桩", x = 0.70, y = 0.58, w = 0.16, h = 0.20,
+                      clueId = "court_power", interactText = "电源桩插座处有轻微焦痕。" },
+                },
             },
             {
-                id = "fountain_ctrl",
-                name = "音乐喷泉中控箱",
-                x = 1700, y = 0.24, w = 340, h = 0.18,
-                clueId = "court_fountain",
-                interactText = "电子时钟走得很准，整点准时响起音乐报时。",
-            },
-            {
-                id = "table",
-                name = "茶歇长桌",
-                x = 1180, y = 0.56, w = 900, h = 0.22,
-                clueId = "court_table",
-                interactText = "甜点几乎没被动过，黑咖啡壶已经空了一半。",
-            },
-            {
-                id = "power",
-                name = "公共电源桩",
-                x = 3000, y = 0.58, w = 280, h = 0.20,
-                clueId = "court_power",
-                interactText = "电源桩的插座处有轻微的焦痕。",
+                id = "s3", title = "喷泉与海景护栏",
+                image = "assets/image/courtyard_screen3.png",
+                bgColor = { 80, 120, 125, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s2", right = nil,
+                items = {
+                    { id = "fountain_ctrl", name = "音乐喷泉中控箱", x = 0.10, y = 0.24, w = 0.18, h = 0.18,
+                      clueId = "court_fountain", interactText = "电子时钟走得很准，整点准时报时。" },
+                },
             },
         },
     },
 
-    -- ===== 第二段：25F VIP 客房走廊与电梯 · 侧视横版 =====
+    -- ===== 第二段：25F VIP 客房走廊与电梯 · 整图切换（线性4屏）=====
     hotel_corridor = {
         title = "25F VIP客房走廊",
-        worldWidth = 3360,
-        groundY = 0.78,
-        spawnX = 420,
-        layers = {
-            background = { image = "assets/image/bg_hotel_corridor_bg.png",  parallax = 0.35 },
-            midground  = { image = "assets/image/bg_hotel_corridor_mid.png", parallax = 1.0  },
-            foreground = { image = "assets/image/bg_hotel_corridor_fg.png",  parallax = 1.4  },
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "电梯厅", nx = 0.15, ny = 0.50 },
+                { id = "s2", label = "2501",  nx = 0.42, ny = 0.40 },
+                { id = "s3", label = "2502",  nx = 0.64, ny = 0.55 },
+                { id = "s4", label = "2504",  nx = 0.86, ny = 0.45 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" }, { "s3", "s4" } },
+            start = "s1",
         },
-        exits = {
-            { id = "to_lobby", label = "电梯", targetScene = "hotel_lobby", x = 80, y = 0.24, w = 280, h = 0.50 },
-        },
-        items = {
+        screens = {
             {
-                id = "room2501",
-                name = "2501房",
-                x = 500,  y = 0.24, w = 460, h = 0.54,
-                clueId = "room_2501",
-                interactText = "2501房是严成峰的套房，门缝里飘出一股淡淡的药水味。",
+                id = "s1", title = "VIP电梯厅",
+                image = "assets/image/corridor_screen1.png",
+                bgColor = { 60, 80, 120, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = nil, right = "s2",
+                exits = {
+                    { id = "to_lobby", label = "电梯→大堂", targetScene = "hotel_lobby", x = 0.06, y = 0.30, w = 0.16, h = 0.45 },
+                },
             },
             {
-                id = "room2502",
-                name = "2502房",
-                x = 1200, y = 0.24, w = 460, h = 0.54,
-                clueId = "room_2502",
-                interactText = "2502房房门紧闭，门牌显示这是赵恒的房间。",
+                id = "s2", title = "2501 严成峰套房",
+                image = "assets/image/corridor_screen2.png",
+                bgColor = { 55, 75, 115, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "room2501", name = "2501房门", x = 0.20, y = 0.24, w = 0.30, h = 0.54,
+                      clueId = "room_2501", interactText = "2501房是严成峰的套房，门缝飘出淡淡药水味。", onInteract = "enter_crime" },
+                },
             },
             {
-                id = "room2504",
-                name = "2504房",
-                x = 2000, y = 0.24, w = 460, h = 0.54,
-                clueId = "room_2504",
-                interactText = "2504房是李志和陈雯音的房间。",
+                id = "s3", title = "2502-2503 房门",
+                image = "assets/image/corridor_screen3.png",
+                bgColor = { 65, 85, 125, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s2", right = "s4",
+                items = {
+                    { id = "room2502", name = "2502房门", x = 0.18, y = 0.24, w = 0.28, h = 0.54,
+                      clueId = "room_2502", interactText = "2502房房门紧闭，门牌显示这是赵恒的房间。" },
+                },
             },
             {
-                id = "room2505",
-                name = "2505房",
-                x = 2700, y = 0.24, w = 460, h = 0.54,
-                clueId = "room_2505",
-                interactText = "2505房是许晴岚的房间，就在李志房间隔壁。",
+                id = "s4", title = "2504-2505 与观景沙发",
+                image = "assets/image/corridor_screen4.png",
+                bgColor = { 70, 90, 130, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s3", right = nil,
+                items = {
+                    { id = "room2504", name = "2504房门", x = 0.12, y = 0.24, w = 0.26, h = 0.54,
+                      clueId = "room_2504", interactText = "2504房是李志和陈雯音的房间。" },
+                    { id = "room2505", name = "2505房门", x = 0.45, y = 0.24, w = 0.26, h = 0.54,
+                      clueId = "room_2505", interactText = "2505房是许晴岚的房间，就在李志隔壁。" },
+                },
             },
         },
     },
 
-    -- ===== 第二段：案发现场（2501房） · 侧视横版 =====
+    -- ===== 第二段：案发现场（2501房） · 整图切换（线性3屏）=====
     crime_scene = {
         title = "2501房 · 案发现场",
-        worldWidth = 2240,
-        groundY = 0.78,
-        spawnX = 420,
-        layers = {
-            background = { image = "assets/image/bg_crime_scene_bg.png",  parallax = 0.35 },
-            midground  = { image = "assets/image/bg_crime_scene_mid.png", parallax = 1.0  },
-            foreground = { image = "assets/image/bg_crime_scene_fg.png",  parallax = 1.4  },
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "门廊", nx = 0.18, ny = 0.50 },
+                { id = "s2", label = "床头", nx = 0.50, ny = 0.40 },
+                { id = "s3", label = "大床", nx = 0.82, ny = 0.55 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" } },
+            start = "s1",
         },
-        exits = {
-            { id = "to_corridor", label = "离开房间", targetScene = "hotel_corridor", x = 1900, y = 0.24, w = 280, h = 0.50 },
-        },
-        items = {
+        screens = {
             {
-                id = "nightstand",
-                name = "床头柜",
-                x = 300,  y = 0.56, w = 320, h = 0.22,
-                clueId = "inhaler",
-                interactText = "床头柜上空空如也。严成峰有重度哮喘，吸入器不应该不在手边。",
+                id = "s1", title = "门廊入口",
+                image = "assets/image/crime_scene_screen1.png",
+                bgColor = { 45, 60, 95, 255 },
+                charPos = { x = 0.55, y = 0.78, scale = 0.58 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "thermostat", name = "智能温控面板", x = 0.10, y = 0.24, w = 0.16, h = 0.16,
+                      clueId = "smart_device", interactText = "温控系统显示凌晨3点温度被骤降至16度。" },
+                },
+                exits = {
+                    { id = "to_corridor", label = "离开房间", targetScene = "hotel_corridor", x = 0.05, y = 0.30, w = 0.14, h = 0.45 },
+                },
             },
             {
-                id = "thermostat",
-                name = "智能温控面板",
-                x = 300,  y = 0.24, w = 260, h = 0.16,
-                clueId = "smart_device",
-                interactText = "温控系统显示凌晨3点有过一次异常操作——温度被骤降至16度。",
+                id = "s2", title = "床头与衣柜",
+                image = "assets/image/crime_scene_screen2.png",
+                bgColor = { 50, 65, 100, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "nightstand", name = "床头柜", x = 0.12, y = 0.56, w = 0.18, h = 0.22,
+                      clueId = "inhaler", interactText = "床头柜上空空如也。严成峰有重度哮喘，吸入器本应不离身。" },
+                },
             },
             {
-                id = "body",
-                name = "尸体",
-                x = 1000, y = 0.58, w = 440, h = 0.20,
-                clueId = "body_position",
-                interactText = "严成峰面部朝下倒在客房地板上，没有明显外伤。",
+                id = "s3", title = "大床与坠落点",
+                image = "assets/image/crime_scene_screen3.png",
+                bgColor = { 40, 55, 90, 255 },
+                charPos = { x = 0.30, y = 0.78, scale = 0.58 },
+                left = "s2", right = nil,
+                items = {
+                    { id = "body", name = "尸体位置", x = 0.40, y = 0.58, w = 0.24, h = 0.20,
+                      clueId = "body_position", interactText = "严成峰面部朝下倒在地板，身体无明显外伤。" },
+                },
             },
         },
     },

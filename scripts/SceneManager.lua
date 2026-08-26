@@ -1,84 +1,74 @@
--- ============================================================================
--- SceneManager.lua - 视差横版场景管理器 v2
---
--- 核心机制：
---   三层视差 (BG慢 / MID基准 / FG快) + 人物固定站立
---   镜头控制：鼠标移到屏幕边缘 或 左右方向键 → 场景左右平移
---   点击物件交互（物件随中景层一起滚动）
---
--- 坐标系：
---   世界坐标：横向为绝对像素 (0 ~ worldWidth)，纵向为屏幕高比例 (0~1)
---   镜头：cameraX 表示 viewport 左边缘的世界坐标
---   屏幕坐标 = 世界坐标 - cameraX
--- ============================================================================
-
-local UI = require("urhox-libs.UI")
--- 输入接口由引擎以全局变量 `input` 注入（提供 input:GetKeyPress(KEY_*) /
--- input:GetMouseButtonPress(MOUSEB_*)），以及全局按键常量 KEY_LEFT 等；
--- 不存在 "Input" 模块，不可 require。
-
 local M = {}
+local GameData = require("GameData")
+local UI = require("urhox-libs.UI")
+-- 键盘输入：引擎以全局变量 `input` 注入（无 Input 模块，勿 require）。
+-- 屏幕尺寸：引擎以全局变量 `graphics` 注入（无 Graphics 模块），无则用 1280x720 兜底。
 
--- ==================== 场景状态 ====================
-M.currentScene = nil
-M.currentSceneData = nil       -- GameData.GetSceneData 完整引用
-M.currentObjects = {}
-M.currentExits = {}
-
--- ==================== 镜头参数 ====================
-M.cameraX = 0                   -- viewport 左边缘（世界像素）
-M.screenW = 0                   -- 屏幕逻辑宽（帧刷新）
-M.screenH = 0                   -- 屏幕逻辑高
-M.scrollSpeed = 450             -- 像素/秒
-M.edgeMargin = 80               -- 鼠标边缘触发距离（px）
-
--- ==================== 回调 ====================
-M.onExit = nil
+-- 公开回调（由 main.lua 设置）
 M.onSceneChanged = nil
 M.onClueCollected = nil
 M.onSpecialInteract = nil
 
--- ==================== UI 引用 ====================
-M.ui = {
-    root = nil,                 -- 全屏裁剪容器 overflow:hidden
-    bgLayer = nil,              -- 背景层 (parallax ~0.35)
-    midLayer = nil,             -- 中景层 (parallax 1.0) 含物件+出口+人物
-    fgLayer = nil,              -- 前景层 (parallax ~1.4)
-    charSprite = nil,           -- 人物立绘 Panel
-    objectButtons = {},         -- [id] → Button widget
-    exitButtons = {},           -- [id] → Button widget
-    titleLabel = nil,           -- 场景名（HUD，不滚）
-    clueBanner = nil,
-    clueBannerText = nil,
-    clueBannerTimer = 0,
-    hoverNameLabel = nil,       -- 悬停名称（HUD）
-    scrollHint = nil,           -- 滚动提示（HUD）
-}
+-- 运行状态（screens 模式复用）
+M.currentSceneId = nil
+M.onExit = nil
+M.ui = { root = nil }
+M.bgFixed = {}
+M.cameraX = 0
+M.worldWidth = 0
+M.screenW = 1280
+M.screenH = 720
+M.scrollSpeed = 450
+M.edgeMargin = 80
+M.groundY = 0.78
+M.spawnX = 520
+M.layers = {}
+M.charSprite = nil
+M.hoverNameLabel = nil
+M.titleLabel = nil
+M.scrollHint = nil
+M.charNameLabel = nil
+M._tutorial = { screens = false, minimap = false }
+M._switchCD = 0
+-- screens 模式状态
+M._screens = nil
+M._curScreenId = nil
+M._screenPanel = nil
+M._screenLayer = nil
+M._btnLeft = nil
+M._btnRight = nil
+M._minimap = nil
+M._mmNodes = {}
+M._tutPanel = nil
 
--- ============================================================================
--- 公开 API：进入场景
--- ============================================================================
+local function _rgba(t)
+    if not t then return "rgba(0,0,0,255)" end
+    return string.format("rgba(%d,%d,%d,%d)", t[1] or 0, t[2] or 0, t[3] or 0, t[4] or 255)
+end
 
+-- ============================================================
+-- 进入场景（根据 mode 分支）
+-- ============================================================
 function M.EnterScene(sceneId, onExit)
-    local GameData = require("scripts.GameData")
-    local sceneData = GameData.GetSceneData(sceneId)
-    if not sceneData then return end
-
-    -- 清理旧场景
-    if M.ui.root then
-        M.ui.root:Destroy()
-        M.ui.root = nil
+    local sceneData = GameData.SceneObjects[sceneId]
+    if not sceneData then
+        print("SceneManager.EnterScene: 未知场景 " .. tostring(sceneId))
+        return
     end
-
-    M.currentScene = sceneId
-    M.currentSceneData = sceneData
-    M.currentObjects = sceneData.items or {}
-    M.currentExits = sceneData.exits or {}
+    M.currentSceneId = sceneId
     M.onExit = onExit
+    M.ui = { root = nil }
+    M.bgFixed = {}
+    M._switchCD = 0
 
-    -- 取屏幕逻辑尺寸：
-    -- 引擎以全局变量 `graphics` 注入（不存在 "Graphics" 模块，勿 require）。
-    -- 若引擎未提供该全局，回退到默认 1280x720 以免崩溃。
+    UI:Init()
+    local root = UI.Panel(nil, {
+        left = 0, top = 0, width = "100%", height = "100%",
+        overflow = "hidden", backgroundColor = "rgba(0,0,0,255)",
+    })
+    M.ui.root = root
+
+    -- 屏幕尺寸
     local sw, sh = 1280, 720
     if graphics then
         local dpr = graphics:GetDPR() or 1
@@ -88,357 +78,424 @@ function M.EnterScene(sceneId, onExit)
     M.screenW = sw
     M.screenH = sh
 
-    -- 初始镜头：让角色位于画面左侧约 1/3 处
-    local worldW = sceneData.worldWidth or M.screenW
-    local spawnX = sceneData.spawnX or math.floor(worldW * 0.25)
-    local idealCam = spawnX - math.floor(M.screenW * 0.30)
-    M.cameraX = math.max(0, math.min(idealCam, worldW - M.screenW))
-
-    M.BuildUI()
-
-    if M.onSceneChanged then
-        M.onSceneChanged(sceneId)
-    end
-end
-
--- ============================================================================
--- 构建完整场景 UI 树
--- ============================================================================
-
-function M.BuildUI()
-    local sd = M.currentSceneData          -- 场景数据简写
-    local worldW = sd.worldWidth or M.screenW
-    local layers = sd.layers or {}
-    local bgP = (layers.background and layers.background.parallax) or 0.35
-    local fgP = (layers.foreground and layers.foreground.parallax) or 1.4
-
-    -- ── ① 全屏裁剪根容器 ──
-    M.ui.root = UI.Panel {
-        width = "100%", height = "100%",
-        backgroundColor = { 16, 14, 24, 255 },
-        overflow = "hidden",
-        position = "absolute", top = 0, left = 0, right = 0, bottom = 0,
-    }
-
-    -- ── ② BG 层（最慢） ──
-    M.ui.bgLayer = UI.Panel {
-        width = worldW, height = "100%",
-        backgroundImage = layers.background and layers.background.image or "",
-        backgroundFit = "cover",
-        backgroundColor = { 28, 24, 38, 255 },
-        position = "absolute", top = 0,
-        left = M._layerL(bgP),
-    }
-    M.ui.root:AddChild(M.ui.bgLayer)
-
-    -- ── ③ MID 层（基准）── 含物件 + 出口 + 人物 ──
-    M.ui.midLayer = UI.Panel {
-        width = worldW, height = "100%",
-        backgroundImage = layers.midground and layers.midground.image or "",
-        backgroundFit = "cover",
-        backgroundColor = { 22, 19, 32, 255 },
-        position = "absolute", top = 0,
-        left = M._layerL(1.0),
-    }
-    M.ui.root:AddChild(M.ui.midLayer)
-
-    -- 人物立绘（固定在世界 spawnX，随 MID 一起滚）
-    local spawnX = sd.spawnX or math.floor(worldW * 0.25)
-    local groundY = sd.groundY or 0.78
-    local charH = math.floor(M.screenH * 0.52)
-    M.ui.charSprite = UI.Panel {
-        width = math.floor(charH * 0.50), height = charH,
-        backgroundImage = "assets/image/char_lizhi.png",
-        backgroundFit = "contain",
-        backgroundColor = { 0, 0, 0, 0 },
-        position = "absolute",
-        left = spawnX - M.cameraX,
-        bottom = math.floor(M.screenH * (1.0 - groundY)),
-    }
-    M.ui.midLayer:AddChild(M.ui.charSprite)
-
-    -- 物件按钮
-    M.ui.objectButtons = {}
-    for _, obj in ipairs(M.currentObjects) do
-        local btn = M._makeObjBtn(obj)
-        M.ui.midLayer:AddChild(btn)
-        M.ui.objectButtons[obj.id] = btn
-    end
-
-    -- 出口按钮
-    M.ui.exitButtons = {}
-    for _, ex in ipairs(M.currentExits) do
-        local btn = M._makeExitBtn(ex)
-        M.ui.midLayer:AddChild(btn)
-        M.ui.exitButtons[ex.id] = btn
-    end
-
-    -- ── ④ FG 层（最快） ──
-    M.ui.fgLayer = UI.Panel {
-        width = worldW, height = "100%",
-        backgroundImage = layers.foreground and layers.foreground.image or "",
-        backgroundFit = "cover",
-        backgroundColor = { 0, 0, 0, 0 },
-        position = "absolute", top = 0,
-        left = M._layerL(fgP),
-    }
-    M.ui.root:AddChild(M.ui.fgLayer)
-
-    -- ── ⑤ HUD（不随镜头滚动） ──
-    M._buildHUD(sd)
-
-    -- 挂载到渲染树
-    local uiRoot = UI.GetRoot()
-    if uiRoot then uiRoot:AddChild(M.ui.root) end
-end
-
--- ============================================================================
--- HUD 构建（标题 / 线索横幅 / 悬停名 / 滚动提示）
--- ============================================================================
-
-function M._buildHUD(sd)
-    -- 场景标题
-    M.ui.titleLabel = UI.Label {
-        text = sd.title or "",
-        fontSize = 20,
-        fontColor = { 240, 235, 225, 220 },
-        position = "absolute", left = 24, top = 16,
-    }
-    M.ui.root:AddChild(M.ui.titleLabel)
-
-    -- 线索横幅
-    M.ui.clueBanner = UI.Panel {
-        position = "absolute", left = "25%", top = "12%", width = "50%",
-        backgroundColor = { 30, 25, 15, 230 },
-        borderRadius = 8, borderWidth = 1,
-        borderColor = { 200, 180, 100, 200 },
-        flexDirection = "column", justifyContent = "center",
-        alignItems = "center", padding = 10, visible = false,
-    }
-    M.ui.root:AddChild(M.ui.clueBanner)
-    M.ui.clueBannerText = UI.Label {
-        text = "", fontSize = 20,
-        fontColor = { 255, 230, 100, 255 }, textAlign = "center",
-    }
-    M.ui.clueBanner:AddChild(M.ui.clueBannerText)
-
-    -- 悬停名称
-    M.ui.hoverNameLabel = UI.Label {
-        text = "", fontSize = 18,
-        fontColor = { 255, 240, 180, 255 },
-        position = "absolute", right = 40, top = "45%",
-        backgroundColor = { 20, 16, 30, 200 },
-        borderRadius = 6, padding = 8, visible = false,
-    }
-    M.ui.root:AddChild(M.ui.hoverNameLabel)
-
-    -- 滚动方向提示（仅当场景比屏宽时显示）
-    M.ui.scrollHint = UI.Label {
-        text = "◀ ← 移动视角 → ▶", fontSize = 13,
-        fontColor = { 200, 200, 200, 100 },
-        position = "absolute", bottom = 12,
-        left = 0, right = 0, textAlign = "center",
-        visible = (sd.worldWidth or 0) > M.screenW,
-    }
-    M.ui.root:AddChild(M.ui.scrollHint)
-end
-
--- ============================================================================
--- 辅助：某层 left 值（= -cameraX × parallax）
--- ============================================================================
-
-function M._layerL(p)
-    return math.floor(-(M.cameraX * p))
-end
-
--- ============================================================================
--- 创建物件按钮（世界坐标 → 初始屏幕坐标）
--- 坐标约定：x/w = 世界像素(px), y/h = 屏幕高比例(0~1)
--- ============================================================================
-
-function M._makeObjBtn(obj)
-    return UI.Button {
-        text = "", variant = "secondary",
-        position = "absolute",
-        left = math.floor(obj.x - M.cameraX),
-        top = (type(obj.y) == "number") and math.floor(obj.y * M.screenH) or obj.y,
-        width = (type(obj.w) == "number") and obj.w or obj.w,
-        height = (type(obj.h) == "number") and math.floor(obj.h * M.screenH) or obj.h,
-        backgroundColor = { 255, 255, 255, 0 },
-        hoverBackgroundColor = { 255, 255, 100, 46 },
-        borderWidth = 2, borderColor = { 255, 255, 255, 50 },
-        onClick = function() M.OnObjectClick(obj) end,
-        onPointerEnter = function(_, w) M.OnObjectHover(obj, w, true) end,
-        onPointerLeave = function(_, w) M.OnObjectHover(obj, w, false) end,
-    }
-end
-
--- ============================================================================
--- 创建出口按钮
--- ============================================================================
-
-function M._makeExitBtn(ex)
-    return UI.Button {
-        text = ex.label or "→", fontSize = 14, variant = "secondary",
-        position = "absolute",
-        left = math.floor(ex.x - M.cameraX),
-        top = (type(ex.y) == "number") and math.floor(ex.y * M.screenH) or ex.y,
-        width = (type(ex.w) == "number") and ex.w or ex.w,
-        height = (type(ex.h) == "number") and math.floor(ex.h * M.screenH) or ex.h,
-        backgroundColor = { 60, 120, 200, 40 },
-        hoverBackgroundColor = { 60, 160, 255, 80 },
-        borderWidth = 1, borderColor = { 120, 180, 255, 80 },
-        onClick = function() M.EnterScene(ex.targetScene, nil) end,
-    }
-end
-
--- ============================================================================
--- 每帧更新（由 main.lua 调用）
---   1. 读取输入（方向键 + 鼠标边缘）
---   2. clamp cameraX
---   3. 同步三层 left + 人物 + 物件/出口 left
---   4. 线索横幅倒计时
--- ============================================================================
-
-function M.Update(dt)
-    if not M.currentSceneData or not M.ui.root then return end
-
-    local sd = M.currentSceneData
-    local worldW = sd.worldWidth or M.screenW
-    local maxCX = math.max(0, worldW - M.screenW)
-    local layers = sd.layers or {}
-    local bgP = (layers.background and layers.background.parallax) or 0.35
-    local fgP = (layers.foreground and layers.foreground.parallax) or 1.4
-
-    -- ── 1. 滚动输入（方向键；引擎全局 input:GetKeyPress）──
-    local dir = 0
-    if input:GetKeyPress(KEY_LEFT) then dir = dir - 1 end
-    if input:GetKeyPress(KEY_RIGHT) then dir = dir + 1 end
-
-    -- ── 2. 应用 & clamp ──
-    if dir ~= 0 then
-        M.cameraX = M.cameraX + dir * M.scrollSpeed * dt
-        M.cameraX = math.max(0, math.min(M.cameraX, maxCX))
-    end
-
-    -- ── 3. 同步各层 left ──
-    local bgL = M._layerL(bgP)
-    local midL = M._layerL(1.0)
-    local fgL = M._layerL(fgP)
-
-    if M.ui.bgLayer then   M.ui.bgLayer:SetStyle({   left = bgL })  end
-    if M.ui.midLayer then  M.ui.midLayer:SetStyle({  left = midL }) end
-    if M.ui.fgLayer then  M.ui.fgLayer:SetStyle({  left = fgL })  end
-
-    -- ── 4. 人物（随 MID） ──
-    if M.ui.charSprite then
-        local spawnX = sd.spawnX or 0
-        local groundY = sd.groundY or 0.78
-        M.ui.charSprite:SetStyle({
-            left = math.floor(spawnX - M.cameraX),
-            bottom = math.floor(M.screenH * (1.0 - groundY)),
-        })
-    end
-
-    -- ── 5. 物件/出口按钮 left 同步 ──
-    for _, obj in ipairs(M.currentObjects) do
-        local b = M.ui.objectButtons[obj.id]
-        if b then b:SetStyle({ left = math.floor(obj.x - M.cameraX) }) end
-    end
-    for _, ex in ipairs(M.currentExits) do
-        local b = M.ui.exitButtons[ex.id]
-        if b then b:SetStyle({ left = math.floor(ex.x - M.cameraX) }) end
-    end
-
-    -- ── 6. 线索横幅倒计时 ──
-    if M.ui.clueBannerTimer and M.ui.clueBannerTimer > 0 then
-        M.ui.clueBannerTimer = M.ui.clueBannerTimer - dt
-        if M.ui.clueBannerTimer <= 0 and M.ui.clueBanner then
-            M.ui.clueBanner:SetVisible(false)
-        end
-    end
-end
-
--- ============================================================================
--- 物件悬停：描边高亮 + 名称标签
--- ============================================================================
-
-function M.OnObjectHover(obj, widget, entering)
-    if entering then
-        widget:SetStyle({ borderColor = { 255, 255, 100, 255 } })
-        if M.ui.hoverNameLabel then
-            M.ui.hoverNameLabel:SetText("🔍 " .. (obj.name or ""))
-            M.ui.hoverNameLabel:SetVisible(true)
-        end
-    else
-        widget:SetStyle({ borderColor = { 255, 255, 255, 50 } })
-        if M.ui.hoverNameLabel then
-            M.ui.hoverNameLabel:SetVisible(false)
-        end
-    end
-end
-
--- ============================================================================
--- 物件点击：线索收集 + 对话展示
--- ============================================================================
-
-function M.OnObjectClick(obj)
-    local GameData = require("scripts.GameData")
-    local DialogueSystem = require("scripts.DialogueSystem")
-    if DialogueSystem.IsActive() then return end
-
-    local txt = obj.interactText or "..."
-
-    -- 收集线索
-    local newClue = false
-    if obj.clueId then newClue = GameData.CollectClue(obj.clueId) end
-
-    if newClue and obj.clueId then
-        local clue = GameData.GetClue(obj.clueId)
-        if clue then M.ShowClueBanner("获得线索：" .. clue.name) end
-        if M.onClueCollected then M.onClueCollected(obj.clueId) end
-    end
-
-    -- 特殊交互回调
-    if obj.onInteract and M.onSpecialInteract then
-        M.onSpecialInteract(obj, function() M.ShowInteraction(txt) end)
-    else
-        M.ShowInteraction(txt)
-    end
-end
-
-function M.ShowInteraction(txt)
-    require("scripts.DialogueSystem").Start({
-        id = "interaction",
-        lines = { { speaker = "LiZhi", text = txt } },
+    -- 公共 HUD：标题 + 悬停名称
+    M.titleLabel = UI.Label(root, {
+        left = 20, top = 16, width = sw - 180, height = 30,
+        text = sceneData.title or sceneId, fontSize = 18, color = "rgba(255,255,255,230)",
+        textAlign = "left",
     })
+    M.hoverNameLabel = UI.Label(root, {
+        left = 0, top = sh - 40, width = sw, height = 28,
+        text = "", fontSize = 16, color = "rgba(255,255,255,240)", textAlign = "center",
+    })
+    M.hoverNameLabel:SetStyle("visible", false)
+
+    if sceneData.mode == "screens" then
+        M:_EnterScreens(sceneData, root, sw, sh)
+    else
+        M:_EnterParallax(sceneData, root, sw, sh)
+    end
+
+    if M.onSceneChanged then M.onSceneChanged(sceneId) end
 end
 
--- ============================================================================
--- 线索横幅
--- ============================================================================
+-- ============================================================
+-- 模式 A：视差三层（仅 office 序章场景）
+-- ============================================================
+function M:_EnterParallax(sceneData, root, sw, sh)
+    M.worldWidth = sceneData.worldWidth
+    M.groundY = sceneData.groundY or 0.78
+    M.spawnX = sceneData.spawnX or 520
 
-function M.ShowClueBanner(text)
-    if not M.ui.clueBanner then return end
-    M.ui.clueBannerText:SetText(text)
-    M.ui.clueBanner:SetVisible(true)
-    M.ui.clueBannerTimer = 3.0
+    local ldefs = sceneData.layers
+    local layerDefs = {
+        { key = "background", def = ldefs.background, z = 1 },
+        { key = "midground",  def = ldefs.midground,  z = 2 },
+        { key = "foreground", def = ldefs.foreground, z = 3 },
+    }
+    for _, ld in ipairs(layerDefs) do
+        if ld.def and ld.def.image then
+            local img = UI.Image(root, {
+                image = ld.def.image,
+                left = 0, top = 0, width = M.worldWidth, height = sh,
+                zorder = ld.z,
+            })
+            M.layers[ld.key] = { img = img, parallax = ld.def.parallax or 1.0, baseLeft = 0 }
+            if M.bgFixed[ld.key] == nil then M.bgFixed[ld.key] = false end
+        end
+    end
+
+    -- 主角
+    local charH = sh * 0.52
+    local charY = (1 - M.groundY) * sh - charH
+    M.charSprite = UI.Image(root, {
+        image = "assets/image/char_lizhi.png",
+        left = M.spawnX, top = charY, width = charH * 0.5, height = charH,
+        zorder = 5,
+    })
+
+    -- 交互物件
+    if sceneData.items then
+        for _, item in ipairs(sceneData.items) do
+            M:_makeItemBtn(item, sw, sh, false)
+        end
+    end
+    if sceneData.exits then
+        for _, ex in ipairs(sceneData.exits) do
+            M:_makeExitBtn(ex, sw, sh, false)
+        end
+    end
+
+    -- 滚动提示
+    M.scrollHint = UI.Label(root, {
+        left = 0, top = sh - 40, width = sw, height = 24,
+        text = "◀ ← 移动视角 → ▶", fontSize = 14, color = "rgba(255,255,255,170)", textAlign = "center",
+    })
+
+    M.cameraX = 0
+    M:_ApplyCamera()
 end
 
--- ============================================================================
--- 退出场景
--- ============================================================================
+function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
+    parent = parent or M.ui.root
+    local left, top, w, h
+    if isScreenMode then
+        left, top, w, h = item.x * sw, item.y * sh, item.w * sw, item.h * sh
+    else
+        left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
+    end
+    local btn = UI.Button(parent, {
+        left = left, top = top, width = w, height = h,
+        backgroundColor = "rgba(255,255,255,0)", borderWidth = 0,
+    })
+    btn:onPointerEnter(function()
+        if M.hoverNameLabel then
+            M.hoverNameLabel:SetText(item.name)
+            M.hoverNameLabel:SetStyle("visible", true)
+        end
+    end)
+    btn:onPointerLeave(function()
+        if M.hoverNameLabel then M.hoverNameLabel:SetStyle("visible", false) end
+    end)
+    btn:onClick(function() M:_onItemInteract(item) end)
+    return btn
+end
+
+function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
+    parent = parent or M.ui.root
+    local left, top, w, h
+    if isScreenMode then
+        left, top, w, h = ex.x * sw, ex.y * sh, ex.w * sw, ex.h * sh
+    else
+        left, top, w, h = ex.x, ex.y * sh, ex.w, ex.h * sh
+    end
+    local btn = UI.Button(parent, {
+        left = left, top = top, width = w, height = h,
+        backgroundColor = "rgba(120,200,255,18)", borderWidth = 0,
+    })
+    btn:onPointerEnter(function()
+        if M.hoverNameLabel then
+            M.hoverNameLabel:SetText(ex.label or "前往")
+            M.hoverNameLabel:SetStyle("visible", true)
+        end
+    end)
+    btn:onPointerLeave(function()
+        if M.hoverNameLabel then M.hoverNameLabel:SetStyle("visible", false) end
+    end)
+    btn:onClick(function()
+        if M.onExit then M.onExit(ex.targetScene) end
+    end)
+    return btn
+end
+
+-- ============================================================
+-- 模式 B：整图切换 · 多屏循环箱庭
+-- ============================================================
+function M:_EnterScreens(sceneData, root, sw, sh)
+    M._screens = sceneData.screens
+    M._curScreenId = sceneData.minimap and sceneData.minimap.start or sceneData.screens[1].id
+
+    -- 整图背景面板（backgroundImage 若不存在则显示 backgroundColor 兜底，绝不黑屏）
+    M._screenPanel = UI.Panel(root, {
+        left = 0, top = 0, width = sw, height = sh,
+        backgroundImage = "", backgroundColor = "rgba(20,20,30,255)", overflow = "hidden",
+    })
+    -- 承载当前 screen 的物件/出口/主角
+    M._screenLayer = UI.Panel(M._screenPanel, {
+        left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+    })
+
+    -- 翻页按钮（◀ ▶）
+    M._btnLeft = UI.Button(root, {
+        left = 24, top = sh / 2 - 24, width = 48, height = 48,
+        text = "◀", fontSize = 22, color = "rgba(255,255,255,220)",
+        backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
+    })
+    M._btnLeft:onClick(function() M:_SwitchScreen("left") end)
+    M._btnRight = UI.Button(root, {
+        left = sw - 24 - 48, top = sh / 2 - 24, width = 48, height = 48,
+        text = "▶", fontSize = 22, color = "rgba(255,255,255,220)",
+        backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
+    })
+    M._btnRight:onClick(function() M:_SwitchScreen("right") end)
+
+    -- 小地图
+    M:_BuildMinimap(sceneData, root, sw, sh)
+
+    -- 构建首屏
+    M:_BuildScreenContent(M._curScreenId)
+
+    -- 新手引导 Step1
+    if not M._tutorial.screens then
+        M:_ShowTutorial(root, sw, sh,
+            "点击场景中的物件进行调查  ◀ ▶ 翻页浏览",
+            function() M._tutorial.screens = true end)
+    end
+end
+
+function M:_GetScreen(id)
+    for _, s in ipairs(M._screens) do
+        if s.id == id then return s end
+    end
+    return nil
+end
+
+function M:_BuildScreenContent(screenId)
+    local screen = M:_GetScreen(screenId)
+    if not screen then return end
+    M._curScreenId = screenId
+    local sw, sh = M.screenW, M.screenH
+
+    -- 整图背景（兜底底色 + 真实图若存在）
+    M._screenPanel:SetStyle("backgroundColor", _rgba(screen.bgColor))
+    M._screenPanel:SetStyle("backgroundImage", screen.image or "")
+
+    -- 重建承载层
+    if M._screenLayer then M._screenLayer:Destroy() end
+    M._screenLayer = UI.Panel(M._screenPanel, {
+        left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+    })
+
+    -- 主角（放大，按 charPos 站位）
+    local cp = screen.charPos or { x = 0.5, y = 0.78, scale = 0.58 }
+    local charH = sh * (cp.scale or 0.58)
+    local charX = cp.x * sw - charH * 0.25
+    local charY = (1 - cp.y) * sh - charH
+    M.charSprite = UI.Image(M._screenLayer, {
+        image = "assets/image/char_lizhi.png",
+        left = charX, top = charY, width = charH * 0.5, height = charH,
+        zorder = 5,
+    })
+
+    -- 物件
+    if screen.items then
+        for _, item in ipairs(screen.items) do
+            M:_makeItemBtn(item, sw, sh, true, M._screenLayer)
+        end
+    end
+    -- 出口（跨场景传送）
+    if screen.exits then
+        for _, ex in ipairs(screen.exits) do
+            M:_makeExitBtn(ex, sw, sh, true, M._screenLayer)
+        end
+    end
+
+    -- 标题
+    if M.titleLabel then
+        M.titleLabel:SetText((GameData.SceneObjects[M.currentSceneId].title or "") .. " · " .. (screen.title or ""))
+    end
+
+    -- 翻页按钮启用态
+    M:_RefreshNavButtons(screen)
+    -- 小地图高亮
+    M:_RefreshMinimap(screenId)
+end
+
+function M:_SwitchScreen(dir)
+    local screen = M:_GetScreen(M._curScreenId)
+    if not screen then return end
+    local targetId = (dir == "left") and screen.left or screen.right
+    if not targetId then return end
+    M:_BuildScreenContent(targetId)
+    -- 新手引导 Step2：首次翻页后小地图脉冲
+    if not M._tutorial.minimap and M._minimap then
+        M._tutorial.minimap = true
+        M._minimap:SetStyle("borderColor", "rgba(255,200,80,255)")
+        M._minimap:SetStyle("borderWidth", 2)
+    end
+end
+
+function M:_RefreshNavButtons(screen)
+    if M._btnLeft then
+        if screen.left then
+            M._btnLeft:SetStyle("opacity", 1)
+        else
+            M._btnLeft:SetStyle("opacity", 0.2)
+        end
+    end
+    if M._btnRight then
+        if screen.right then
+            M._btnRight:SetStyle("opacity", 1)
+        else
+            M._btnRight:SetStyle("opacity", 0.2)
+        end
+    end
+end
+
+-- 小地图（右上角拓扑缩略图）
+function M:_BuildMinimap(sceneData, root, sw, sh)
+    local mmData = sceneData.minimap
+    if not mmData then return end
+    local mw, mh = 140, 100
+    M._minimap = UI.Panel(root, {
+        right = 16, top = 16, width = mw, height = mh,
+        backgroundColor = "rgba(12,10,20,200)", borderRadius = 8,
+        borderWidth = 1, borderColor = "rgba(255,255,255,38)", overflow = "hidden",
+    })
+    M._mmNodes = {}
+    local pad = 12
+    local innerW, innerH = mw - pad * 2, mh - pad * 2
+    for _, node in ipairs(mmData.nodes) do
+        local nx = pad + (node.nx or 0.5) * innerW
+        local ny = pad + (node.ny or 0.5) * innerH
+        local dot = UI.Panel(M._minimap, {
+            left = nx - 5, top = ny - 5, width = 10, height = 10,
+            borderRadius = 5, backgroundColor = "rgba(255,255,255,120)",
+        })
+        local lbl = UI.Label(M._minimap, {
+            left = nx - 24, top = ny + 6, width = 48, height = 16,
+            text = node.label or "", fontSize = 10, color = "rgba(255,255,255,160)", textAlign = "center",
+        })
+        M._mmNodes[node.id] = { dot = dot, lbl = lbl }
+    end
+end
+
+function M:_RefreshMinimap(screenId)
+    if not M._minimap then return end
+    for id, n in pairs(M._mmNodes) do
+        if id == screenId then
+            n.dot:SetStyle("backgroundColor", "rgba(255,180,60,255)")
+        else
+            n.dot:SetStyle("backgroundColor", "rgba(255,255,255,120)")
+        end
+    end
+end
+
+-- 新手引导浮窗（非阻塞，点击任意处关闭）
+function M:_ShowTutorial(root, sw, sh, text, onClose)
+    if M._tutPanel then M._tutPanel:Destroy() end
+    M._tutPanel = UI.Panel(root, {
+        left = sw / 2 - 200, top = sh / 2 - 50, width = 400, height = 100,
+        backgroundColor = "rgba(20,18,30,235)", borderRadius = 12,
+        borderWidth = 1, borderColor = "rgba(255,255,255,30)", zorder = 100,
+    })
+    local tip = UI.Label(M._tutPanel, {
+        left = 16, top = 16, width = 368, height = 68,
+        text = text, fontSize = 15, color = "rgba(255,255,255,235)", textAlign = "center",
+    })
+    local overlay = UI.Button(root, {
+        left = 0, top = 0, width = sw, height = sh,
+        backgroundColor = "rgba(0,0,0,0)", zorder = 99, borderWidth = 0,
+    })
+    overlay:onClick(function()
+        overlay:Destroy()
+        if M._tutPanel then M._tutPanel:Destroy() end
+        M._tutPanel = nil
+        if onClose then onClose() end
+    end)
+end
+
+-- ============================================================
+-- 交互逻辑（两模式共用）
+-- ============================================================
+function M:_onItemInteract(item)
+    if item.clueId then
+        local gs = GameData.GameState or {}
+        gs.collectedClues = gs.collectedClues or {}
+        local already = gs.collectedClues[item.clueId]
+        gs.collectedClues[item.clueId] = true
+        GameData.GameState = gs
+        GameData.SetFlag("clue_" .. item.clueId, true)
+        if M.onClueCollected then M.onClueCollected(item.clueId, item.name, already) end
+    end
+    if item.onInteract then
+        if M.onSpecialInteract then M.onSpecialInteract(item.onInteract, item) end
+    end
+    if item.interactText then
+        M:ShowClueBanner(item.name, item.interactText)
+    end
+end
+
+function M:ShowClueBanner(name, text)
+    if M.hoverNameLabel then
+        M.hoverNameLabel:SetText(name .. "：" .. text)
+        M.hoverNameLabel:SetStyle("visible", true)
+        M.hoverNameLabel:SetStyle("opacity", 1)
+    end
+end
+
+function M:_ApplyCamera()
+    for _, layer in pairs(M.layers) do
+        if layer.img then
+            local px = layer.parallax or 1.0
+            layer.img:SetStyle("left", -M.cameraX * px)
+        end
+    end
+    if M.charSprite then
+        M.charSprite:SetStyle("left", M.spawnX - M.cameraX)
+    end
+end
+
+-- ============================================================
+-- 每帧更新
+-- ============================================================
+function M.Update(dt)
+    if M._switchCD > 0 then M._switchCD = M._switchCD - (dt or 0) end
+
+    local sceneData = GameData.SceneObjects[M.currentSceneId]
+    if not sceneData then return end
+
+    if sceneData.mode == "screens" then
+        -- 模式 B：方向键翻页（带冷却）
+        if M._switchCD <= 0 and input then
+            if input:GetKeyPress(KEY_LEFT) then
+                M:_SwitchScreen("left"); M._switchCD = 0.25
+            elseif input:GetKeyPress(KEY_RIGHT) then
+                M:_SwitchScreen("right"); M._switchCD = 0.25
+            end
+        end
+    else
+        -- 模式 A：方向键滚动
+        local dir = 0
+        if input and input:GetKeyPress(KEY_LEFT) then dir = dir - 1 end
+        if input and input:GetKeyPress(KEY_RIGHT) then dir = dir + 1 end
+        if dir ~= 0 then
+            M.cameraX = M.cameraX + dir * M.scrollSpeed * (dt or 0)
+            M.cameraX = math.max(0, math.min(M.cameraX, M.worldWidth - M.screenW))
+            M:_ApplyCamera()
+        end
+    end
+end
 
 function M.ExitScene()
-    if M.ui.root then
+    if M.ui and M.ui.root then
         M.ui.root:Destroy()
-        M.ui.root = nil
     end
-    M.currentScene = nil
-    M.currentSceneData = nil
-    M.currentObjects = {}
-    M.currentExits = {}
-    M.cameraX = 0
+    M.ui = { root = nil }
+    M.bgFixed = {}
+    M.layers = {}
+    M.charSprite = nil
+    M.hoverNameLabel = nil
+    M.titleLabel = nil
+    M.scrollHint = nil
+    M.charNameLabel = nil
+    M._screenPanel = nil
+    M._screenLayer = nil
+    M._btnLeft = nil
+    M._btnRight = nil
+    M._minimap = nil
+    M._mmNodes = {}
+    M._tutPanel = nil
 end
 
 return M
