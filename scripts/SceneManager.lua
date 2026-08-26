@@ -68,6 +68,12 @@ function M.EnterScene(sceneId, onExit)
     })
     M.ui.root = root
 
+    -- 关键：挂载到 UI 渲染树。UI 仅在 UI.GetRoot() 渲染树中可见；
+    -- 若不挂载，整场景游离不渲染，表现为纯黑屏（main.lua 总根背景为纯黑）。
+    -- 注意 UI.Panel(nil,...) 不会自动成为根，必须显式 AddChild（OpenScene/Menu 同此约定）。
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(root) end
+
     -- 屏幕尺寸
     local sw, sh = 1280, 720
     if graphics then
