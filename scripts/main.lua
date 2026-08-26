@@ -174,7 +174,7 @@ local function ShowSuspectChoice()
             backgroundColor = "rgba(60,82,132,210)", borderRadius = 8,
             borderWidth = 1, borderColor = "rgba(255,255,255,40)",
         })
-        b:onClick(function()
+        b.onClick = function()
             if s.key == "ZhouWen" then
                 panel:Destroy(); overlay:Destroy()
                 GameData.SetFlag("case_solved", true)

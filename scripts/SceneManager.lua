@@ -177,7 +177,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     btn:onPointerLeave(function()
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end)
-    btn:onClick(function() M:_onItemInteract(item) end)
+    btn.onClick = function() M:_onItemInteract(item) end
     return btn
 end
 
@@ -202,9 +202,9 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     btn:onPointerLeave(function()
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end)
-    btn:onClick(function()
+    btn.onClick = function()
         if M.onExit then M.onExit(ex.targetScene) end
-    end)
+    end
     return btn
 end
 
@@ -231,13 +231,13 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         text = "◀", fontSize = 22, color = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
-    M._btnLeft:onClick(function() M:_SwitchScreen("left") end)
+    M._btnLeft.onClick = function() M:_SwitchScreen("left") end
     M._btnRight = UI.Button(root, {
         left = sw - 24 - 48, top = sh / 2 - 24, width = 48, height = 48,
         text = "▶", fontSize = 22, color = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
-    M._btnRight:onClick(function() M:_SwitchScreen("right") end)
+    M._btnRight.onClick = function() M:_SwitchScreen("right") end
 
     -- 小地图
     M:_BuildMinimap(sceneData, root, sw, sh)
@@ -397,7 +397,7 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
         left = 0, top = 0, width = sw, height = sh,
         backgroundColor = "rgba(0,0,0,0)", zorder = 99, borderWidth = 0,
     })
-    overlay:onClick(function()
+    overlay.onClick = function()
         overlay:Destroy()
         if M._tutPanel then M._tutPanel:Destroy() end
         M._tutPanel = nil
