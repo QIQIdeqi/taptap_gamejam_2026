@@ -104,8 +104,12 @@ function M.EnterScene(sceneId, onExit)
 
     -- 公共 HUD：标题 + 悬停名称
     M.titleLabel = Label(root, {
-        left = 20, top = 16, width = sw - 180, height = 30,
-        text = sceneData.title or sceneId, fontSize = 18, color = "rgba(255,255,255,230)",
+        left = 12, top = 10, width = sw - 180, height = 32,
+        text = sceneData.title or sceneId, fontSize = 16,
+        fontColor = "rgba(255,255,255,230)",
+        backgroundColor = "rgba(0,0,0,140)",
+        borderRadius = 6,
+        padding = { 6, 10, 4, 10 },
         textAlign = "left",
     })
     M.hoverNameLabel = Label(root, {
@@ -152,7 +156,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
 
     -- 主角
     local charH = sh * 0.52
-    local charY = (1 - M.groundY) * sh - charH
+    local charY = sh * M.groundY - charH  -- 脚底站在 groundY 比例高度处
     M.charSprite = Panel(root, {
         backgroundImage = "assets/image/char_lizhi.png",
         backgroundFit = "contain",
@@ -307,7 +311,7 @@ function M:_BuildScreenContent(screenId)
     local cp = screen.charPos or { x = 0.5, y = 0.78, scale = 0.58 }
     local charH = sh * (cp.scale or 0.58)
     local charX = cp.x * sw - charH * 0.25
-    local charY = (1 - cp.y) * sh - charH
+    local charY = sh * cp.y - charH  -- 脚底站在屏幕 cp.y 比例高度处
     M.charSprite = Panel(M._screenLayer, {
         backgroundImage = "assets/image/char_lizhi.png",
         backgroundFit = "contain",
