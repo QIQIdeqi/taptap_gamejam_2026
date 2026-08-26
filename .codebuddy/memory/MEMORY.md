@@ -46,7 +46,7 @@
 - **中文路径坑（execute_command）**：PowerShell 传入含中文的绝对路径会乱码（`Set-Location : 找不到路径…鐙珛娓告垙`）。规避：(a) 用通配符 `03_*` 匹配 `03_独立游戏` 目录；(b) git 命令不带 `-C` 直接用 cwd（shell 工作目录已是项目根）。
 
 ## 待办（后续开发）
-- **场景图片资源**：`docs/ai-image-prompts.md`(v2.1) 已定义 **17 张 Screen 整图 + 开场背景**，引用名 lobby/courtyard/corridor/crime_scene + office_screen1/2/3.png 等。**尚未生成**，当前以 backgroundColor 色块占位；生成后放入 `assets/image/`。视差三图(bg_office_bg/mid/fg)已弃用。
+- **场景图片资源**：`docs/ai-image-prompts.md`(v2.1) 已定义 **17 张 Screen 整图 + 开场背景**，引用名 lobby/courtyard/corridor/crime_scene + office_screen1/2/3.png 等。**已于 2026-08-26 全部生成**（1920×1080 日系二次元）并放入 `assets/image/`，Maker 自动生成 `.meta`。当前场景已显示真实整图。视差三图(bg_office_bg/mid/fg)已弃用；旧 `bg_hotel_lobby.png`/`bg_hotel_courtyard.png`/`bg_hotel_corridor.png`/`bg_crime_scene.png` 为遗留视差背景（代码 screens 模式未引用，可清理或保留）。
 - 角色立绘 ⚠️ 7主角立绘仍是08-24"现代写实插画"风格，与背景的日系二次元风格**不一致**；待用户用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成并同名覆盖 `char_*.png`
 - 场景物件坐标基于 prompt 构图推断（非逐像素视觉），出图后可能需微调
 - 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
