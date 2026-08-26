@@ -419,7 +419,7 @@ function M:_onItemInteract(item)
         if M.onClueCollected then M.onClueCollected(item.clueId, item.name, already) end
     end
     if item.onInteract then
-        if M.onSpecialInteract then M.onSpecialInteract(item.onInteract, item) end
+        if M.onSpecialInteract then M.onSpecialInteract(item) end
     end
     if item.interactText then
         M:ShowClueBanner(item.name, item.interactText)
