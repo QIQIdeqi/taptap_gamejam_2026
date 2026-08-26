@@ -1,6 +1,24 @@
 local M = {}
 local GameData = require("GameData")
 local UI = require("urhox-libs.UI")
+
+-- ⚠️ 引擎 Widget:new 只接受单参数 props；UI.X(parent, props) 的 parent 会被忽略！
+-- 下面 wrapper 兼容 Panel/Label/Button 的 (parent, props) 双参数形式，并自动 parent:AddChild。
+-- 之前 SceneManager 误用 UI.X(parent, props)，导致所有控件以空 props 创建 → 整屏黑屏（2026-08-27 修复）。
+local UI_Panel = UI.Panel
+local UI_Label = UI.Label
+local UI_Button = UI.Button
+local function _mk(parent, props, ctor)
+    if props == nil then
+        return ctor(parent or {})             -- 单参数形式 UI.X(props)
+    end
+    local w = ctor(props)
+    if parent then parent:AddChild(w) end     -- 双参数：显式挂载到 parent（引擎不会自动挂载）
+    return w
+end
+local Panel  = function(parent, props) return _mk(parent, props, UI_Panel) end
+local Label  = function(parent, props) return _mk(parent, props, UI_Label) end
+local Button = function(parent, props) return _mk(parent, props, UI_Button) end
 -- 键盘输入：引擎以全局变量 `input` 注入（无 Input 模块，勿 require）。
 -- 屏幕尺寸：引擎以全局变量 `graphics` 注入（无 Graphics 模块），无则用 1280x720 兜底。
 
@@ -62,7 +80,7 @@ function M.EnterScene(sceneId, onExit)
     M._switchCD = 0
 
     UI:Init()
-    local root = UI.Panel(nil, {
+    local root = Panel(nil, {
         left = 0, top = 0, width = "100%", height = "100%",
         overflow = "hidden", backgroundColor = "rgba(0,0,0,255)",
     })
@@ -70,7 +88,7 @@ function M.EnterScene(sceneId, onExit)
 
     -- 关键：挂载到 UI 渲染树。UI 仅在 UI.GetRoot() 渲染树中可见；
     -- 若不挂载，整场景游离不渲染，表现为纯黑屏（main.lua 总根背景为纯黑）。
-    -- 注意 UI.Panel(nil,...) 不会自动成为根，必须显式 AddChild（OpenScene/Menu 同此约定）。
+    -- 注意 Panel(nil,...) 不会自动成为根，必须显式 AddChild（OpenScene/Menu 同此约定）。
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(root) end
 
@@ -85,12 +103,12 @@ function M.EnterScene(sceneId, onExit)
     M.screenH = sh
 
     -- 公共 HUD：标题 + 悬停名称
-    M.titleLabel = UI.Label(root, {
+    M.titleLabel = Label(root, {
         left = 20, top = 16, width = sw - 180, height = 30,
         text = sceneData.title or sceneId, fontSize = 18, color = "rgba(255,255,255,230)",
         textAlign = "left",
     })
-    M.hoverNameLabel = UI.Label(root, {
+    M.hoverNameLabel = Label(root, {
         left = 0, top = sh - 40, width = sw, height = 28,
         text = "", fontSize = 16, color = "rgba(255,255,255,240)", textAlign = "center",
     })
@@ -121,7 +139,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     }
     for _, ld in ipairs(layerDefs) do
         if ld.def and ld.def.image then
-            local img = UI.Panel(root, {
+            local img = Panel(root, {
                 backgroundImage = ld.def.image,
                 backgroundFit = "cover",
                 left = 0, top = 0, width = M.worldWidth, height = sh,
@@ -135,7 +153,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     -- 主角
     local charH = sh * 0.52
     local charY = (1 - M.groundY) * sh - charH
-    M.charSprite = UI.Panel(root, {
+    M.charSprite = Panel(root, {
         backgroundImage = "assets/image/char_lizhi.png",
         backgroundFit = "contain",
         backgroundColor = "rgba(0,0,0,0)",
@@ -156,7 +174,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     end
 
     -- 滚动提示
-    M.scrollHint = UI.Label(root, {
+    M.scrollHint = Label(root, {
         left = 0, top = sh - 40, width = sw, height = 24,
         text = "◀ ← 移动视角 → ▶", fontSize = 14, color = "rgba(255,255,255,170)", textAlign = "center",
     })
@@ -173,7 +191,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
-    local btn = UI.Button(parent, {
+    local btn = Button(parent, {
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(255,255,255,0)", borderWidth = 0,
     })
@@ -198,7 +216,7 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = ex.x, ex.y * sh, ex.w, ex.h * sh
     end
-    local btn = UI.Button(parent, {
+    local btn = Button(parent, {
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(120,200,255,18)", borderWidth = 0,
     })
@@ -225,23 +243,23 @@ function M:_EnterScreens(sceneData, root, sw, sh)
     M._curScreenId = sceneData.minimap and sceneData.minimap.start or sceneData.screens[1].id
 
     -- 整图背景面板（backgroundImage 若不存在则显示 backgroundColor 兜底，绝不黑屏）
-    M._screenPanel = UI.Panel(root, {
+    M._screenPanel = Panel(root, {
         left = 0, top = 0, width = sw, height = sh,
         backgroundImage = "", backgroundColor = "rgba(20,20,30,255)", overflow = "hidden",
     })
     -- 承载当前 screen 的物件/出口/主角
-    M._screenLayer = UI.Panel(M._screenPanel, {
+    M._screenLayer = Panel(M._screenPanel, {
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
     })
 
     -- 翻页按钮（◀ ▶）
-    M._btnLeft = UI.Button(root, {
+    M._btnLeft = Button(root, {
         left = 24, top = sh / 2 - 24, width = 48, height = 48,
         text = "◀", fontSize = 22, color = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
-    M._btnRight = UI.Button(root, {
+    M._btnRight = Button(root, {
         left = sw - 24 - 48, top = sh / 2 - 24, width = 48, height = 48,
         text = "▶", fontSize = 22, color = "rgba(255,255,255,220)",
         backgroundColor = "rgba(0,0,0,90)", borderRadius = 8,
@@ -281,7 +299,7 @@ function M:_BuildScreenContent(screenId)
 
     -- 重建承载层
     if M._screenLayer then M._screenLayer:Destroy() end
-    M._screenLayer = UI.Panel(M._screenPanel, {
+    M._screenLayer = Panel(M._screenPanel, {
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
     })
 
@@ -290,7 +308,7 @@ function M:_BuildScreenContent(screenId)
     local charH = sh * (cp.scale or 0.58)
     local charX = cp.x * sw - charH * 0.25
     local charY = (1 - cp.y) * sh - charH
-    M.charSprite = UI.Panel(M._screenLayer, {
+    M.charSprite = Panel(M._screenLayer, {
         backgroundImage = "assets/image/char_lizhi.png",
         backgroundFit = "contain",
         backgroundColor = "rgba(0,0,0,0)",
@@ -358,7 +376,7 @@ function M:_BuildMinimap(sceneData, root, sw, sh)
     local mmData = sceneData.minimap
     if not mmData then return end
     local mw, mh = 140, 100
-    M._minimap = UI.Panel(root, {
+    M._minimap = Panel(root, {
         right = 16, top = 16, width = mw, height = mh,
         backgroundColor = "rgba(12,10,20,200)", borderRadius = 8,
         borderWidth = 1, borderColor = "rgba(255,255,255,38)", overflow = "hidden",
@@ -369,11 +387,11 @@ function M:_BuildMinimap(sceneData, root, sw, sh)
     for _, node in ipairs(mmData.nodes) do
         local nx = pad + (node.nx or 0.5) * innerW
         local ny = pad + (node.ny or 0.5) * innerH
-        local dot = UI.Panel(M._minimap, {
+        local dot = Panel(M._minimap, {
             left = nx - 5, top = ny - 5, width = 10, height = 10,
             borderRadius = 5, backgroundColor = "rgba(255,255,255,120)",
         })
-        local lbl = UI.Label(M._minimap, {
+        local lbl = Label(M._minimap, {
             left = nx - 24, top = ny + 6, width = 48, height = 16,
             text = node.label or "", fontSize = 10, color = "rgba(255,255,255,160)", textAlign = "center",
         })
@@ -395,16 +413,16 @@ end
 -- 新手引导浮窗（非阻塞，点击任意处关闭）
 function M:_ShowTutorial(root, sw, sh, text, onClose)
     if M._tutPanel then M._tutPanel:Destroy() end
-    M._tutPanel = UI.Panel(root, {
+    M._tutPanel = Panel(root, {
         left = sw / 2 - 200, top = sh / 2 - 50, width = 400, height = 100,
         backgroundColor = "rgba(20,18,30,235)", borderRadius = 12,
         borderWidth = 1, borderColor = "rgba(255,255,255,30)", zorder = 100,
     })
-    local tip = UI.Label(M._tutPanel, {
+    local tip = Label(M._tutPanel, {
         left = 16, top = 16, width = 368, height = 68,
         text = text, fontSize = 15, color = "rgba(255,255,255,235)", textAlign = "center",
     })
-    local overlay = UI.Button(root, {
+    local overlay = Button(root, {
         left = 0, top = 0, width = sw, height = sh,
         backgroundColor = "rgba(0,0,0,0)", zorder = 99, borderWidth = 0,
     })

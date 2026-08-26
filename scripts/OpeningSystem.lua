@@ -108,6 +108,7 @@ function M.BuildLocationUI()
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
+    M._skipBtn = _AddSkipButton(M.ui.root)
 end
 
 function M.DestroyUI()
@@ -121,6 +122,26 @@ function M.DestroyUI()
     end
     M.ui.timeLabel = nil
     M.ui.locationLabel = nil
+end
+
+-- 跳过按钮：挂到开场动画任意阶段 UI 上，点击直接结束开场进入场景
+local function _AddSkipButton(parent)
+    local btn = UI.Button {
+        position = "absolute",
+        top = 16, right = 16,
+        width = 64, height = 34,
+        backgroundColor = { 0, 0, 0, 130 },
+        borderWidth = 1, borderColor = { 255, 255, 255, 100 },
+        borderRadius = 6,
+        text = "跳过 ›",
+        fontColor = { 255, 255, 255, 230 },
+        fontSize = 16,
+        onClick = function(self, event)
+            M.Finish()
+        end,
+    }
+    parent:AddChild(btn)
+    return btn
 end
 
 -- 创建带背景图与暗化遮罩的全屏面板（保证文字可读）
@@ -174,6 +195,7 @@ function M.BuildBackdrop()
     M.ui.backdrop = M.CreateBackdropPanel(M.GetCurrentDialogueBackground())
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.backdrop) end
+    M._skipBtn = _AddSkipButton(M.ui.backdrop)
 end
 
 -- ============================================================================
