@@ -288,16 +288,34 @@ end
 function M.End()
     M.state.isActive = false
     M.state.dialogue = nil
-    if M.ui.root then
-        M.ui.root:Destroy()
-        M.ui.root = nil
-        M.ui.portrait = nil
-    end
+    M._CleanUI()
     if M.onComplete then
         local cb = M.onComplete
         M.onComplete = nil
         cb()
     end
+end
+
+-- Stop: 外部调用的安全停止接口（OpeningSystem.Finish 等使用）
+function M.Stop()
+    M.state.isActive = false
+    M.state.dialogue = nil
+    M._CleanUI()
+    M.onComplete = nil
+end
+
+-- 内部：彻底销毁 UI 并清空所有引用
+function M._CleanUI()
+    if M.ui.root then
+        M.ui.root:Destroy()
+        M.ui.root = nil
+    end
+    -- 清空所有子控件引用，防止悬挂指针
+    M.ui.textLabel = nil
+    M.ui.nameLabel = nil
+    M.ui.continueHint = nil
+    M.ui.portrait = nil
+    M.ui.skipBtn = nil
 end
 
 function M.IsActive()
