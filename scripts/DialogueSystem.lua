@@ -93,13 +93,13 @@ function M.BuildUI(showSkip)
     -- 底部对话面板
     local panel = UI.Panel {
         width = "100%",
-        height = 180,
+        height = 240,
         backgroundColor = { 15, 12, 25, 220 },
         borderTopWidth = 2,
         borderTopColor = { 180, 160, 120, 200 },
         flexDirection = "column",
-        padding = { 30, 40, 30, 40 },
-        gap = 10,
+        padding = { 24, 40, 20, 40 },
+        gap = 8,
     }
     M.ui.root:AddChild(panel)
 
@@ -140,7 +140,7 @@ function M.BuildUI(showSkip)
         height = 340,
         position = "absolute",
         left = 40,
-        bottom = 170,
+        bottom = 230,
         backgroundColor = { 0, 0, 0, 0 },
         backgroundFit = "contain",
         backgroundImageOpacity = 1,

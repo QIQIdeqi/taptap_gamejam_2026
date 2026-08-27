@@ -41,6 +41,7 @@
 - ✅ 已核查实现：命案发现剧情触发(enter_crime→crime_found→张承宇登场)、第二阶段推理/结案(deduce→crime_deduction→ShowSuspectChoice→crime_ending_true)、开场动画(Openings prologue/chapter1→对应分镜对话) 流程与对话 id 均已齐备
 - ✅ 已完成（2026-08-27 晚）：SceneManager 物件坐标静态优化——4个首屏左侧exit(lobby/corridor/courtyard/crime)避开翻页按钮与调查物件，courtyard plant上移；HUD(标题/翻页/小地图/hover名)加zIndex=2000防御。待办已清零，后续仅剩运行期观感微调。
 - ✅ 已完成（2026-08-28）：wolai 二~四阶段缺失台词全部补入 `assets/data/dialogues.csv`（12 组 +52 行，crime_found 由 5 句扩为 10 句完整版）；GameData 加 WaiterA/WaiterB/PoliceA 三角色 + 庭院 4组NPC物件 + 走廊"门缝下的声响"偷听物件；main.lua 命案序列重构为完整链（闲聊→对讲机→张承宇→电梯→查房→登门→现场）。CSV 现为唯一台词编辑源。
+- ✅ 已修复（2026-08-28）：重大 bug——CSV 从未在运行时生效（Maker 不打包 assets/data/*.csv，游戏一直用内嵌兜底）。新增 `tools/csv_to_lua.js` 把 CSV 编译为 `scripts/data_dialogues.lua`/`data_clues.lua`，GameData 优先 require Lua 模块。**改台词流程：编辑 CSV → `node tools/csv_to_lua.js` → 构建。** 运行时日志已确认"文本已从 Lua 模块加载（对话/线索）"。
 
 ## 文本数据 CSV 化（2026-08-28）
 - 台词/线索已导出为可编辑 CSV，运行时由 Lua 直接读取（策划在 Excel/表格改完即生效）：
