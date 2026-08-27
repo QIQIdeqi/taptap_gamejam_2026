@@ -291,7 +291,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         text = "◀", fontSize = 30, fontColor = "rgba(255,255,255,255)",
         textAlign = "center", alignItems = "center", justifyContent = "center",
     })
-    M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
+    M._btnLeft.props.onClick = function() print("[SM DEBUG] btnLeft clicked"); M:_SwitchScreen("left") end
     M._btnRight = Button(M._navLayer, {
         left = sw - 18 - 56, top = sh / 2 - 30, width = 56, height = 56,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
@@ -303,7 +303,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         text = "▶", fontSize = 30, fontColor = "rgba(255,255,255,255)",
         textAlign = "center", alignItems = "center", justifyContent = "center",
     })
-    M._btnRight.props.onClick = function() M:_SwitchScreen("right") end
+    M._btnRight.props.onClick = function() print("[SM DEBUG] btnRight clicked"); M:_SwitchScreen("right") end
 
     -- 小地图
     M:_BuildMinimap(sceneData, root, sw, sh)
@@ -383,6 +383,7 @@ function M:_BuildScreenContent(screenId)
 end
 
 function M:_SwitchScreen(dir)
+    print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s", tostring(dir), tostring(M._curScreenId)))
     local screen = M:_GetScreen(M._curScreenId)
     if not screen then return end
     local targetId = (dir == "left") and screen.left or screen.right
