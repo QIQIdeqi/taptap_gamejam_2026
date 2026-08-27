@@ -71,6 +71,23 @@ function M.Run()
                 check("BuildScreen " .. sceneId .. "/" .. tostring(sid), function()
                     SceneManager._BuildScreenContent(sid)
                 end)
+                -- 翻页切换验证：触发左右翻页按钮 onClick，断言当前屏 id 真正改变
+                if screen.right then
+                    check("NavRight " .. sceneId .. "/" .. tostring(sid), function()
+                        SceneManager._btnRight.props.onClick()
+                        assert(SceneManager._curScreenId == screen.right,
+                            "right switch failed: " .. tostring(SceneManager._curScreenId) .. " ~= " .. tostring(screen.right))
+                    end)
+                    SceneManager._BuildScreenContent(sid)
+                end
+                if screen.left then
+                    check("NavLeft " .. sceneId .. "/" .. tostring(sid), function()
+                        SceneManager._btnLeft.props.onClick()
+                        assert(SceneManager._curScreenId == screen.left,
+                            "left switch failed: " .. tostring(SceneManager._curScreenId) .. " ~= " .. tostring(screen.left))
+                    end)
+                    SceneManager._BuildScreenContent(sid)
+                end
                 for _, item in ipairs(screen.items or {}) do
                     interact(sceneId, tostring(sid), item)
                 end
