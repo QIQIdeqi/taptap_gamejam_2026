@@ -101,6 +101,13 @@ function Start()
     -- 事件驱动主循环：引擎每帧调用 HandleUpdate
     SubscribeToEvent("Update", "HandleUpdate")
 
+    -- 自动冒烟测试：遍历全流程，捕获报错/阻塞，结果见 runtime 日志 [SMOKE]
+    pcall(function()
+        local Smoke = require("scripts.smoketest")
+        local res = Smoke.Run()
+        print(string.format("[SMOKE] AUTO PASS=%d FAIL=%d", res.pass, res.fail))
+    end)
+
     EnterMainMenu()
 end
 
