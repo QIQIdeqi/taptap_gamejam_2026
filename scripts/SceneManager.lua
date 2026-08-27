@@ -273,14 +273,18 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
     })
 
-    -- 翻页按钮（◀ ▶）— 挂到 UI.GetRoot() 顶层（与 hoverNameLabel 同级），
-    -- 避免 scene root 的 overflow:hidden 裁剪导致不可见
-    local uiRoot = UI.GetRoot()
-    M._btnLeft = Button(uiRoot, {
+    -- 翻页按钮层（独立 navLayer，absolute 脱离 scene root flex 流，overflow 不裁剪；
+    -- 点击穿透到下层物件，仅按钮自身可点。按钮挂 navLayer（与 _screenLayer 同模式）确保渲染）
+    M._navLayer = Panel(root, {
+        left = 0, top = 0, width = sw, height = sh, position = "absolute",
+        overflow = "visible", pointerEvents = "none", zIndex = 2000,
+    })
+    -- 翻页按钮（◀ ▶）
+    M._btnLeft = Button(M._navLayer, {
         left = 18, top = sh / 2 - 30, width = 56, height = 56,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
         borderWidth = 2, borderColor = "rgba(255,210,120,230)",
-        zIndex = 2000, hoverCursor = "pointer",
+        zIndex = 2001, hoverCursor = "pointer", pointerEvents = "auto",
     })
     Label(M._btnLeft, {
         left = 0, top = 0, width = 56, height = 56,
@@ -288,11 +292,11 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         textAlign = "center", alignItems = "center", justifyContent = "center",
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
-    M._btnRight = Button(uiRoot, {
+    M._btnRight = Button(M._navLayer, {
         left = sw - 18 - 56, top = sh / 2 - 30, width = 56, height = 56,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
         borderWidth = 2, borderColor = "rgba(255,210,120,230)",
-        zIndex = 2000, hoverCursor = "pointer",
+        zIndex = 2001, hoverCursor = "pointer", pointerEvents = "auto",
     })
     Label(M._btnRight, {
         left = 0, top = 0, width = 56, height = 56,
@@ -313,6 +317,8 @@ function M:_EnterScreens(sceneData, root, sw, sh)
             "点击场景中的物件进行调查  ◀ ▶ 翻页浏览",
             function() M._tutorial.screens = true end)
     end
+    print(string.format("[SM DEBUG] _EnterScreens done: navLayer=%s btnLeft=%s btnRight=%s",
+        tostring(M._navLayer ~= nil), tostring(M._btnLeft ~= nil), tostring(M._btnRight ~= nil)))
 end
 
 function M:_GetScreen(id)
@@ -602,6 +608,10 @@ function M.ExitScene()
     if M._btnRight then
         M._btnRight:Destroy()
         M._btnRight = nil
+    end
+    if M._navLayer then
+        M._navLayer:Destroy()
+        M._navLayer = nil
     end
     if M.ui and M.ui.root then
         M.ui.root:Destroy()
