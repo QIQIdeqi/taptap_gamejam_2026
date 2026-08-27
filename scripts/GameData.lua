@@ -121,6 +121,30 @@ M.Characters = {
         color = { 180, 180, 180, 255 },
         description = "播报磐安智能AI故障的新闻。",
     },
+    WaiterA = {
+        id = "WaiterA",
+        name = "服务员",
+        age = nil,
+        role = "酒店服务员",
+        color = { 150, 180, 210, 255 },
+        description = "万丽海湾大酒店服务员。",
+    },
+    WaiterB = {
+        id = "WaiterB",
+        name = "服务员",
+        age = nil,
+        role = "酒店服务员",
+        color = { 150, 180, 210, 255 },
+        description = "万丽海湾大酒店服务员。",
+    },
+    PoliceA = {
+        id = "PoliceA",
+        name = "执勤警察",
+        age = nil,
+        role = "现场执勤警察",
+        color = { 120, 120, 130, 255 },
+        description = "命案现场执勤的市局警察。",
+    },
 }
 
 -- ============================================================================
@@ -813,6 +837,8 @@ M.SceneObjects = {
                 items = {
                     { id = "plant", name = "罗马柱与盆栽", x = 0.08, y = 0.12, w = 0.22, h = 0.46,
                       clueId = "court_plant", interactText = "茂密盆栽形成视线死角，有人曾压低声音打电话。" },
+                    { id = "npc_zhaoheng", name = "赵恒", x = 0.45, y = 0.50, w = 0.18, h = 0.30,
+                      dialogueId = "ch3_npc_zhaoheng", interactText = "赵恒站在连廊下，西装后背洇出一片汗渍。" },
                 },
                 exits = {
                     { id = "to_lobby", label = "回到大堂", targetScene = "hotel_lobby", x = 0.08, y = 0.62, w = 0.14, h = 0.22 },
@@ -831,6 +857,10 @@ M.SceneObjects = {
                       clueId = "court_wifi", interactText = "路由器指示灯规律闪烁，记录设备接入日志。" },
                     { id = "power", name = "公共电源桩", x = 0.70, y = 0.58, w = 0.16, h = 0.20,
                       clueId = "court_power", interactText = "电源桩插座处有轻微焦痕。" },
+                    { id = "npc_xuqinglan", name = "许晴岚", x = 0.30, y = 0.26, w = 0.18, h = 0.28,
+                      dialogueId = "ch3_npc_xuqinglan", interactText = "许晴岚端着咖啡斜倚在茶歇桌旁。" },
+                    { id = "npc_zhouwen", name = "周文", x = 0.66, y = 0.28, w = 0.16, h = 0.26,
+                      dialogueId = "ch3_npc_zhouwen", interactText = "周文蹲在电源桩旁调试设备，满头是汗。" },
                 },
             },
             {
@@ -842,6 +872,10 @@ M.SceneObjects = {
                 items = {
                     { id = "fountain_ctrl", name = "音乐喷泉中控箱", x = 0.10, y = 0.24, w = 0.18, h = 0.18,
                       clueId = "court_fountain", interactText = "电子时钟走得很准，整点准时报时。" },
+                    { id = "npc_yanchengfeng", name = "严成峰", x = 0.40, y = 0.46, w = 0.18, h = 0.32,
+                      dialogueId = "ch3_npc_yanchengfeng", interactText = "严成峰负手立于喷泉边，西装扣得一丝不苟。" },
+                    { id = "npc_yanchengfeng_leave", name = "走向电梯的严成峰", x = 0.72, y = 0.46, w = 0.18, h = 0.30,
+                      dialogueId = "ch3_yanchengfeng_leave", interactText = "严成峰朝电梯厅方向走去，像是要回房歇息。" },
                 },
             },
         },
@@ -881,6 +915,8 @@ M.SceneObjects = {
                 items = {
                     { id = "room2501", name = "2501房门", x = 0.20, y = 0.24, w = 0.30, h = 0.54,
                       clueId = "room_2501", interactText = "2501房是严成峰的套房，门缝飘出淡淡药水味。", onInteract = "enter_crime" },
+                    { id = "room2501_vent", name = "门缝下的声响", x = 0.04, y = 0.30, w = 0.14, h = 0.22,
+                      dialogueId = "ch2_2501_eavesdrop", interactText = "门缝里传来严成峰吩咐周文去买哮喘吸入剂的低语。" },
                 },
             },
             {

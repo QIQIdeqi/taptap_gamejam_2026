@@ -237,8 +237,19 @@ function HandleSpecialInteract(obj, onComplete)
                 SceneManager:ShowClueBanner("2501 房门", "房门紧锁，似乎还进不去。先多点几处线索调查吧。")
             else
                 GameData.SetFlag("crime_discovered", true)
-                DialogueSystem.Start("crime_found", function()
-                    SceneManager.EnterScene("crime_scene")
+                -- 命案发现完整序列（还原 wolai 第四阶段 1.1：闲聊→对讲机→张承宇登场→电梯→查房→登门→现场）
+                DialogueSystem.Start("ch4_party_chat", function()
+                    DialogueSystem.Start("ch4_discovery", function()
+                        DialogueSystem.Start("crime_found", function()
+                            DialogueSystem.Start("ch4_elevator", function()
+                                DialogueSystem.Start("ch4_police_check", function()
+                                    DialogueSystem.Start("ch4_zhang_visit", function()
+                                        SceneManager.EnterScene("crime_scene")
+                                    end)
+                                end)
+                            end)
+                        end)
+                    end)
                 end)
             end
         end
