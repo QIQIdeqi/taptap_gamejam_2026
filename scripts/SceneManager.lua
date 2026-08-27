@@ -273,8 +273,10 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
     })
 
-    -- 翻页按钮（◀ ▶）— 增强可见性：UI.Button 不渲染 text，故内置白色箭头 Label；提亮边框确保在深色场景可见
-    M._btnLeft = Button(root, {
+    -- 翻页按钮（◀ ▶）— 挂到 UI.GetRoot() 顶层（与 hoverNameLabel 同级），
+    -- 避免 scene root 的 overflow:hidden 裁剪导致不可见
+    local uiRoot = UI.GetRoot()
+    M._btnLeft = Button(uiRoot, {
         left = 18, top = sh / 2 - 30, width = 56, height = 56,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
         borderWidth = 2, borderColor = "rgba(255,210,120,230)",
@@ -286,7 +288,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         textAlign = "center", alignItems = "center", justifyContent = "center",
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
-    M._btnRight = Button(root, {
+    M._btnRight = Button(uiRoot, {
         left = sw - 18 - 56, top = sh / 2 - 30, width = 56, height = 56,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
         borderWidth = 2, borderColor = "rgba(255,210,120,230)",
@@ -588,10 +590,18 @@ function M.Update(dt)
 end
 
 function M.ExitScene()
-    -- hoverNameLabel 现在挂到 UI.GetRoot()，需单独清理
+    -- hoverNameLabel / 翻页按钮 挂到 UI.GetRoot()，需单独清理
     if M.hoverNameLabel then
         M.hoverNameLabel:Destroy()
         M.hoverNameLabel = nil
+    end
+    if M._btnLeft then
+        M._btnLeft:Destroy()
+        M._btnLeft = nil
+    end
+    if M._btnRight then
+        M._btnRight:Destroy()
+        M._btnRight = nil
     end
     if M.ui and M.ui.root then
         M.ui.root:Destroy()
