@@ -382,15 +382,15 @@ function M:_BuildScreenContent(screenId)
 end
 
 function M:_SwitchScreen(dir)
-    -- 防抖：引擎可能一次点击派发两次 onClick，导致一次点击翻两页。
-    -- 忽略「同帧 + 同方向 + 同起点」的重复调用。
+    -- 防抖：一次点击可能被派发两次 _SwitchScreen（按钮 onClick 与键盘 handler 同帧触发，或引擎重复派发 onClick）。
+    -- 忽略「同帧 + 同方向」的重复调用，避免一次点击翻两页。
     local seq = M._frameCount or 0
-    local fromId = M._curScreenId
-    if M._lastSwitch and M._lastSwitch.seq == seq and M._lastSwitch.dir == dir and M._lastSwitch.from == fromId then
+    if M._lastSwitch and M._lastSwitch.seq == seq and M._lastSwitch.dir == dir then
         return
     end
-    M._lastSwitch = { seq = seq, dir = dir, from = fromId }
-    print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s", tostring(dir), tostring(M._curScreenId)))
+    M._lastSwitch = { seq = seq, dir = dir }
+    print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s fc=%s", tostring(dir), tostring(M._curScreenId), tostring(M._frameCount)))
+    print("[SM DEBUG] TRACE: " .. tostring(debug and debug.traceback and debug.traceback() or "no debug"))
     local screen = M:_GetScreen(M._curScreenId)
     if not screen then return end
     local targetId = (dir == "left") and screen.left or screen.right
@@ -586,10 +586,8 @@ function M.Update(dt)
         -- 模式 B：方向键翻页（带冷却）
         if M._switchCD <= 0 and input then
             if input:GetKeyPress(KEY_LEFT) then
-                print("[SM DEBUG] [KBD] SwitchScreen left")
                 M:_SwitchScreen("left"); M._switchCD = 0.25
             elseif input:GetKeyPress(KEY_RIGHT) then
-                print("[SM DEBUG] [KBD] SwitchScreen right")
                 M:_SwitchScreen("right"); M._switchCD = 0.25
             end
         end
