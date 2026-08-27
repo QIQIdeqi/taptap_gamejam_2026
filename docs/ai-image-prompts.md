@@ -889,25 +889,29 @@ Step 4 — 收录第 1 条线索后
 ### 解密关卡（模式 B · 整图切换）
 | 关卡 | 资源名 | 内容 | 屏幕数 | 状态 |
 |------|--------|------|--------|------|
-| **P1 事务所** | office_screen1.png | 书柜区 | 3 | 待生成 |
-| | office_screen2.png | 办公桌区（主角初始） | | 待生成 |
-| | office_screen3.png | 衣柜&地铺（剧情关键） | | 待生成 |
-| **P2 大堂** | lobby_screen1.png | 旋转门入口 | 4 | 待生成 |
-| | lobby_screen2.png | 外卖柜+假山 | | 待生成 |
-| | lobby_screen3.png | 展架+前台 | | 待生成 |
-| | lobby_screen4.png | 安检闸机 | | 待生成 |
-| **P3 庭院** | courtyard_screen1.png | 推拉门入口 | 3 | 待生成 |
-| | courtyard_screen2.png | 茶歇桌+偷听点 | | 待生成 |
-| | courtyard_screen3.png | 喷泉+海景 | | 待生成 |
-| **P4 走廊** | corridor_screen1.png | 电梯厅 | 4 | 待生成 |
-| | corridor_screen2.png | 2501房门（案发） | | 待生成 |
-| | corridor_screen3.png | 2502-2503房门 | | 待生成 |
-| | corridor_screen4.png | 2504-2505+沙发 | | 待生成 |
-| **P5 案发现场** | crime_scene_screen1.png | 门廊入口 | 3 | 待生成 |
-| | crime_scene_screen2.png | 床头+衣柜 | | 待生成 |
-| | crime_scene_screen3.png | 大床+坠落点（核心） | | 待生成 |
+| **P1 事务所** | office_screen1.png | 书柜区 | 3 | 已有 |
+| | office_screen2.png | 办公桌区（主角初始） | | 已有 |
+| | office_screen3.png | 衣柜&地铺（剧情关键） | | 已有 |
+| **P2 大堂** | lobby_screen1.png | 旋转门入口 | 4 | 已有 |
+| | lobby_screen2.png | 外卖柜+假山 | | 已有 |
+| | lobby_screen3.png | 展架+前台 | | 已有 |
+| | lobby_screen4.png | 安检闸机 | | 已有 |
+| **P3 庭院** | courtyard_screen1.png | 推拉门入口 | 3 | 已有 |
+| | courtyard_screen2.png | 茶歇桌+偷听点 | | 已有 |
+| | courtyard_screen3.png | 喷泉+海景 | | 已有 |
+| **P4 走廊** | corridor_screen1.png | 电梯厅 | 4 | 已有 |
+| | corridor_screen2.png | 2501房门（案发） | | 已有 |
+| | corridor_screen3.png | 2502-2503房门 | | 已有 |
+| | corridor_screen4.png | 2504-2505+沙发 | | 已有 |
+| **P5 案发现场** | crime_scene_screen1.png | 门廊入口 | 3 | 已有 |
+| | crime_scene_screen2.png | 床头+衣柜 | | 已有 |
+| | crime_scene_screen3.png | 大床+坠落点（核心） | | 已有 |
 
-**解密关卡合计：17 张 Screen 整图**
+**解密关卡合计：17 张 Screen 整图（已于 2026-08-26 全部生成并入 assets/image）**
+
+**新增资源（2026-08-27，详见第九、十章）**：
+- 线索特写图：clue_inhaler.png / clue_body.png / clue_signbook.png / clue_fountain.png 等（待生成，替换 GameData 占位）
+- 次要角色立绘：char_receptionist.png / char_sister.png / char_technician.png / ui_news_anchor.png（待生成）
 
 ### 角色立绘
 | 资源名 | 角色 | 尺寸 | 状态 |
@@ -974,5 +978,78 @@ Step 4 — 收录第 1 条线索后
 
 ---
 
-*文档版本：整图切换·多屏循环箱庭版 v2.1 | 更新时间：2026-08-26（office 序章改为多图切换）*
-*数据来源：wolai 设计文档（基础设计 page_id: 3uc1XCmBM6jmyyAnVePCsU）+ 用户需求（解密关卡改为整图切换/循环箱庭/小地图/翻页按钮/新手引导/主角放大/全贴图覆盖）*
+---
+
+## 九、线索特写图（Clue Close-ups）
+
+> **新增（2026-08-27）**：对齐 wolai 5.2.7 笔记详情区「16:9 高清特写照片」要求。
+> 侦探笔记（NoteSystem）详情区已支持显示线索 `image` 字段并点击放大全屏预览。
+> 目前 GameData 中 `inhaler`/`body_position`/`lobby_signbook`/`court_fountain` 四条线索的 `image`
+> 暂用场景整图占位（`bg_crime_scene.png`/`bg_lobby.png`/`bg_courtyard.png`），**后续请生成下列专用特写图替换占位路径**。
+
+| 资源名 | 对应线索 id | 内容 | 尺寸 | 状态 |
+|--------|------------|------|------|------|
+| clue_inhaler.png | inhaler | 破碎/空的哮喘吸入器特写，喷口微挤压 | 1280×720（16:9） | 待生成（替换占位） |
+| clue_body.png | body_position | 案发现场死者位置俯拍示意（非血腥） | 1280×720 | 待生成（替换占位） |
+| clue_signbook.png | lobby_signbook | VIP 签到簿翻开页特写 | 1280×720 | 待生成（替换占位） |
+| clue_fountain.png | court_fountain | 音乐喷泉中控箱电子时钟特写 | 1280×720 | 待生成（替换占位） |
+| clue_letter.png | （待补线索） | 关键信件/便条特写 | 1280×720 | 待生成 |
+| clue_badge.png | （待补线索） | 工牌/房卡特写 | 1280×720 | 待生成 |
+| clue_footprint.png | （待补线索） | 走廊脚印/擦痕特写 | 1280×720 | 待生成 |
+| clue_watch.png | （待补线索） | 智能手表/温控记录特写 | 1280×720 | 待生成 |
+
+**通用 Prompt 模板**（以 clue_inhaler 为例）：
+```
+日系二次元动漫风格，物证特写摄影感，16:9 横构图 1280×720。
+画面主体是【破碎的哮喘吸入器】，置于深色证物台/绒布上，侧光打亮金属喷口，
+喷口处有被挤压的细微痕迹。背景虚化（浅景深），冷调微暖光，电影级静物构图。
+干净线稿，柔和赛璐璐上色，物证档案质感，无文字无人物。
+```
+> 其余线索把【】内主体替换即可；生成后用 `Rename-Item` 改为 `clue_xxx.png`，
+> 并在 `scripts/GameData.lua` 对应线索加 `image = "assets/image/clue_xxx.png"` 替换占位。
+
+---
+
+## 十、次要角色立绘（次要 NPC · 透明背景）
+
+> **新增（2026-08-27）**：对齐 wolai 4.角色补充（非关键角色）。以下为出场但无需精细表情差分的次要角色。
+
+### N1. 酒店前台（Receptionist）
+```
+日系二次元动漫风格全身立绘，透明背景，正面站立。
+约25岁酒店前台女性，职业微笑但眼神职业化疏离。齐肩深棕卷发，标准制服
+（深色马甲+白衬衫+及膝裙），胸前工牌。双手交叠腹前，姿态标准。
+干净线稿，柔和赛璐璐上色，酒店精致感。尺寸占比约 56%。
+```
+**代码引用名**：`char_receptionist.png`
+
+### N2. 李志的姐姐（Sister / 关联人）
+```
+日系二次元动漫风格全身立绘，透明背景，正面站立。
+约35岁温婉女性，李志已故姐姐（案件关联人）。过肩黑长发，眉眼与李志相似，
+气质柔和哀伤。米色针织衫+长裙，怀抱旧相册。站姿安静。
+干净线稿，柔和赛璐璐上色，暖调怀旧。尺寸占比约 58%。
+```
+**代码引用名**：`char_sister.png`
+
+### N3. 磐安智能技术员（Technician）
+```
+日系二次元动漫风格全身立绘，透明背景，正面站立。
+约28岁技术员男性，戴细框眼镜，夹着平板的手。公司 polo 衫+工装裤，
+胸前磐安智能 Logo。表情专注略紧张。干净线稿，柔和赛璐璐上色，科技冷调。
+尺寸占比约 57%。
+```
+**代码引用名**：`char_technician.png`
+
+### N4. 平板新闻播报（News Tablet · UI 元素）
+```
+日系二次元动漫风格，平板屏幕内的新闻播报 UI 插画，透明背景。
+简洁的虚拟女主播头像（半身），中性职业装，播报栏配简洁数据图表底纹。
+用于案件相关新闻弹窗。扁平 UI 插画风，干净线稿，柔和赛璐璐上色。
+```
+**代码引用名**：`ui_news_anchor.png`
+
+---
+
+*文档版本：整图切换·多屏循环箱庭版 v2.2 | 更新时间：2026-08-27（新增线索特写图 + 次要角色立绘章节，对齐 wolai 5.2.7 与 4.角色补充；17 张 Screen 已确认生成）*
+*数据来源：wolai 设计文档（基础设计 page_id: 3uc1XCmBM6jmyyAnVePCsU）+ 用户需求（解密关卡改为整图切换/循环箱庭/小地图/翻页按钮/新手引导/主角放大/全贴图覆盖；2026-08-27 接入笔记特写图与次要角色）*

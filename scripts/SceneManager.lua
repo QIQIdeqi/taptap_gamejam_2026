@@ -455,13 +455,11 @@ end
 function M:_onItemInteract(item)
     print("[SM DEBUG] _onItemInteract: id=" .. (item.id or "?") .. " hasInteract=" .. tostring(not not item.onInteract))
     if item.clueId then
-        local gs = GameData.GameState or {}
-        gs.collectedClues = gs.collectedClues or {}
-        local already = gs.collectedClues[item.clueId]
-        gs.collectedClues[item.clueId] = true
-        GameData.GameState = gs
+        local isNew = GameData.CollectClue(item.clueId)
         GameData.SetFlag("clue_" .. item.clueId, true)
-        if M.onClueCollected then M.onClueCollected(item.clueId, item.name, already) end
+        local clueDef = GameData.Clues[item.clueId]
+        local name = (clueDef and clueDef.name) or item.name or item.clueId
+        if M.onClueCollected then M.onClueCollected(item.clueId, name, not isNew) end
     end
     if item.onInteract then
         if M.onSpecialInteract then M.onSpecialInteract(item) end

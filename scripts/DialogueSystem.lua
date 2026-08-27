@@ -180,6 +180,7 @@ function M.StartLine(index)
 
     local line = lines[index]
     M.state.lineIndex = index
+    M.state.lineClueFired = false
     M.state.fullText = line.text or ""
     M.state.displayText = ""
     M.state.charIndex = 0
@@ -233,6 +234,23 @@ function M.Update(deltaTime)
         end
 
         M.ui.textLabel:SetText(M.state.displayText)
+
+        -- 证言提取：关键句打字机播毕即触发线索收录（wolai 5.2.5）
+        if M.state.isLineComplete and not M.state.lineClueFired then
+            M.state.lineClueFired = true
+            local line = M.state.dialogue.lines[M.state.lineIndex]
+            if line and line.clue then
+                local SceneManager = require("scripts.SceneManager")
+                local GameData = require("scripts.GameData")
+                local isNew = GameData.CollectClue(line.clue)
+                GameData.SetFlag("clue_" .. line.clue, true)
+                local clueDef = GameData.Clues[line.clue]
+                local name = (clueDef and clueDef.name) or line.clue
+                if SceneManager.onClueCollected then
+                    SceneManager.onClueCollected(line.clue, name, not isNew)
+                end
+            end
+        end
     end
 end
 

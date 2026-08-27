@@ -206,6 +206,7 @@ M.Clues = {
         chapter = "chapter1",
         description = "VIP贵宾签到簿与房卡盒。前台表示非授权人员无法查看。",
         detail = "签到簿上密密麻麻记录着参会高管的入住信息，前台礼貌地拒绝了查看请求。",
+        image = "assets/image/bg_lobby.png",  -- 占位：后续替换为线索特写图 clue_signbook.png
     },
 
     -- ===== 第一章（第二段）：1F 露天庭院连廊与茶歇区 =====
@@ -240,6 +241,7 @@ M.Clues = {
         chapter = "chapter1",
         description = "带电子时钟的音乐喷泉中控柱，整点会准时报时。",
         detail = "中控柱上的电子时钟走得很准，整点准时响起音乐报时——这是可靠的时间标尺。",
+        image = "assets/image/bg_courtyard.png",  -- 占位：后续替换为线索特写图 clue_fountain.png
     },
     court_wifi = {
         id = "court_wifi",
@@ -292,6 +294,7 @@ M.Clues = {
         chapter = "chapter1",
         description = "严成峰的尸体倒在客房内，面部朝下，没有明显外伤。",
         detail = "严成峰面部朝下倒在客房地板上，身体没有明显外伤，死状蹊跷。",
+        image = "assets/image/bg_crime_scene.png",  -- 占位：后续替换为线索特写图 clue_body.png
     },
     inhaler = {
         id = "inhaler",
@@ -300,6 +303,7 @@ M.Clues = {
         chapter = "chapter1",
         description = "死者身边的哮喘吸入器不见了，这可能是关键。",
         detail = "严成峰有重度哮喘，吸入器本应不离身，此刻却不在手边。",
+        image = "assets/image/bg_crime_scene.png",  -- 占位：后续替换为线索特写图 clue_inhaler.png
     },
     smart_device = {
         id = "smart_device",

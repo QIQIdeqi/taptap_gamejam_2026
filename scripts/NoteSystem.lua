@@ -330,6 +330,22 @@ function M.BuildUI()
         }
         rightPanel:AddChild(M.ui.detailText)
 
+        if selectedClue.image then
+            local thumb = UI.Panel {
+                width = 320, height = 180,
+                backgroundImage = selectedClue.image,
+                backgroundFit = "contain",
+                backgroundColor = { 0, 0, 0, 60 },
+                borderRadius = 6,
+                cursor = "pointer",
+                onClick = function(self, event)
+                    M.ShowImagePreview(selectedClue.image)
+                end,
+            }
+            rightPanel:AddChild(thumb)
+            M.ui.detailImage = thumb
+        end
+
         M.ui.detailHint = UI.Label {
             text = isUnread and "【新线索】已自动标记为已读" or "按 F 键标记 / 取消标记",
             fontSize = 13,
@@ -378,6 +394,44 @@ function M.SelectClue(index)
     M.state.selectedIndex = index
     -- 仅刷新详情，重建UI（简单可靠）
     M.BuildUI()
+end
+
+-- ============================================================================
+-- 线索特写图全屏预览（wolai 5.2.7）
+-- ============================================================================
+function M.ShowImagePreview(imagePath)
+    if not imagePath then return end
+    local uiRoot = UI.GetRoot()
+    if not uiRoot then return end
+    local overlay = UI.Panel {
+        position = "absolute",
+        left = 0, top = 0, width = "100%", height = "100%",
+        backgroundColor = { 0, 0, 0, 220 },
+        zIndex = 100000,
+    }
+    overlay:AddChild(UI.Panel {
+        position = "absolute",
+        left = "10%", top = "10%", width = "80%", height = "80%",
+        backgroundImage = imagePath,
+        backgroundFit = "contain",
+        backgroundColor = { 0, 0, 0, 0 },
+    })
+    overlay:AddChild(UI.Label {
+        position = "absolute",
+        right = 24, top = 20,
+        text = "点击任意处关闭",
+        fontSize = 16, fontColor = { 230, 230, 230, 255 },
+    })
+    overlay.props.onClick = function(self, event)
+        M.CloseImagePreview(overlay)
+    end
+    uiRoot:AddChild(overlay)
+    M.imagePreviewOverlay = overlay
+end
+
+function M.CloseImagePreview(overlay)
+    if overlay and overlay.Destroy then overlay:Destroy() end
+    if M.imagePreviewOverlay == overlay then M.imagePreviewOverlay = nil end
 end
 
 -- ============================================================================

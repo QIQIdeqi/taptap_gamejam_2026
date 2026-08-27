@@ -71,3 +71,4 @@
 - **全贴图覆盖**：所有状态有贴图或纯色填充
 - **资源总量**：17 张解密 Screen + 7 张角色立绘 + 5 张 UI 元素 + 1 张开场背景(bg_office.png) = 30 张有效（另 3 张视差图层弃用）
 - **Prompt 文档**：`docs/ai-image-prompts.md` 已更新为 v2.1（整图切换·多屏循环箱庭版，office 归模式B、模式A 视差标注弃用）
+- **场景物件交互字段约定（2026-08-27 新增）**：每个 screen 的 `items` 元素支持：`clueId`（点击收集线索）、`onInteract`（关键交互，触发 main.lua `HandleSpecialInteract` 对话/流程）、`dialogueId`（点击用 `DialogueSystem.Start` 弹角色独白对话，优先于横幅）、`misleading=true`（误导物件，不收集线索仅弹错误/引导对话）、`interactText`（兜底，弹金边横幅 `ShowClueBanner`）。`SceneManager._onItemInteract` 优先级：`onInteract` → `dialogueId` → `interactText`。对话文本写在 `GameData.M.Dialogues`（格式 `{ id, lines = { { speaker="LiZhi", text="..." } } }`，speaker 空串=旁白，GetDialogue(id) 取用）。

@@ -30,6 +30,11 @@ local playTimer = 0
 local autoSaveTimer = 0
 local AUTO_SAVE_INTERVAL = 60
 
+-- 线索收录提示框 & 常驻笔记红点
+local clueToasts = {}
+local tabHintWidget = nil
+local tabHintRedDot = nil
+
 -- ============================================================================
 -- 初始化
 -- ============================================================================
@@ -47,6 +52,29 @@ function Start()
     })
     UI.SetRoot(uiRoot)
 
+    -- 常驻"笔记 TAB"提示（含未读红点）
+    tabHintWidget = UI.Panel({
+        position = "absolute",
+        bottom = 20, right = 20,
+        width = 96, height = 36,
+        backgroundColor = { 0, 0, 0, 120 },
+        borderRadius = 18,
+        visible = (currentMode == GameMode.Playing),
+    })
+    tabHintWidget:AddChild(UI.Label({
+        position = "absolute",
+        left = 10, top = 8, width = 72, height = 20,
+        text = "📓 笔记", fontSize = 14, fontColor = { 200, 200, 210, 255 },
+    }))
+    tabHintRedDot = UI.Panel({
+        position = "absolute",
+        right = 8, top = 7,
+        width = 10, height = 10, borderRadius = 5,
+        backgroundColor = { 225, 60, 60, 255 }, visible = false,
+    })
+    tabHintWidget:AddChild(tabHintRedDot)
+    uiRoot:AddChild(tabHintWidget)
+
     SaveSystem.Init()
     NoteSystem.Init({})
 
@@ -63,8 +91,8 @@ function Start()
     SceneManager.onSceneChanged = function(sceneId)
         GameData.GameState.currentScene = sceneId
     end
-    SceneManager.onClueCollected = function(clueId)
-        -- 线索横幅已由 SceneManager 显示，此处可留空
+    SceneManager.onClueCollected = function(clueId, name, already)
+        ShowClueCollectedToast(clueId, name, already)
     end
     SceneManager.onSpecialInteract = function(obj, onComplete)
         HandleSpecialInteract(obj, onComplete)
@@ -341,6 +369,41 @@ end
 -- 更新循环
 -- ============================================================================
 
+-- 线索收录提示框（wolai 5.2.5）：收集新线索时右上角弹出，2.5 秒后淡出
+function ShowClueCollectedToast(clueId, name, already)
+    if already then return end
+    local catId = (GameData.Clues[clueId] or {}).category
+    local catName = "线索"
+    for _, c in ipairs(GameData.ClueCategories) do
+        if c.id == catId then catName = c.name; break end
+    end
+    local root = UI.GetRoot()
+    if not root then return end
+
+    local panel = UI.Panel({
+        position = "absolute",
+        top = 20, right = 20,
+        width = 320, height = 66,
+        backgroundColor = { 20, 18, 32, 235 },
+        borderWidth = 1, borderColor = { 120, 200, 160, 220 },
+        borderRadius = 8,
+    })
+    panel:AddChild(UI.Label({
+        position = "absolute",
+        left = 16, top = 12, width = 288, height = 22,
+        text = "🔍 [新" .. catName .. "收录] " .. (name or clueId),
+        fontSize = 16, fontColor = { 220, 255, 220, 255 },
+    }))
+    panel:AddChild(UI.Label({
+        position = "absolute",
+        left = 16, top = 40, width = 288, height = 18,
+        text = "已添加至【" .. catName .. "】  (按 TAB 查看)",
+        fontSize = 13, fontColor = { 180, 180, 190, 255 },
+    }))
+    root:AddChild(panel)
+    table.insert(clueToasts, { panel = panel, ttl = 2.5 })
+end
+
 function HandleUpdate(eventType, eventData)
     local deltaTime = eventData["TimeStep"]:GetFloat()
     HandleInput()
@@ -354,6 +417,16 @@ function HandleUpdate(eventType, eventData)
         SceneManager.Update(deltaTime)
         NoteSystem.Update(deltaTime)
 
+        -- 线索收录提示框计时
+        for i = #clueToasts, 1, -1 do
+            local t = clueToasts[i]
+            t.ttl = t.ttl - deltaTime
+            if t.ttl <= 0 then
+                if t.panel and t.panel.Destroy then t.panel:Destroy() end
+                table.remove(clueToasts, i)
+            end
+        end
+
         -- 自动存档（仅场景已进入时）
         if SceneManager.currentScene then
             autoSaveTimer = autoSaveTimer + deltaTime
@@ -364,6 +437,15 @@ function HandleUpdate(eventType, eventData)
         end
     elseif currentMode == GameMode.Paused then
         DialogueSystem.Update(deltaTime)
+    end
+
+    -- 更新常驻笔记提示红点
+    if tabHintWidget then
+        local showHint = (currentMode == GameMode.Playing or currentMode == GameMode.Paused)
+        tabHintWidget:SetVisible(showHint)
+        if tabHintRedDot then
+            tabHintRedDot:SetVisible(showHint and NoteSystem.GetUnreadCount() > 0)
+        end
     end
 end
 

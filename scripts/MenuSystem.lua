@@ -353,10 +353,27 @@ function M.CreateSlotButton(info, isSaveMode)
             label, info.chapterTitle or "", info.sceneName or "", timeStr, info.saveTime or "")
     end
 
+    local container = UI.Panel {
+        width = "100%",
+        flexDirection = "row",
+        gap = 8,
+        alignItems = "center",
+    }
+
+    if not info.isEmpty and info.sceneImage then
+        container:AddChild(UI.Panel {
+            width = 120, height = 55,
+            backgroundImage = info.sceneImage,
+            backgroundFit = "cover",
+            backgroundColor = { 0, 0, 0, 60 },
+            borderRadius = 6,
+        })
+    end
+
     local btn = UI.Button {
         text = text,
         fontSize = 16,
-        width = "100%", height = 55,
+        flexGrow = 1, height = 55,
         variant = "secondary",
         onClick = function()
             if isSaveMode then
@@ -373,8 +390,21 @@ function M.CreateSlotButton(info, isSaveMode)
             end
         end,
     }
+    container:AddChild(btn)
 
-    return btn
+    if (not info.isEmpty) and (not info.isAuto) then
+        container:AddChild(UI.Button {
+            text = "删除",
+            fontSize = 14, width = 70, height = 55,
+            backgroundColor = { 120, 40, 40, 255 },
+            fontColor = { 255, 255, 255, 255 },
+            onClick = function()
+                M.ShowDeleteConfirm(info.slotId)
+            end,
+        })
+    end
+
+    return container
 end
 
 -- ============================================================================

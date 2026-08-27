@@ -141,6 +141,7 @@ function M.CreateSaveDataFromState(gameState)
         data.chapterTitle = chapter.title
         data.sceneName = chapter.subtitle
     end
+    data.sceneImage = M.GetSceneThumbnail(data.scene)
     data.saveTime = M.GetCurrentTime()
     return data
 end
@@ -201,6 +202,18 @@ function M.GetCurrentTime()
     return os.date("%Y-%m-%d %H:%M:%S")
 end
 
+-- 存档槽位缩略图（按当前场景映射到代表背景图）
+function M.GetSceneThumbnail(scene)
+    local map = {
+        office = "assets/image/bg_office.png",
+        lobby = "assets/image/bg_lobby.png",
+        courtyard = "assets/image/bg_courtyard.png",
+        corridor = "assets/image/bg_corridor.png",
+        crime_scene = "assets/image/bg_crime_scene.png",
+    }
+    return map[scene] or "assets/image/bg_office.png"
+end
+
 function M.GetSlotInfo(slotId)
     local data = M.slots[slotId]
     if not data then return nil end
@@ -209,6 +222,7 @@ function M.GetSlotInfo(slotId)
         chapter = data.chapter,
         chapterTitle = data.chapterTitle or "未知章节",
         sceneName = data.sceneName or "未知地点",
+        sceneImage = data.sceneImage or M.GetSceneThumbnail(data.scene or "office"),
         playTime = data.playTime or 0,
         saveTime = data.saveTime or "",
         isEmpty = false,
