@@ -113,13 +113,14 @@ function M.EnterScene(sceneId, onExit)
         textAlign = "right",
         zIndex = 2000,
     })
-    M.hoverNameLabel = Label(root, {
+    M.hoverNameLabel = Label(UI.GetRoot(), {
         left = 0, top = sh - 48, width = sw, height = 32,
         text = "", fontSize = 16, fontColor = "rgba(255,255,255,240)", textAlign = "center",
-        zIndex = 2000,
+        zIndex = 99998,
         backgroundColor = "rgba(0,0,0,160)",
         borderRadius = 4,
         padding = { 4, 12, 4, 12 },
+        pointerEvents = false,
     })
     M.hoverNameLabel:SetStyle({ visible = false })
 
@@ -579,6 +580,11 @@ function M.Update(dt)
 end
 
 function M.ExitScene()
+    -- hoverNameLabel 现在挂到 UI.GetRoot()，需单独清理
+    if M.hoverNameLabel then
+        M.hoverNameLabel:Destroy()
+        M.hoverNameLabel = nil
+    end
     if M.ui and M.ui.root then
         M.ui.root:Destroy()
     end
@@ -586,7 +592,6 @@ function M.ExitScene()
     M.bgFixed = {}
     M.layers = {}
     M.charSprite = nil
-    M.hoverNameLabel = nil
     M.titleLabel = nil
     M.scrollHint = nil
     M.charNameLabel = nil
