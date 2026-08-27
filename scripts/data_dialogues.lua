@@ -136,7 +136,7 @@ M["opening_chapter1_4"] = {
 };
 M["opening_chapter1_5"] = {
   id = "opening_chapter1_5",
-  background = [==[assets/image/bg_hotel_room.png]==],
+  background = [==[assets/image/bg_crime_scene.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[（画面切换，黑屏显示：2036年8月13日 10:17，万丽海湾大酒店 2510房）]==] },
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志在房间里拿着手机与姐姐通话。]==] },

@@ -273,21 +273,29 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
     })
 
-    -- 翻页按钮（◀ ▶）— 增强可见性
+    -- 翻页按钮（◀ ▶）— 增强可见性：UI.Button 不渲染 text，故内置白色箭头 Label；提亮边框确保在深色场景可见
     M._btnLeft = Button(root, {
-        left = 20, top = sh / 2 - 26, width = 52, height = 52,
-        text = "◀", fontSize = 24, fontColor = "rgba(255,255,255,255)",
-        backgroundColor = "rgba(0,0,0,170)", borderRadius = 10,
-        borderWidth = 1, borderColor = "rgba(255,255,255,80)",
-        zIndex = 2000,
+        left = 18, top = sh / 2 - 30, width = 56, height = 56,
+        backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
+        borderWidth = 2, borderColor = "rgba(255,210,120,230)",
+        zIndex = 2000, hoverCursor = "pointer",
+    })
+    Label(M._btnLeft, {
+        left = 0, top = 0, width = 56, height = 56,
+        text = "◀", fontSize = 30, fontColor = "rgba(255,255,255,255)",
+        textAlign = "center", alignItems = "center", justifyContent = "center",
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
     M._btnRight = Button(root, {
-        left = sw - 20 - 52, top = sh / 2 - 26, width = 52, height = 52,
-        text = "▶", fontSize = 24, fontColor = "rgba(255,255,255,255)",
-        backgroundColor = "rgba(0,0,0,170)", borderRadius = 10,
-        borderWidth = 1, borderColor = "rgba(255,255,255,80)",
-        zIndex = 2000,
+        left = sw - 18 - 56, top = sh / 2 - 30, width = 56, height = 56,
+        backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
+        borderWidth = 2, borderColor = "rgba(255,210,120,230)",
+        zIndex = 2000, hoverCursor = "pointer",
+    })
+    Label(M._btnRight, {
+        left = 0, top = 0, width = 56, height = 56,
+        text = "▶", fontSize = 30, fontColor = "rgba(255,255,255,255)",
+        textAlign = "center", alignItems = "center", justifyContent = "center",
     })
     M._btnRight.props.onClick = function() M:_SwitchScreen("right") end
 
@@ -465,13 +473,16 @@ end
 -- 交互逻辑（两模式共用）
 -- ============================================================
 function M:_onItemInteract(item)
-    print("[SM DEBUG] _onItemInteract: id=" .. (item.id or "?") .. " hasInteract=" .. tostring(not not item.onInteract))
     if item.clueId then
         local isNew = GameData.CollectClue(item.clueId)
         GameData.SetFlag("clue_" .. item.clueId, true)
         local clueDef = GameData.Clues[item.clueId]
         local name = (clueDef and clueDef.name) or item.name or item.clueId
-        if M.onClueCollected then M.onClueCollected(item.clueId, name, not isNew) end
+        -- 若该线索会触发对话/特殊交互，对话本身即反馈，不再弹冗余的"线索收录"提示框（避免黄框→延迟→对话的割裂感）
+        local hasDialogue = item.dialogueId or item.onInteract
+        if not hasDialogue and M.onClueCollected then
+            M.onClueCollected(item.clueId, name, not isNew)
+        end
     end
     if item.onInteract then
         if M.onSpecialInteract then M.onSpecialInteract(item) end
@@ -485,8 +496,6 @@ function M:_onItemInteract(item)
 end
 
 function M:ShowClueBanner(name, text)
-    print("[SM DEBUG] ShowClueBanner: name=" .. tostring(name) .. " root=" .. tostring(M.ui.root)
-        .. " sw=" .. tostring(M.screenW) .. " sh=" .. tostring(M.screenH))
     -- 挂到绝对根，确保永远在 UI 最上层（不受 scene root 的 overflow 裁剪）
     local root = UI.GetRoot() or M.ui.root
     if not root then return end

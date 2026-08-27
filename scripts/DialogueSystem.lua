@@ -16,7 +16,7 @@ M.state = {
     fullText = "",
     charIndex = 0,
     timer = 0,
-    charsPerSecond = 30,
+    charsPerSecond = 50,
     isLineComplete = false,
 }
 
