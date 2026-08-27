@@ -37,4 +37,5 @@
 
 ## 待办（后续开发）
 - ✅ 已完成：场景黑屏修复、跳过按钮、场景UI反馈(ShowClueBanner)、物件点击→角色独白+误导对话、线索收录HUD提示框(5.2.5)、证言提取Clue_Extract、笔记特写图放大(5.2.7)、常驻笔记红点(5.2.6)、存档缩略图+删除按钮(5.1)、ai-image-prompts.md 线索特写图+次要角色立绘章节
-- ⬜ 待做：命案发现剧情触发(crime_scene进入/张承宇登场)、第二阶段推理/结案流程、生成次要角色立绘(char_receptionist/sister/technician.png, ui_news_anchor.png)、生成线索特写图(clue_*.png 替换 GameData 占位)、SceneManager 物件坐标微调
+- ✅ 已完成（2026-08-27 晚）：次要角色立绘(char_receptionist/sister/technician.png, ui_news_anchor.png)与线索特写图(clue_inhaler/body/signbook/fountain.png)已生成并入 assets/image，并替换 GameData 占位引用（注意：code-explorer 子代理为只读型，无法调用 maker 生成图片/写文件，故由主 agent 直接调度 maker 批量生成，等价于并行 worker 产出）
+- ⬜ 待做：命案发现剧情触发(crime_scene进入/张承宇登场)、第二阶段推理/结案流程、SceneManager 物件坐标微调、次要角色立绘代码接入（对应角色对话上线时引用 char_*）

@@ -32,6 +32,11 @@ M.portraitMap = {
     ZhaoHeng = "assets/image/char_zhaoheng.png",
     ZhouWen = "assets/image/char_zhouwen.png",
     ZhangChengyu = "assets/image/char_zhangchengyu.png",
+    -- 次要角色立绘（2026-08-27 生成接入）
+    LiZhiSister = "assets/image/char_sister.png",          -- 李志的姐姐
+    FrontDesk = "assets/image/char_receptionist.png",       -- 酒店前台
+    PanganEmployee = "assets/image/char_technician.png",    -- 磐安智能技术员/中层组长
+    NewsAnchor = "assets/image/ui_news_anchor.png",         -- 平板 AI 新闻播报
 }
 
 -- ============================================================================
