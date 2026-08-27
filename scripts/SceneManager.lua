@@ -83,10 +83,6 @@ function M.EnterScene(sceneId, onExit)
     local root = Panel(nil, {
         left = 0, top = 0, width = "100%", height = "100%",
         overflow = "hidden", backgroundColor = "rgba(0,0,0,255)",
-        -- 全量消费 pan 事件，彻底禁用引擎默认的拖拽/平移/滚动行为
-        onPanStart = function() return true end,
-        onPan = function() return true end,
-        onPanEnd = function() return true end,
     })
     M.ui.root = root
 
@@ -154,6 +150,7 @@ function M:_EnterParallax(sceneData, root, sw, sh)
                 backgroundFit = "cover",
                 left = 0, top = 0, width = M.worldWidth, height = sh,
                 zIndex = ld.z,
+                overflow = "hidden",
             })
             M.layers[ld.key] = { img = img, parallax = ld.def.parallax or 1.0, baseLeft = 0 }
             if M.bgFixed[ld.key] == nil then M.bgFixed[ld.key] = false end
