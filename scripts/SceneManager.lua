@@ -506,7 +506,6 @@ function M:ShowClueBanner(name, text)
         backgroundColor = "rgba(20,16,8,245)", borderRadius = 14,
         borderWidth = 3, borderColor = "rgba(255,200,80,255)", zIndex = 99999,
     })
-    print("[SM DEBUG] ShowClueBanner: banner created=" .. tostring(banner))
     Label(banner, {
         left = 0, top = 22, width = 520, height = 36,
         text = "【" .. (name or "") .. "】", fontSize = 22, fontColor = "rgba(255,200,80,255)", textAlign = "center",
