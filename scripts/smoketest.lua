@@ -39,7 +39,7 @@ local function interact(sceneId, where, item)
     check("Interact " .. label, function()
         local orig = SceneManager.onSpecialInteract
         SceneManager.onSpecialInteract = nil
-        SceneManager._onItemInteract(item)
+        SceneManager:_onItemInteract(item)
         safeStopDialogue()
         SceneManager.onSpecialInteract = orig
     end)
