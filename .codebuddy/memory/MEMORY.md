@@ -1,74 +1,40 @@
 # 项目长期记忆（异视 · 黄昏事务所）
 
 ## 项目概况
-- **游戏名**：异视（副标题：黄昏事务所）
-- **类型**：2D 横板推理游戏（含 meta 元游戏元素）
-- **引擎**：UrhoX Lua（代码在 `scripts/`，UI 用 `urhox-libs/UI`）
-- **案件**：落晖之宴·严成峰坠亡案
+- 游戏名：异视（副标题：黄昏事务所）；2D 横板推理（含 meta）；UrhoX Lua 引擎
+- 案件：落晖之宴·严成峰坠亡案
+- 美术：日系二次元动漫风格（08-25 定，干净线稿+赛璐璐+暖调低饱和）
 
 ## 设计文档（wolai）
-- 基础设计：https://www.wolai.com/3uc1XCmBM6jmyyAnVePCsU （page_id `3uc1XCmBM6jmyyAnVePCsU`）
-- 父页面「TAP制造内容」page_id `f5e1DjK54NdmDQQf4HQytz`，含子页面：
-  - 第一阶段 page_id `6mPKsvWmZMEikxNZYZDQo2`
-  - 第二阶段 page_id `rq5a3Qq3iMv811cKjCET7Z`
+- 基础设计 page_id `3uc1XCmBM6jmyyAnVePCsU`（v58，5章30节154block，最新更新集中在 5.2 笔记功能）
+- 四大分类已落地：【物证档案/证言纪要/人物名录/现场痕迹】
+- 已对齐规范：线索收录HUD提示框(5.2.5)、⭐标记+只看标记(5.2.4)、红点三级(5.2.6)、状态机(5.2.8)、特写图点击放大(5.2.7)、存档10槽+自动档置顶+二次确认+缩略图(5.1)
 - 用 wolai MCP 读取：get_page_outline / get_section_content / get_page_blocks / get_doc
 
-## 剧情结构
-- **序章**：黄昏事务所。开场动画（2036-08-12 12:59）→ 新手引导（书柜/衣柜/床铺3对象，点衣柜推进）
-- **第一章**：万丽海湾大酒店。开场动画（2036-08-13 09:32）→ 4区域自由探索（1F大堂 / 1F露天庭院 / 25F走廊）
-- 角色：李志（侦探）、陈雯音（外甥女，能看到屏幕外的人）、许晴岚、严成峰（死者）、赵恒、周文、张承宇（重案组队长）
-
 ## 代码模块（scripts/）
-- `main.lua`：主循环、模式管理（Boot/MainMenu/Playing/Paused）、Tab键笔记、ESC暂停、自动存档
-- `GameData.lua`：角色/章节/线索（四大分类）/对话/开场动画/场景物件
-- `NoteSystem.lua`：侦探笔记（Tab呼出、四大分类、状态机、F标记、红点）
-- `OpeningSystem.lua`：开场动画（黑屏时间地点3秒 + 分镜对话）
-- `SceneManager.lua` v3：**整图切换多屏场景系统**（screens 模式：翻页按钮 + 小地图 + 新手引导 + 物件交互 + 主角放大站位；parallax 分支保留但已无场景使用）
-- `DialogueSystem.lua`：打字机对话（Start 支持字符串id和table）
-- `MenuSystem.lua`：主菜单/暂停/存档/读档/设置
-- `SaveSystem.lua`：10槽+自动存档（含 readClues/starredClues 笔记状态）
+- `main.lua`：主循环/模式/Tab笔记/ESC暂停/自动存档；`ShowClueCollectedToast`（新线索收录HUD）+ `tabHintWidget`（常驻笔记红点）
+- `GameData.lua`：角色/章节/线索(四大分类)/对话/开场/场景物件；线索字段 `id/name/category/chapter/description/detail/image`
+- `NoteSystem.lua`：笔记(Tab/Q/E/W/S/F/⭐/红点/状态机)；`ShowImagePreview` 全屏预览；`GetUnreadCount()` 供红点
+- `SceneManager.lua` v3：整图切换多屏；`_onItemInteract` 优先级 `onInteract→dialogueId→interactText→misleading`；线索走 `GameData.CollectClue`
+- `DialogueSystem.lua`：打字机；对话行支持 `line.clue`（播毕触发证言提取收录）
+- `MenuSystem.lua`：菜单/存档/读档/设置；槽位按钮含缩略图+删除按钮
+- `SaveSystem.lua`：10槽+自动存档；`GetSceneThumbnail` 场景→缩略图映射
 
-## 关键约定
-- 长度单位米、Y-up 左手坐标系
-- 屏幕尺寸：`graphics` 是引擎**全局变量**（非模块，勿 `require("Graphics")`，否则 Module not found），可用 `graphics:GetWidth()/GetHeight()/GetDPR()`；`graphics:SetMode()` 已禁用。SceneManager 用它取逻辑分辨率，全局不存在时回退默认 1280x720。
-- UI 组件支持 `onPointerEnter`/`onPointerLeave`（回调签名 `(event, widget)`，运行时赋值到 `widget.props.onPointerEnter`/`widget.props.onPointerLeave`，不可写 `widget:onPointerEnter(fn)` 或 `widget.onPointerEnter=fn` 实例字段）、`borderWidth`/`borderColor`、`SetStyle({...})`
-- **`SetStyle` 只接受单个 table 参数**，必须写 `widget:SetStyle({ key = value })`，**绝不能**写 `SetStyle("key", value)`——后者会把第一个参数（字符串）当 props 传入 `NormalizeColorProps`，导致 `pairs(string)` 崩溃（`bad argument #1 to 'for iterator' (table expected, got string)`）。改字体颜色用 `SetStyle({ fontColor = {r,g,b,a} })`（table 值范围 0~255，或传 `"rgba(...)"` 字符串引擎会自动 ParseColor）；无 `SetFontColor`/`SetTextColor` 方法（只有 `SetBackgroundColor`/`SetBorderColor` 两个 alias）。颜色属性值既可传 table 也可传 `"rgba(...)"` 字符串。
-- **`UI:Init()` 重复调用警告**：`EnterScene` 每次调用 `UI:Init()`，若之前未 `UI.Shutdown()` 会打印 `UI.Init() called twice ... ignored` 警告（非 ERROR，引擎忽略，不影响渲染）。保持现状即可，无需特意加 Shutdown。
-- 键盘输入：引擎以**全局变量** `input` 注入（不是模块！勿 `require("Input")`，会报 Module not found 并连带 main.lua 解析失败）。可用方法只有 `input:GetKeyPress(KEY_*)`（按住时每帧返回 true，可当持续状态用）和 `input:GetMouseButtonPress(MOUSEB_*)`。**不存在** `GetKeyDown`、`GetMousePosition`，也没有鼠标移动事件（无 onMouseMove），故鼠标坐标不可得——场景镜头滚动只能用方向键 `KEY_LEFT/KEY_RIGHT`。按键常量 KEY_LEFT/RIGHT/UP/DOWN/ESCAPE/TAB/Q/W/S/F 等为全局。
-- Button 文本始终居中（不支持 textAlign）
-- **事件回调必须写入 `widget.props.onX`，既非 `widget.onX` 也非 `widget:onX()`**：本引擎所有事件回调（点击 `onClick`、指针进入 `onPointerEnter`、指针离开 `onPointerLeave`）都是 **`props` 里的字段**，引擎只读 `self.props.onX`（`Widget:OnClick` 见 `urhox-libs/UI/Core/Widget.lua:4073`、`Widget:OnPointerEnter/:OnPointerLeave` 见同文件 3974/3984、`Button:OnClick` 见 `Widgets/Button.lua:626`，均无 `self.onX` 兜底）。因此：(a) **绝不能** `btn:onClick(fn)`/`btn:onPointerEnter(fn)`（当方法调用→nil→`attempt to call a nil value (method 'onClick'/'onPointerEnter')`）；(b) **绝不能** `btn.onClick = fn`（`__newindex` 无 `SetOnClick` setter → 被 `rawset` 成实例字段，写不进 `props` → 回调永不触发，是死代码！）；(c) **正确写法**：构造时 `UI.Button(parent, { onClick = fn, onPointerEnter = fn, onPointerLeave = fn })`，或运行时 `btn.props.onClick = function(self, event) ... end` / `btn.props.onPointerEnter = function(event, widget) ... end`。回调签名：`onClick(self, event)`、`onPointerEnter(event, self)`、`onPointerLeave(event, self)`。2026-08-26 连续踩坑：先 `:onClick(fn)` 崩溃→改 `btn.onClick=fn` 不崩溃但交互全失效（死代码）→再 `:onPointerEnter(fn)` 又崩溃→最终全部改 `btn.props.onX` 才既修复崩溃又真正可交互（commit af018d3）。⚠️ **连锁坑（转换写法时）**：把 `btn:onClick(function() ... end)` 改成 `btn.props.onClick = function() ... end` 时，必须删掉原函数调用末尾的闭合括号 `end)` → `end`，否则 `unexpected symbol near ')'`（2026-08-26 因此连出 main.lua:185 与 SceneManager.lua:405 解析错误）。判断 `end)` 是否合法：仅当它是某**方法/函数调用**的实参闭合（如 `pcall(function()...end)`、`_ShowTutorial(...,function()...end)`）才合法；前面若是 `props.onX =` 赋值则必为多余括号。
-- **事件驱动主循环**：UrhoX 无 `engine:GetFrameTime()/IsExiting()/FrameNext()`，勿手写 while。用 `Start()` + `SubscribeToEvent("Update","HandleUpdate")`，帧时间取 `eventData["TimeStep"]:GetFloat()`
-- **UI 渲染挂载**：`UI.Init` + `UI.SetRoot(root)` 才会渲染；widget 必须 `UI.GetRoot():AddChild(widget)`（或直接 `parent:AddChild(widget)`）挂到渲染树；`Destroy()` 自动从 parent 移除；`Widget:Show()` 仅 SetVisible。
-- ⚠️ **致命实战坑 · UI 构造双参数被忽略（2026-08-27 黑屏真因）**：引擎 `Widget:new(props)` **只接受单参数 `props`**（`urhox-libs/UI/Core/Widget.lua:308`），且**不处理 `props.parent`**（搜索 0 结果）。`UI.Panel/UI.Label/UI.Button` 是类，`UI.X(parent, props)` 两参数调用时**第二参数 `props` 被完全忽略** → widget 以**空 props** 创建（无 width/height/背景/样式）→ 不渲染 → 整屏黑且无任何报错。Menu/Opening 用单参数 `UI.X({...})` 故正常；**SceneManager 此前大量用 `UI.X(parent, {props})` 双参数 → 序章 office + 第一章全部黑屏**。修复：SceneManager 顶部加兼容 wrapper（`Panel/Label/Button`，把双参数转为 `ctor(props)` + `parent:AddChild`，兼容 `X(props)`/`X(parent,props)`/`X(nil,props)` 三种形式），commit 7318552。⚠️ **排查 UI 不显示时，第一优先级确认构造调用是否误用双参数 `(parent, props)` 被引擎吞掉第二参**，而不是先怀疑图片/数据/AddChild。
-- **`Widget:AddChild(child)` 返回 `self`（父节点）用于链式调用，不是 child**！要引用子节点必须 `local x = UI.xxx{...}; parent:AddChild(x)`，绝不能写 `local x = parent:AddChild(...)`（否则 x 指向父节点，缺子类方法如 SetText 会报 nil）
-- **美术风格偏好**：用户于 08-25 明确要求**日系二次元动漫风格**（参考图为干净线条+赛璐璐上色+修长比例+暖调低饱和），而非 08-24 批次使用的"现代写实插画"。后续生成图片应统一为此风格。
-- **AI图像Prompt文档**：`docs/ai-image-prompts.md`(v2.1 整图切换·多屏循环箱庭版) 含 17 张 Screen + 7 角色 + 5 UI 元素 + 开场背景的完整中文 prompt，可直接用于 `batch_generate_images`。
-- **图片资源生成（taptap-maker）**：`batch_generate_images`（2-10张并行）/`generate_image` 下载到 `assets/image/`，文件名**自动加时间戳后缀**（如 `bg_office_20260824xxxx.png`），生成后需 `Rename-Item` 重命名为代码引用名（`bg_office.png` 等）；人物立绘传 `transparent:true` 得透明背景 PNG，`aspect_ratio`/`target_size`/`resolution` 控制画幅。
-- **显示图片**：用 `Widget:SetBackgroundImage("assets/image/xxx.png")` 或构造 `backgroundImage = "assets/image/xxx.png"` + `backgroundFit`（"fill"/"contain"/"cover"）+ `backgroundImageOpacity`；**只接受项目相对路径**（如 `assets/image/...`），不接受绝对路径或 Texture 对象。⚠️ **不存在 `UI.Image` 构造器**（2026-08-26 误用 `UI.Image(...)` 导致 SceneManager `_BuildScreenContent` 运行时报 `attempt to call a nil value (field 'Image')`）；显示图片一律用 `UI.Panel` + `backgroundImage`（参考 DialogueSystem 立绘面板），且字段名是 `backgroundImage` 而非 `image`；角色立绘加 `backgroundColor = "rgba(0,0,0,0)"` 透明 + `backgroundFit = "contain"` 避免变形。可用 UI 构造器仅 `UI.Panel` / `UI.Label` / `UI.Button`。
-- **中文路径坑（execute_command）**：PowerShell 传入含中文的绝对路径会乱码（`Set-Location : 找不到路径…鐙珛娓告垙`）。规避：(a) 用通配符 `03_*` 匹配 `03_独立游戏` 目录；(b) git 命令不带 `-C` 直接用 cwd（shell 工作目录已是项目根）。
+## 关键约定（致命坑精简）
+- 长度米、Y-up 左手坐标系
+- `graphics`/`input` 是全局变量（勿 require）；无 SetMode；`GetKeyPress` 仅此、无鼠标坐标（滚动用方向键）
+- UI 构造仅 `UI.Panel/Label/Button`，单参数 `UI.X({...})`；**双参数 `UI.X(parent,props)` 第二参被吞→黑屏**（最致命坑）
+- 事件回调写 `widget.props.onX`（onClick/onPointerEnter/onPointerLeave），**非** `widget:onX()` **非** `widget.onX=`
+- `SetStyle` 仅单 table 参数；颜色 table 或 `"rgba(...)"`
+- `Widget:AddChild` 返回 **self**（非 child）；图片用 `backgroundImage`(项目相对路径)，**无 `UI.Image`**
+- 主循环：`Start` + `SubscribeToEvent("Update","HandleUpdate")`；帧时间 `eventData["TimeStep"]:GetFloat()`
+- 图片：`backgroundImage` + `backgroundFit`(fill/contain/cover) + `backgroundColor` 透明；`SetVisible(bool)` 存在
+
+## 场景架构（模式 B 多图切换）
+- 侧视横版；每关 N 张 1920×1080 全屏 Screen 翻页切换
+- office(序章,3屏) / P2大堂(4屏环形) / P3庭院(3屏) / P4走廊(4屏) / P5案发现场(3屏)
+- UI：小地图/翻页按钮/页码/新手引导/主角放大/全贴图覆盖
 
 ## 待办（后续开发）
-- **场景图片资源**：`docs/ai-image-prompts.md`(v2.1) 已定义 **17 张 Screen 整图 + 开场背景**，引用名 lobby/courtyard/corridor/crime_scene + office_screen1/2/3.png 等。**已于 2026-08-26 全部生成**（1920×1080 日系二次元）并放入 `assets/image/`，Maker 自动生成 `.meta`。当前场景已显示真实整图。视差三图(bg_office_bg/mid/fg)已弃用；旧 `bg_hotel_lobby.png`/`bg_hotel_courtyard.png`/`bg_hotel_corridor.png`/`bg_crime_scene.png` 为遗留视差背景（代码 screens 模式未引用，可清理或保留）。
-- 角色立绘 ✅ 7 主角立绘已于 2026-08-26 用 `docs/ai-image-prompts.md` 的 C1-C7 prompt 重生成为**日系二次元透明背景**(800×1200 PNG)，同名覆盖 `char_*.png`（李志/陈雯音/许晴岚/严成峰/赵恒/周文/张承宇）。commit 445abeb 构建成功，运行日志无 ERROR。现在背景(17张Screen)与立绘风格统一。
-- 场景物件坐标基于 prompt 构图推断（非逐像素视觉），出图后可能需微调
-- 命案发现剧情触发（crime_scene 进入时机、张承宇登场）
-- 第二阶段探索后的推理/结案流程
-- 次要角色（姐姐/前台/磐安员工/平板新闻）立绘未生成
-- 跳过按钮 ✅ 2026-08-27 已加：(1) OpeningSystem 序章开场（location+dialogue 两阶段）"跳过 ›"（点击 `M.Finish()` 结束整个开场进场景）；(2) DialogueSystem 对话界面"跳过 ›"（左上角，点击 `M.End()` 结束整段对话进下一节点）。序章对话阶段两按钮并存：右上=OpeningSystem 结束整个开场，左上=DialogueSystem 结束当前分镜。笔记图片放大等细节待做
-
-## 场景架构（08-26 重构后：全模式 B 多图切换）
-- **视角**：侧视横版 side-view（非等距俯视），类似视觉小说/Galgame 场景展示
-- **统一模式 B · 解密关卡（整图切换 + 多屏循环箱庭）**：每个关卡由 N 张 1920×1080 全屏整图（Screen）组成，玩家通过左右翻页按钮在 Screen 间切换。交互物件分散隐藏。
-  - **office 事务所（序章）**：3 屏线性（s1书柜区→s2办公桌区→s3衣柜地铺区），衣柜 `onInteract="wardrobe"` 触发序章推进
-  - P2 大堂：4 屏环形（旋转门→假山→前台→闸机→循环）
-  - P3 庭院：3 屏线性（入口→茶歇桌→喷泉海景）
-  - P4 走廊：4 屏线性（电梯厅→2501→2502-03→2504-05+沙发）
-  - P5 案发现场：3 屏线性（门廊→床头+衣柜→大床+坠落点）
-- **模式 A · 视差三层（⚠️ 已弃用）**：原仅 office 使用，2026-08-26 office 已改模式B。bg_office_bg/mid/fg.png 不再被引用。
-- **解密关卡 UI**：右上角小地图（140×100px 拓扑缩略图 + 当前位置高亮）、左右翻页按钮（48×48px 半透明箭头）、页码指示器
-- **新手引导**：4 步渐进式非阻塞引导，首次进入 screens 场景触发（序章 office 即触发），一次性存档 `tutorial_completed`
-- **主角比例放大**：占屏幕高度 55%~65%，每屏独立 charPos 站位
-- **全贴图覆盖**：所有状态有贴图或纯色填充
-- **资源总量**：17 张解密 Screen + 7 张角色立绘 + 5 张 UI 元素 + 1 张开场背景(bg_office.png) = 30 张有效（另 3 张视差图层弃用）
-- **Prompt 文档**：`docs/ai-image-prompts.md` 已更新为 v2.1（整图切换·多屏循环箱庭版，office 归模式B、模式A 视差标注弃用）
-- **场景物件交互字段约定（2026-08-27 新增）**：每个 screen 的 `items` 元素支持：`clueId`（点击收集线索）、`onInteract`（关键交互，触发 main.lua `HandleSpecialInteract` 对话/流程）、`dialogueId`（点击用 `DialogueSystem.Start` 弹角色独白对话，优先于横幅）、`misleading=true`（误导物件，不收集线索仅弹错误/引导对话）、`interactText`（兜底，弹金边横幅 `ShowClueBanner`）。`SceneManager._onItemInteract` 优先级：`onInteract` → `dialogueId` → `interactText`。对话文本写在 `GameData.M.Dialogues`（格式 `{ id, lines = { { speaker="LiZhi", text="..." } } }`，speaker 空串=旁白，GetDialogue(id) 取用）。
+- ✅ 已完成：场景黑屏修复、跳过按钮、场景UI反馈(ShowClueBanner)、物件点击→角色独白+误导对话、线索收录HUD提示框(5.2.5)、证言提取Clue_Extract、笔记特写图放大(5.2.7)、常驻笔记红点(5.2.6)、存档缩略图+删除按钮(5.1)、ai-image-prompts.md 线索特写图+次要角色立绘章节
+- ⬜ 待做：命案发现剧情触发(crime_scene进入/张承宇登场)、第二阶段推理/结案流程、生成次要角色立绘(char_receptionist/sister/technician.png, ui_news_anchor.png)、生成线索特写图(clue_*.png 替换 GameData 占位)、SceneManager 物件坐标微调

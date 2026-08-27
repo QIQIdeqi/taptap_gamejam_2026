@@ -984,15 +984,14 @@ Step 4 — 收录第 1 条线索后
 
 > **新增（2026-08-27）**：对齐 wolai 5.2.7 笔记详情区「16:9 高清特写照片」要求。
 > 侦探笔记（NoteSystem）详情区已支持显示线索 `image` 字段并点击放大全屏预览。
-> 目前 GameData 中 `inhaler`/`body_position`/`lobby_signbook`/`court_fountain` 四条线索的 `image`
-> 暂用场景整图占位（`bg_crime_scene.png`/`bg_lobby.png`/`bg_courtyard.png`），**后续请生成下列专用特写图替换占位路径**。
+> ✅ `clue_inhaler`/`clue_body`/`clue_signbook`/`clue_fountain` 已于 2026-08-27 生成并入 `assets/image/`，并在 `GameData.lua` 对应线索的 `image` 字段完成替换。其余线索特写图待补线索后生成。
 
 | 资源名 | 对应线索 id | 内容 | 尺寸 | 状态 |
 |--------|------------|------|------|------|
-| clue_inhaler.png | inhaler | 破碎/空的哮喘吸入器特写，喷口微挤压 | 1280×720（16:9） | 待生成（替换占位） |
-| clue_body.png | body_position | 案发现场死者位置俯拍示意（非血腥） | 1280×720 | 待生成（替换占位） |
-| clue_signbook.png | lobby_signbook | VIP 签到簿翻开页特写 | 1280×720 | 待生成（替换占位） |
-| clue_fountain.png | court_fountain | 音乐喷泉中控箱电子时钟特写 | 1280×720 | 待生成（替换占位） |
+| clue_inhaler.png | inhaler | 破碎/空的哮喘吸入器特写，喷口微挤压 | 1280×720（16:9） | ✅ 已生成 |
+| clue_body.png | body_position | 案发现场死者位置俯拍示意（非血腥） | 1280×720 | ✅ 已生成 |
+| clue_signbook.png | lobby_signbook | VIP 签到簿翻开页特写 | 1280×720 | ✅ 已生成 |
+| clue_fountain.png | court_fountain | 音乐喷泉中控箱电子时钟特写 | 1280×720 | ✅ 已生成 |
 | clue_letter.png | （待补线索） | 关键信件/便条特写 | 1280×720 | 待生成 |
 | clue_badge.png | （待补线索） | 工牌/房卡特写 | 1280×720 | 待生成 |
 | clue_footprint.png | （待补线索） | 走廊脚印/擦痕特写 | 1280×720 | 待生成 |
@@ -1013,6 +1012,7 @@ Step 4 — 收录第 1 条线索后
 ## 十、次要角色立绘（次要 NPC · 透明背景）
 
 > **新增（2026-08-27）**：对齐 wolai 4.角色补充（非关键角色）。以下为出场但无需精细表情差分的次要角色。
+> ✅ `char_receptionist`/`char_sister`/`char_technician`/`ui_news_anchor` 已于 2026-08-27 生成并入 `assets/image/`（透明背景）。代码接入待对应角色对话上线时引用。
 
 ### N1. 酒店前台（Receptionist）
 ```
@@ -1051,5 +1051,5 @@ Step 4 — 收录第 1 条线索后
 
 ---
 
-*文档版本：整图切换·多屏循环箱庭版 v2.2 | 更新时间：2026-08-27（新增线索特写图 + 次要角色立绘章节，对齐 wolai 5.2.7 与 4.角色补充；17 张 Screen 已确认生成）*
+*文档版本：整图切换·多屏循环箱庭版 v2.3 | 更新时间：2026-08-27（clue_inhaler/body/signbook/fountain 特写图 + char_receptionist/sister/technician/ui_news_anchor 次要角色立绘已生成并替换 GameData 占位；17 张 Screen 已确认生成）*
 *数据来源：wolai 设计文档（基础设计 page_id: 3uc1XCmBM6jmyyAnVePCsU）+ 用户需求（解密关卡改为整图切换/循环箱庭/小地图/翻页按钮/新手引导/主角放大/全贴图覆盖；2026-08-27 接入笔记特写图与次要角色）*
