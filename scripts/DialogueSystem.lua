@@ -104,7 +104,7 @@ function M.BuildUI(showSkip)
     M.ui.root:AddChild(panel)
 
     -- 点击区域（整个面板可点击推进对话）
-    panel.onClick = function()
+    panel.props.onClick = function(self, event)
         M.OnClick()
     end
 

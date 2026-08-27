@@ -173,13 +173,13 @@ local function ShowSuspectChoice()
     -- 半透明覆盖层（拦截点击，防止误触场景）
     local overlay = UI.Button(root, {
         left = 0, top = 0, width = sw, height = sh,
-        backgroundColor = "rgba(0,0,0,150)", zorder = 200, borderWidth = 0,
+        backgroundColor = "rgba(0,0,0,150)", zIndex = 50000, borderWidth = 0,
     })
     -- 选择面板
     local panel = UI.Panel(root, {
         left = sw / 2 - 230, top = sh / 2 - 170, width = 460, height = 340,
         backgroundColor = "rgba(20,22,38,240)", borderRadius = 14,
-        borderWidth = 2, borderColor = "rgba(255,255,255,60)", zorder = 201,
+        borderWidth = 2, borderColor = "rgba(255,255,255,60)", zIndex = 50001,
     })
     UI.Label(panel, {
         left = 0, top = 20, width = 460, height = 36,

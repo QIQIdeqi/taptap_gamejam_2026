@@ -58,8 +58,10 @@ function M.IsActive()
     return M.state.active
 end
 
--- 跳过按钮：挂到开场动画任意阶段 UI 上，点击直接结束开场进入场景
-local function _AddSkipButton(parent)
+-- 跳过按钮：挂到 UI.GetRoot() 最顶层，确保不被 DialogueSystem 全屏面板遮挡
+local function _AddSkipButton()
+    local uiRoot = UI.GetRoot()
+    if not uiRoot then return nil end
     local btn = UI.Button {
         position = "absolute",
         top = 16, right = 16,
@@ -70,11 +72,12 @@ local function _AddSkipButton(parent)
         text = "跳过 ›",
         fontColor = { 255, 255, 255, 230 },
         fontSize = 16,
+        zIndex = 99999,
         onClick = function(self, event)
             M.Finish()
         end,
     }
-    parent:AddChild(btn)
+    uiRoot:AddChild(btn)
     return btn
 end
 
@@ -128,10 +131,14 @@ function M.BuildLocationUI()
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
-    M._skipBtn = _AddSkipButton(M.ui.root)
+    M._skipBtn = _AddSkipButton()
 end
 
 function M.DestroyUI()
+    if M._skipBtn then
+        M._skipBtn:Destroy()
+        M._skipBtn = nil
+    end
     if M.ui.root then
         M.ui.root:Destroy()
         M.ui.root = nil
@@ -195,7 +202,7 @@ function M.BuildBackdrop()
     M.ui.backdrop = M.CreateBackdropPanel(M.GetCurrentDialogueBackground())
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.backdrop) end
-    M._skipBtn = _AddSkipButton(M.ui.backdrop)
+    M._skipBtn = _AddSkipButton()
 end
 
 -- ============================================================================
