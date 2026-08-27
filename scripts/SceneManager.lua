@@ -113,10 +113,12 @@ function M.EnterScene(sceneId, onExit)
         borderRadius = 6,
         padding = { 6, 10, 4, 10 },
         textAlign = "right",
+        zIndex = 2000,
     })
     M.hoverNameLabel = Label(root, {
         left = 0, top = sh - 40, width = sw, height = 28,
         text = "", fontSize = 16, fontColor = "rgba(255,255,255,240)", textAlign = "center",
+        zIndex = 2000,
     })
     M.hoverNameLabel:SetStyle({ visible = false })
 
@@ -270,6 +272,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         text = "◀", fontSize = 24, fontColor = "rgba(255,255,255,255)",
         backgroundColor = "rgba(0,0,0,170)", borderRadius = 10,
         borderWidth = 1, borderColor = "rgba(255,255,255,80)",
+        zIndex = 2000,
     })
     M._btnLeft.props.onClick = function() M:_SwitchScreen("left") end
     M._btnRight = Button(root, {
@@ -277,6 +280,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         text = "▶", fontSize = 24, fontColor = "rgba(255,255,255,255)",
         backgroundColor = "rgba(0,0,0,170)", borderRadius = 10,
         borderWidth = 1, borderColor = "rgba(255,255,255,80)",
+        zIndex = 2000,
     })
     M._btnRight.props.onClick = function() M:_SwitchScreen("right") end
 
@@ -395,6 +399,7 @@ function M:_BuildMinimap(sceneData, root, sw, sh)
         right = 12, top = 48, width = mw, height = mh,
         backgroundColor = "rgba(12,10,20,200)", borderRadius = 8,
         borderWidth = 1, borderColor = "rgba(255,255,255,38)", overflow = "hidden",
+        zIndex = 2000,
     })
     M._mmNodes = {}
     local pad = 12

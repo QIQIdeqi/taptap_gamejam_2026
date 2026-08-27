@@ -747,7 +747,7 @@ M.SceneObjects = {
                       interactText = "门前雨伞架里插着几把长伞。" },
                 },
                 exits = {
-                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.04, y = 0.30, w = 0.14, h = 0.45 },
+                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.04, y = 0.10, w = 0.14, h = 0.30 },
                 },
             },
             {
@@ -811,11 +811,11 @@ M.SceneObjects = {
                 charPos = { x = 0.50, y = 0.78, scale = 0.58 },
                 left = nil, right = "s2",
                 items = {
-                    { id = "plant", name = "罗马柱与盆栽", x = 0.08, y = 0.20, w = 0.22, h = 0.58,
+                    { id = "plant", name = "罗马柱与盆栽", x = 0.08, y = 0.12, w = 0.22, h = 0.46,
                       clueId = "court_plant", interactText = "茂密盆栽形成视线死角，有人曾压低声音打电话。" },
                 },
                 exits = {
-                    { id = "to_lobby", label = "回到大堂", targetScene = "hotel_lobby", x = 0.04, y = 0.30, w = 0.14, h = 0.45 },
+                    { id = "to_lobby", label = "回到大堂", targetScene = "hotel_lobby", x = 0.08, y = 0.62, w = 0.14, h = 0.22 },
                 },
             },
             {
@@ -869,7 +869,7 @@ M.SceneObjects = {
                 charPos = { x = 0.50, y = 0.78, scale = 0.58 },
                 left = nil, right = "s2",
                 exits = {
-                    { id = "to_lobby", label = "电梯→大堂", targetScene = "hotel_lobby", x = 0.06, y = 0.30, w = 0.16, h = 0.45 },
+                    { id = "to_lobby", label = "电梯→大堂", targetScene = "hotel_lobby", x = 0.06, y = 0.12, w = 0.16, h = 0.30 },
                 },
             },
             {
@@ -935,7 +935,7 @@ M.SceneObjects = {
                       clueId = "smart_device", interactText = "温控系统显示凌晨3点温度被骤降至16度。" },
                 },
                 exits = {
-                    { id = "to_corridor", label = "离开房间", targetScene = "hotel_corridor", x = 0.05, y = 0.30, w = 0.14, h = 0.45 },
+                    { id = "to_corridor", label = "离开房间", targetScene = "hotel_corridor", x = 0.05, y = 0.60, w = 0.14, h = 0.34 },
                 },
             },
             {
