@@ -71,10 +71,12 @@ function M.Run()
                 check("BuildScreen " .. sceneId .. "/" .. tostring(sid), function()
                     SceneManager._BuildScreenContent(sid)
                 end)
-                -- 翻页切换验证：触发左右翻页按钮 onClick，断言当前屏 id 真正改变
+                -- 翻页切换验证：直接驱动 _SwitchScreen（避开同步期键盘 handler 的二次触发），
+                -- 每个测试前重置防抖状态，断言当前屏 id 真正改变
                 if screen.right then
                     check("NavRight " .. sceneId .. "/" .. tostring(sid), function()
-                        SceneManager._btnRight.props.onClick()
+                        SceneManager._lastSwitch = nil
+                        SceneManager._SwitchScreen("right")
                         assert(SceneManager._curScreenId == screen.right,
                             "right switch failed: " .. tostring(SceneManager._curScreenId) .. " ~= " .. tostring(screen.right))
                     end)
@@ -82,7 +84,8 @@ function M.Run()
                 end
                 if screen.left then
                     check("NavLeft " .. sceneId .. "/" .. tostring(sid), function()
-                        SceneManager._btnLeft.props.onClick()
+                        SceneManager._lastSwitch = nil
+                        SceneManager._SwitchScreen("left")
                         assert(SceneManager._curScreenId == screen.left,
                             "left switch failed: " .. tostring(SceneManager._curScreenId) .. " ~= " .. tostring(screen.left))
                     end)

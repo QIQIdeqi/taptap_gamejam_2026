@@ -389,8 +389,7 @@ function M:_SwitchScreen(dir)
         return
     end
     M._lastSwitch = { seq = seq, dir = dir }
-    print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s fc=%s", tostring(dir), tostring(M._curScreenId), tostring(M._frameCount)))
-    print("[SM DEBUG] TRACE: " .. tostring(debug and debug.traceback and debug.traceback() or "no debug"))
+    print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s", tostring(dir), tostring(M._curScreenId)))
     local screen = M:_GetScreen(M._curScreenId)
     if not screen then return end
     local targetId = (dir == "left") and screen.left or screen.right
