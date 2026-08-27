@@ -599,38 +599,38 @@ M.Dialogues = {
             { speaker = "LiZhi", text = "（黄昏事务所的灯，今晚可以早点熄了。）" },
             },
 
-            -- ===== 序章办公室：普通物件调查独白（点击弹对话，替代横幅） =====
-            of_bookshelf = {
-            id = "of_bookshelf",
-            lines = {
-                { speaker = "LiZhi", text = "书柜里几乎被一位名叫'秋白'的作者填满。封皮起了毛边，显然被反复翻阅过。" },
-                { speaker = "LiZhi", text = "'秋白'……这名字有点耳熟。陈姐生前啃这些推理小说，对密室和不在场证明的套路，怕是比我还熟。" },
-            },
-            },
-            of_desk = {
-            id = "of_desk",
-            lines = {
-                { speaker = "LiZhi", text = "桌上散落着未结案的委托档案，还有几个空泡面杯——陈姐最近接的活儿不少。" },
-                { speaker = "LiZhi", text = "这些案子大多不了了之。她总说，有些真相，当事人并不想知道。" },
-            },
-            },
-            of_bed = {
-            id = "of_bed",
-            lines = {
-                { speaker = "LiZhi", text = "这张地铺很小，这段时间都由雯音睡在这里。" },
-                { speaker = "LiZhi", text = "我这个当舅舅的，连张像样的床都给不了她……等这案子了了，带她离开这个破地方。" },
-            },
-            },
-            -- 误导物件：台灯（非线索，触发"错误方向"对话，引导玩家去正确线索——衣柜）
-            of_lamp_mislead = {
-            id = "of_lamp_mislead",
-            lines = {
-                { speaker = "LiZhi", text = "暖黄的灯光，是这间事务所唯一的温度。" },
-                { speaker = "LiZhi", text = "（戳了戳灯罩）可惜这玩意儿和案子八竿子打不着。" },
-                { speaker = "LiZhi", text = "线索不会藏在'舒服'的地方。我得去翻翻别处——比如那个衣柜。" },
-            },
-            },
-            },
+    },
+    -- 序章办公室物件对话（CSV 化前的兜底副本；运行时若 assets/data/dialogues.csv 存在则被其覆盖）
+    of_bookshelf = {
+        id = "of_bookshelf",
+        lines = {
+            { speaker = "LiZhi", text = "书柜里几乎被一位名叫'秋白'的作者填满。封皮起了毛边，显然被反复翻阅过。" },
+            { speaker = "LiZhi", text = "'秋白'……这名字有点耳熟。陈姐生前啃这些推理小说，对密室和不在场证明的套路，怕是比我还熟。" },
+        },
+    },
+    of_desk = {
+        id = "of_desk",
+        lines = {
+            { speaker = "LiZhi", text = "桌上散落着未结案的委托档案，还有几个空泡面杯——陈姐最近接的活儿不少。" },
+            { speaker = "LiZhi", text = "这些案子大多不了了之。她总说，有些真相，当事人并不想知道。" },
+        },
+    },
+    of_bed = {
+        id = "of_bed",
+        lines = {
+            { speaker = "LiZhi", text = "这张地铺很小，这段时间都由雯音睡在这里。" },
+            { speaker = "LiZhi", text = "我这个当舅舅的，连张像样的床都给不了她……等这案子了了，带她离开这个破地方。" },
+        },
+    },
+    -- 误导物件：台灯（非线索，触发"错误方向"对话，引导玩家去正确线索——衣柜）
+    of_lamp_mislead = {
+        id = "of_lamp_mislead",
+        lines = {
+            { speaker = "LiZhi", text = "暖黄的灯光，是这间事务所唯一的温度。" },
+            { speaker = "LiZhi", text = "（戳了戳灯罩）可惜这玩意儿和案子八竿子打不着。" },
+            { speaker = "LiZhi", text = "线索不会藏在'舒服'的地方。我得去翻翻别处——比如那个衣柜。" },
+        },
+    },
 }
 
 -- ============================================================================
@@ -1056,6 +1056,25 @@ function M.ResetGameState()
         starredClues = {},
         flags = {},
     }
+end
+
+-- ============================================================================
+-- CSV 文本覆盖（策划可编辑 assets/data/dialogues.csv / clues.csv）
+-- 优先读取 CSV；找不到时保留上方内嵌兜底数据，游戏不会崩。
+-- 对话按 dialogue_id 分组、按 line_no 排序重建为 lines 数组 —— 行数即句数。
+-- ============================================================================
+local ok, CSVLoader = pcall(require, "scripts.CSVLoader")
+if ok and CSVLoader then
+    local csv = CSVLoader.LoadAll()
+    if csv.dialogues then M.Dialogues = csv.dialogues end
+    if csv.clues then M.Clues = csv.clues end
+    if csv.dlgPath then print("[GameData] 对话文本已从 CSV 加载: " .. csv.dlgPath) end
+    if csv.cluePath then print("[GameData] 线索文本已从 CSV 加载: " .. csv.cluePath) end
+    if not csv.dlgPath and not csv.cluePath then
+        print("[GameData] 未找到 CSV（assets/data/*.csv），使用内嵌文本兜底。")
+    end
+else
+    print("[GameData] 未能加载 CSVLoader，使用内嵌文本兜底。")
 end
 
 return M
