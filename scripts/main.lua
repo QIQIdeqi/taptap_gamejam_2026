@@ -4,7 +4,7 @@
 -- ============================================================================
 
 -- 调试开关：设为 true 时 Start() 会跑冒烟测试（污染 GameState，仅开发期用）
-_ENABLE_SMOKE = true
+_ENABLE_SMOKE = false
 
 -- 引擎模块
 local UI = require("urhox-libs.UI")
