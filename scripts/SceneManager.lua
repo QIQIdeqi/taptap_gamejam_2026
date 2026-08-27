@@ -48,6 +48,8 @@ M.scrollHint = nil
 M.charNameLabel = nil
 M._tutorial = { screens = false, minimap = false }
 M._switchCD = 0
+M._frameCount = 0
+M._lastSwitch = nil
 -- screens 模式状态
 M._screens = nil
 M._curScreenId = nil
@@ -380,6 +382,14 @@ function M:_BuildScreenContent(screenId)
 end
 
 function M:_SwitchScreen(dir)
+    -- 防抖：引擎可能一次点击派发两次 onClick，导致一次点击翻两页。
+    -- 忽略「同帧 + 同方向 + 同起点」的重复调用。
+    local seq = M._frameCount or 0
+    local fromId = M._curScreenId
+    if M._lastSwitch and M._lastSwitch.seq == seq and M._lastSwitch.dir == dir and M._lastSwitch.from == fromId then
+        return
+    end
+    M._lastSwitch = { seq = seq, dir = dir, from = fromId }
     print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s", tostring(dir), tostring(M._curScreenId)))
     local screen = M:_GetScreen(M._curScreenId)
     if not screen then return end
@@ -554,6 +564,7 @@ end
 -- 每帧更新
 -- ============================================================
 function M.Update(dt)
+    M._frameCount = (M._frameCount or 0) + 1
     if M._switchCD > 0 then M._switchCD = M._switchCD - (dt or 0) end
 
     -- 处理横幅自动消失定时器
