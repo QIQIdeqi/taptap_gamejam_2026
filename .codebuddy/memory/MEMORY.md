@@ -39,4 +39,4 @@
 - ✅ 已完成：场景黑屏修复、跳过按钮、场景UI反馈(ShowClueBanner)、物件点击→角色独白+误导对话、线索收录HUD提示框(5.2.5)、证言提取Clue_Extract、笔记特写图放大(5.2.7)、常驻笔记红点(5.2.6)、存档缩略图+删除按钮(5.1)、ai-image-prompts.md 线索特写图+次要角色立绘章节
 - ✅ 已完成（2026-08-27 晚）：次要角色立绘(char_receptionist/sister/technician.png, ui_news_anchor.png)与线索特写图(clue_inhaler/body/signbook/fountain.png)已生成并入 assets/image；线索特写图已替换 GameData 占位引用；DialogueSystem.portraitMap 接入 4 位次要角色立绘(LiZhiSister/FrontDesk/PanganEmployee/NewsAnchor)（注意：code-explorer 子代理为只读型，无法调用 maker 生成图片/写文件，故由主 agent 直接调度 maker 批量生成，等价于并行 worker 产出）
 - ✅ 已核查实现：命案发现剧情触发(enter_crime→crime_found→张承宇登场)、第二阶段推理/结案(deduce→crime_deduction→ShowSuspectChoice→crime_ending_true)、开场动画(Openings prologue/chapter1→对应分镜对话) 流程与对话 id 均已齐备
-- ⬜ 待做：SceneManager 物件坐标微调（需运行调参，非阻塞）
+- ✅ 已完成（2026-08-27 晚）：SceneManager 物件坐标静态优化——4个首屏左侧exit(lobby/corridor/courtyard/crime)避开翻页按钮与调查物件，courtyard plant上移；HUD(标题/翻页/小地图/hover名)加zIndex=2000防御。待办已清零，后续仅剩运行期观感微调。

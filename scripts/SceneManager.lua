@@ -83,8 +83,10 @@ function M.EnterScene(sceneId, onExit)
     local root = Panel(nil, {
         left = 0, top = 0, width = "100%", height = "100%",
         overflow = "hidden", backgroundColor = "rgba(0,0,0,255)",
-        -- 消费所有 pan 事件，禁用引擎默认的拖拽/平移行为
+        -- 全量消费 pan 事件，彻底禁用引擎默认的拖拽/平移/滚动行为
         onPanStart = function() return true end,
+        onPan = function() return true end,
+        onPanEnd = function() return true end,
     })
     M.ui.root = root
 
@@ -203,6 +205,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(255,255,255,0)",
         borderWidth = 2, borderColor = "rgba(255,255,255,55)",
+        zIndex = 100,
     })
     btn.props.onPointerEnter = function(event, widget)
         btn:SetStyle({ borderColor = "rgba(255,220,120,255)", borderWidth = 3, backgroundColor = "rgba(255,220,120,28)" })
@@ -231,6 +234,7 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(120,200,255,18)",
         borderWidth = 2, borderColor = "rgba(120,200,255,55)",
+        zIndex = 100,
     })
     btn.props.onPointerEnter = function(event, widget)
         btn:SetStyle({ borderColor = "rgba(120,200,255,255)", borderWidth = 3, backgroundColor = "rgba(120,200,255,45)" })
