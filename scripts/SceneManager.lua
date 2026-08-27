@@ -586,8 +586,10 @@ function M.Update(dt)
         -- 模式 B：方向键翻页（带冷却）
         if M._switchCD <= 0 and input then
             if input:GetKeyPress(KEY_LEFT) then
+                print("[SM DEBUG] [KBD] SwitchScreen left")
                 M:_SwitchScreen("left"); M._switchCD = 0.25
             elseif input:GetKeyPress(KEY_RIGHT) then
+                print("[SM DEBUG] [KBD] SwitchScreen right")
                 M:_SwitchScreen("right"); M._switchCD = 0.25
             end
         end
