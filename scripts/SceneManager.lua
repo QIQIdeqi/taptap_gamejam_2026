@@ -114,9 +114,12 @@ function M.EnterScene(sceneId, onExit)
         zIndex = 2000,
     })
     M.hoverNameLabel = Label(root, {
-        left = 0, top = sh - 40, width = sw, height = 28,
+        left = 0, top = sh - 48, width = sw, height = 32,
         text = "", fontSize = 16, fontColor = "rgba(255,255,255,240)", textAlign = "center",
         zIndex = 2000,
+        backgroundColor = "rgba(0,0,0,160)",
+        borderRadius = 4,
+        padding = { 4, 12, 4, 12 },
     })
     M.hoverNameLabel:SetStyle({ visible = false })
 
@@ -182,8 +185,9 @@ function M:_EnterParallax(sceneData, root, sw, sh)
 
     -- 滚动提示
     M.scrollHint = Label(root, {
-        left = 0, top = sh - 40, width = sw, height = 24,
+        left = 0, top = sh - 48, width = sw, height = 24,
         text = "◀ ← 移动视角 → ▶", fontSize = 14, fontColor = "rgba(255,255,255,170)", textAlign = "center",
+        zIndex = 2000,
     })
 
     M.cameraX = 0
@@ -260,7 +264,8 @@ function M:_EnterScreens(sceneData, root, sw, sh)
     -- 整图背景面板（backgroundImage 若不存在则显示 backgroundColor 兜底，绝不黑屏）
     M._screenPanel = Panel(root, {
         left = 0, top = 0, width = sw, height = sh,
-        backgroundImage = "", backgroundColor = "rgba(20,20,30,255)", overflow = "hidden",
+        backgroundImage = "", backgroundColor = "rgba(20,20,30,255)",
+        overflow = "hidden", backgroundPosition = "center center",
     })
     -- 承载当前 screen 的物件/出口/主角
     M._screenLayer = Panel(M._screenPanel, {
