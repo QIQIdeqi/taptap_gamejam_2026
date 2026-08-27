@@ -1095,22 +1095,36 @@ function M.ResetGameState()
 end
 
 -- ============================================================================
--- CSV 文本覆盖（策划可编辑 assets/data/dialogues.csv / clues.csv）
--- 优先读取 CSV；找不到时保留上方内嵌兜底数据，游戏不会崩。
--- 对话按 dialogue_id 分组、按 line_no 排序重建为 lines 数组 —— 行数即句数。
 -- ============================================================================
-local ok, CSVLoader = pcall(require, "scripts.CSVLoader")
-if ok and CSVLoader then
-    local csv = CSVLoader.LoadAll()
-    if csv.dialogues then M.Dialogues = csv.dialogues end
-    if csv.clues then M.Clues = csv.clues end
-    if csv.dlgPath then print("[GameData] 对话文本已从 CSV 加载: " .. csv.dlgPath) end
-    if csv.cluePath then print("[GameData] 线索文本已从 CSV 加载: " .. csv.cluePath) end
-    if not csv.dlgPath and not csv.cluePath then
-        print("[GameData] 未找到 CSV（assets/data/*.csv），使用内嵌文本兜底。")
-    end
+-- CSV 文本覆盖（策划可编辑 assets/data/dialogues.csv / clues.csv）
+-- 运行时优先加载由 CSV 自动生成的 Lua 模块（scripts/data_*.lua，必被 Maker 打包），
+-- 其次尝试直接读取 CSV 文件（兼容未来 Maker 支持 assets/data/*.csv），
+-- 最后保留上方内嵌兜底数据，游戏不会崩。
+-- ⚠️ 编辑 CSV 后必须重新生成 Lua 模块：node tools/csv_to_lua.js
+-- ============================================================================
+local luaDlgOk, dlgMod = pcall(require, "scripts.data_dialogues")
+local luaClueOk, clueMod = pcall(require, "scripts.data_clues")
+if luaDlgOk and dlgMod then M.Dialogues = dlgMod end
+if luaClueOk and clueMod then M.Clues = clueMod end
+if (luaDlgOk and dlgMod) or (luaClueOk and clueMod) then
+    local parts = {}
+    if luaDlgOk and dlgMod then parts[#parts + 1] = "对话" end
+    if luaClueOk and clueMod then parts[#parts + 1] = "线索" end
+    print("[GameData] 文本已从 Lua 模块加载（" .. table.concat(parts, "/") .. "），源: assets/data/*.csv")
 else
-    print("[GameData] 未能加载 CSVLoader，使用内嵌文本兜底。")
+    local ok, CSVLoader = pcall(require, "scripts.CSVLoader")
+    if ok and CSVLoader then
+        local csv = CSVLoader.LoadAll()
+        if csv.dialogues then M.Dialogues = csv.dialogues end
+        if csv.clues then M.Clues = csv.clues end
+        if csv.dlgPath then print("[GameData] 对话文本已从 CSV 加载: " .. csv.dlgPath) end
+        if csv.cluePath then print("[GameData] 线索文本已从 CSV 加载: " .. csv.cluePath) end
+        if not csv.dlgPath and not csv.cluePath then
+            print("[GameData] 未找到 CSV（assets/data/*.csv），使用内嵌文本兜底。")
+        end
+    else
+        print("[GameData] 未能加载 CSVLoader，使用内嵌文本兜底。")
+    end
 end
 
 return M
