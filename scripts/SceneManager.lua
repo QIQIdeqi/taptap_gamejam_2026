@@ -529,6 +529,8 @@ function M:ShowClueBanner(name, text)
     local root = UI.GetRoot() or M.ui.root
     if not root then return end
     local sw, sh = M.screenW or 1280, M.screenH or 720
+    print(string.format("[SM DEBUG] ShowClueBanner: root=%s sw=%s sh=%s name=%s",
+        tostring(root), tostring(sw), tostring(sh), tostring(name)))
 
     local banner = Panel(root, {
         left = sw / 2 - 260, top = sh / 2 - 80, width = 520, height = 160,
