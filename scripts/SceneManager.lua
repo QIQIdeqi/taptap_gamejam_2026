@@ -498,6 +498,8 @@ end
 -- 交互逻辑（两模式共用）
 -- ============================================================
 function M:_onItemInteract(item)
+    print(string.format("[SM DEBUG] _onItemInteract: id=%s clueId=%s interactText=%s dialogueId=%s onInteract=%s",
+        tostring(item.id), tostring(item.clueId), tostring(item.interactText), tostring(item.dialogueId), tostring(item.onInteract)))
     if item.clueId then
         local isNew = GameData.CollectClue(item.clueId)
         GameData.SetFlag("clue_" .. item.clueId, true)
@@ -506,6 +508,7 @@ function M:_onItemInteract(item)
         -- 若该线索会触发对话/特殊交互，对话本身即反馈，不再弹冗余的"线索收录"提示框（避免黄框→延迟→对话的割裂感）
         local hasDialogue = item.dialogueId or item.onInteract
         if not hasDialogue and M.onClueCollected then
+            print(string.format("[SM DEBUG] calling onClueCollected: %s isNew=%s", item.clueId, tostring(isNew)))
             M.onClueCollected(item.clueId, name, not isNew)
         end
     end
@@ -516,6 +519,7 @@ function M:_onItemInteract(item)
         local DialogueSystem = require("scripts.DialogueSystem")
         DialogueSystem.Start(item.dialogueId, nil)
     elseif item.interactText then
+        print(string.format("[SM DEBUG] ShowClueBanner: %s", item.name))
         M:ShowClueBanner(item.name, item.interactText)
     end
 end
