@@ -75,6 +75,11 @@ function M.EnterScene(sceneId, onExit)
         print("SceneManager.EnterScene: 未知场景 " .. tostring(sceneId))
         return
     end
+    -- 关键：必须先销毁旧场景 UI。UI:Init() 在重复调用时会被引擎忽略（不清理旧树），
+    -- 若不显式销毁，每次切场景都会在 UI 树上叠加一层完整场景，历史按钮的 onClick 依旧有效，
+    -- 表现为一次点击触发多次跳转/翻页。
+    M.ExitScene()
+
     M.currentSceneId = sceneId
     M.onExit = onExit
     M.ui = { root = nil }
