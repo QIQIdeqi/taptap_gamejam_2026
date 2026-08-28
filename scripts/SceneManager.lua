@@ -474,7 +474,8 @@ function M:_ShowTutorial(root, sw, sh, text, onClose)
     })
     local overlay = Button(root, {
         left = 0, top = 0, width = sw, height = sh,
-        backgroundColor = "rgba(0,0,0,0)", zIndex = 99, borderWidth = 0,
+        backgroundColor = "rgba(0,0,0,0)", zIndex = 5, borderWidth = 0,
+        pointerEvents = "box-none",
     })
     overlay.props.onClick = function()
         overlay:Destroy()
