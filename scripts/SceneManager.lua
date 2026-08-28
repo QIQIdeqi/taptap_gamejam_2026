@@ -210,6 +210,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         backgroundColor = "rgba(255,255,255,0)",
         borderWidth = 2, borderColor = "rgba(255,255,255,55)",
         zIndex = 100,
+        onClick = function() M:_onItemInteract(item) end,
     })
     btn.props.onPointerEnter = function(event, widget)
         btn:SetStyle({ borderColor = "rgba(255,220,120,255)", borderWidth = 3, backgroundColor = "rgba(255,220,120,28)" })
@@ -239,6 +240,7 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
         backgroundColor = "rgba(120,200,255,18)",
         borderWidth = 2, borderColor = "rgba(120,200,255,55)",
         zIndex = 100,
+        onClick = function() if M.onExit then M.onExit(ex.targetScene) end end,
     })
     btn.props.onPointerEnter = function(event, widget)
         btn:SetStyle({ borderColor = "rgba(120,200,255,255)", borderWidth = 3, backgroundColor = "rgba(120,200,255,45)" })
@@ -274,6 +276,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
     -- 承载当前 screen 的物件/出口/主角
     M._screenLayer = Panel(M._screenPanel, {
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+        pointerEvents = "box-none",
     })
 
     -- 翻页按钮（◀ ▶）— 挂到 _screenPanel（与 _screenLayer 同容器，已验证可渲染且命中测试能穿透到其子节点）；
@@ -342,6 +345,7 @@ function M:_BuildScreenContent(screenId)
     if M._screenLayer then M._screenLayer:Destroy() end
     M._screenLayer = Panel(M._screenPanel, {
         left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+        pointerEvents = "box-none",
     })
 
     -- 主角（默认隐藏；2D 横板推理探索模式不显示角色立绘，避免遮挡交互 UI）
