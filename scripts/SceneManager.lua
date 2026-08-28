@@ -396,13 +396,13 @@ function M:_BuildScreenContent(screenId)
 end
 
 function M:_SwitchScreen(dir)
-    -- 防抖：一次点击可能被派发两次 _SwitchScreen（按钮 onClick 与键盘 handler 同帧触发，或引擎重复派发 onClick）。
-    -- 忽略「同帧 + 同方向」的重复调用，避免一次点击翻两页。
-    local seq = M._frameCount or 0
-    if M._lastSwitch and M._lastSwitch.seq == seq and M._lastSwitch.dir == dir then
+    -- 防抖：引擎会以约 170ms 周期反复派发 onClick（触发跨越多帧，帧级防抖拦不住），
+    -- 故改用时间防抖：同方向 250ms 内只响应一次，避免一次点击连翻多屏。
+    local now = os.clock()
+    if M._lastSwitch and M._lastSwitch.dir == dir and (now - M._lastSwitch.t) < 0.25 then
         return
     end
-    M._lastSwitch = { seq = seq, dir = dir }
+    M._lastSwitch = { t = now, dir = dir }
     print(string.format("[SM DEBUG] _SwitchScreen dir=%s cur=%s", tostring(dir), tostring(M._curScreenId)))
     local screen = M:_GetScreen(M._curScreenId)
     if not screen then return end
@@ -503,12 +503,13 @@ end
 -- 交互逻辑（两模式共用）
 -- ============================================================
 function M:_onItemInteract(item)
-    -- 引擎会把同一次点击重复派发 onClick，故加「同帧 + 同物件」防抖，避免一次点击重复弹横幅/重复收录
-    local frame = M._frameCount or 0
-    if frame == M._itemLastFrame and item.id == M._itemLastId then
+    -- 引擎会以约 170ms 周期反复派发 onClick，帧级防抖拦不住（触发跨越多帧），
+    -- 故改用时间防抖：同一物件 600ms 内只响应一次，避免重复弹横幅/重复收录
+    local now = os.clock()
+    if item.id == M._itemLastId and (now - (M._itemLastTime or 0)) < 0.6 then
         return
     end
-    M._itemLastFrame, M._itemLastId = frame, item.id
+    M._itemLastId, M._itemLastTime = item.id, now
     if item.clueId then
         local isNew = GameData.CollectClue(item.clueId)
         GameData.SetFlag("clue_" .. item.clueId, true)
