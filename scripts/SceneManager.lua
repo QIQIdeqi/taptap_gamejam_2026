@@ -498,8 +498,12 @@ end
 -- 交互逻辑（两模式共用）
 -- ============================================================
 function M:_onItemInteract(item)
-    print(string.format("[SM DEBUG] _onItemInteract: id=%s clueId=%s interactText=%s dialogueId=%s onInteract=%s",
-        tostring(item.id), tostring(item.clueId), tostring(item.interactText), tostring(item.dialogueId), tostring(item.onInteract)))
+    -- 引擎会把同一次点击重复派发 onClick，故加「同帧 + 同物件」防抖，避免一次点击重复弹横幅/重复收录
+    local frame = M._frameCount or 0
+    if frame == M._itemLastFrame and item.id == M._itemLastId then
+        return
+    end
+    M._itemLastFrame, M._itemLastId = frame, item.id
     if item.clueId then
         local isNew = GameData.CollectClue(item.clueId)
         GameData.SetFlag("clue_" .. item.clueId, true)
@@ -529,6 +533,12 @@ function M:ShowClueBanner(name, text)
     local root = UI.GetRoot() or M.ui.root
     if not root then return end
 
+    -- 若已有横幅在显示，先销毁旧的，避免多次点击后横幅叠加
+    if M._activeBanner then
+        pcall(function() M._activeBanner:Destroy() end)
+        M._activeBanner = nil
+    end
+
     local banner = UI.Panel({
         position = "absolute",
         left = "calc(50% - 260px)", top = "calc(50% - 80px)", width = 520, height = 160,
@@ -546,6 +556,7 @@ function M:ShowClueBanner(name, text)
         text = text or "", fontSize = 17, fontColor = { 255, 245, 225, 255 }, textAlign = "center",
     }))
     root:AddChild(banner)
+    M._activeBanner = banner
 
     -- 3 秒后自动消失 + 淡出
     local ttl = 3.0
@@ -554,6 +565,7 @@ function M:ShowClueBanner(name, text)
         ttl = ttl - (1 / 60)
         if ttl <= 0 or not banner or not banner.props then
             if banner and banner.Destroy then banner:Destroy() end
+            if M._activeBanner == banner then M._activeBanner = nil end
             return
         end
         if ttl < 0.6 then

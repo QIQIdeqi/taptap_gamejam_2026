@@ -98,7 +98,14 @@ function Start()
         GameData.GameState.currentScene = sceneId
     end
     -- 统一场景出口回调：点击 exit 按钮时切换到目标场景
+    -- 引擎会把同一次点击重复派发 onClick，故加「同帧 + 同目标」防抖，避免一次点击反复 EnterScene
+    local _exitLastFrame, _exitLastTarget = -1, nil
     sceneExitCallback = function(targetScene)
+        local frame = SceneManager._frameCount or 0
+        if frame == _exitLastFrame and targetScene == _exitLastTarget then
+            return
+        end
+        _exitLastFrame, _exitLastTarget = frame, targetScene
         GameData.GameState.currentScene = targetScene
         SceneManager.EnterScene(targetScene, sceneExitCallback)
     end
