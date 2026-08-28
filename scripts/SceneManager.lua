@@ -269,6 +269,7 @@ function M:_EnterScreens(sceneData, root, sw, sh)
         left = 0, top = 0, width = sw, height = sh,
         backgroundImage = "", backgroundColor = "rgba(20,20,30,255)",
         overflow = "hidden", backgroundPosition = "center center",
+        pointerEvents = "box-none",
     })
     -- 承载当前 screen 的物件/出口/主角
     M._screenLayer = Panel(M._screenPanel, {

@@ -767,11 +767,11 @@ M.SceneObjects = {
                 charPos = { x = 0.62, y = 0.78, scale = 0.60 },
                 left = nil, right = "s2",
                 items = {
-                    { id = "umbrella", name = "雨伞架", x = 0.10, y = 0.45, w = 0.10, h = 0.40,
+                    { id = "umbrella", name = "雨伞架", x = 0.02, y = 0.50, w = 0.12, h = 0.35,
                       interactText = "门前雨伞架里插着几把长伞。" },
                 },
                 exits = {
-                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.04, y = 0.10, w = 0.14, h = 0.30 },
+                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.01, y = 0.05, w = 0.13, h = 0.28 },
                 },
             },
             {
