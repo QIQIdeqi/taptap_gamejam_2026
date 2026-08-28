@@ -528,23 +528,24 @@ function M:ShowClueBanner(name, text)
     -- 挂到绝对根，确保永远在 UI 最上层（不受 scene root 的 overflow 裁剪）
     local root = UI.GetRoot() or M.ui.root
     if not root then return end
-    local sw, sh = M.screenW or 1280, M.screenH or 720
-    print(string.format("[SM DEBUG] ShowClueBanner: root=%s sw=%s sh=%s name=%s",
-        tostring(root), tostring(sw), tostring(sh), tostring(name)))
 
-    local banner = Panel(root, {
-        left = sw / 2 - 260, top = sh / 2 - 80, width = 520, height = 160,
-        backgroundColor = "rgba(20,16,8,245)", borderRadius = 14,
-        borderWidth = 3, borderColor = "rgba(255,200,80,255)", zIndex = 99999,
+    local banner = UI.Panel({
+        position = "absolute",
+        left = "calc(50% - 260px)", top = "calc(50% - 80px)", width = 520, height = 160,
+        backgroundColor = { 20, 16, 8, 245 }, borderRadius = 14,
+        borderWidth = 3, borderColor = { 255, 200, 80, 255 }, zIndex = 99999,
     })
-    Label(banner, {
+    banner:AddChild(UI.Label({
+        position = "absolute",
         left = 0, top = 22, width = 520, height = 36,
-        text = "【" .. (name or "") .. "】", fontSize = 22, fontColor = "rgba(255,200,80,255)", textAlign = "center",
-    })
-    Label(banner, {
+        text = "【" .. (name or "") .. "】", fontSize = 22, fontColor = { 255, 200, 80, 255 }, textAlign = "center",
+    }))
+    banner:AddChild(UI.Label({
+        position = "absolute",
         left = 24, top = 70, width = 472, height = 64,
-        text = text or "", fontSize = 17, fontColor = "rgba(255,245,225,255)", textAlign = "center",
-    })
+        text = text or "", fontSize = 17, fontColor = { 255, 245, 225, 255 }, textAlign = "center",
+    }))
+    root:AddChild(banner)
 
     -- 3 秒后自动消失 + 淡出
     local ttl = 3.0
