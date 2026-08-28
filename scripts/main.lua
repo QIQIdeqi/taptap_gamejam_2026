@@ -297,7 +297,13 @@ function EnterChapter1()
     -- 第二章开场动画（黑屏时间地点 + 5个分镜对话）
     OpeningSystem.Start("chapter1", function()
         GameData.GameState.currentScene = "hotel_lobby"
-        SceneManager.EnterScene("hotel_lobby", nil)
+        SceneManager.EnterScene("hotel_lobby", function(targetScene)
+            GameData.GameState.currentScene = targetScene
+            SceneManager.EnterScene(targetScene, function(nextScene)
+                GameData.GameState.currentScene = nextScene
+                SceneManager.EnterScene(nextScene, nil)
+            end)
+        end)
         DialogueSystem.Start("chapter1_free_explore", nil)
     end)
 end
@@ -326,7 +332,13 @@ function LoadGame(slotId)
             sceneId = "hotel_lobby"
         end
 
-        SceneManager.EnterScene(sceneId, nil)
+        SceneManager.EnterScene(sceneId, function(targetScene)
+            GameData.GameState.currentScene = targetScene
+            SceneManager.EnterScene(targetScene, function(nextScene)
+                GameData.GameState.currentScene = nextScene
+                SceneManager.EnterScene(nextScene, nil)
+            end)
+        end)
         ResumeGame()
     end
 end

@@ -771,7 +771,7 @@ M.SceneObjects = {
                       interactText = "门前雨伞架里插着几把长伞。" },
                 },
                 exits = {
-                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.01, y = 0.05, w = 0.13, h = 0.28 },
+                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.02, y = 0.12, w = 0.14, h = 0.35 },
                 },
             },
             {
