@@ -206,11 +206,11 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
     local btn = Button(parent, {
+        position = "absolute",
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(255,255,255,0)",
         borderWidth = 2, borderColor = "rgba(255,255,255,55)",
         zIndex = 100,
-        onClick = function() M:_onItemInteract(item) end,
     })
     btn.props.onPointerEnter = function(event, widget)
         btn:SetStyle({ borderColor = "rgba(255,220,120,255)", borderWidth = 3, backgroundColor = "rgba(255,220,120,28)" })
@@ -223,7 +223,10 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         btn:SetStyle({ borderColor = "rgba(255,255,255,55)", borderWidth = 2, backgroundColor = "rgba(255,255,255,0)" })
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end
-    btn.props.onClick = function() M:_onItemInteract(item) end
+    btn.props.onClick = function()
+        print(string.format("[SM DEBUG] item clicked: %s", tostring(item.id)))
+        M:_onItemInteract(item)
+    end
     return btn
 end
 
@@ -236,11 +239,11 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
         left, top, w, h = ex.x, ex.y * sh, ex.w, ex.h * sh
     end
     local btn = Button(parent, {
+        position = "absolute",
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(120,200,255,18)",
         borderWidth = 2, borderColor = "rgba(120,200,255,55)",
         zIndex = 100,
-        onClick = function() if M.onExit then M.onExit(ex.targetScene) end end,
     })
     btn.props.onPointerEnter = function(event, widget)
         btn:SetStyle({ borderColor = "rgba(120,200,255,255)", borderWidth = 3, backgroundColor = "rgba(120,200,255,45)" })
@@ -254,6 +257,7 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end
     btn.props.onClick = function()
+        print(string.format("[SM DEBUG] exit clicked: %s -> %s", tostring(ex.id), tostring(ex.targetScene)))
         if M.onExit then M.onExit(ex.targetScene) end
     end
     return btn
