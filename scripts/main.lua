@@ -38,6 +38,9 @@ local clueToasts = {}
 local tabHintWidget = nil
 local tabHintRedDot = nil
 
+-- 统一场景出口回调（自引用，需在 Start() 中赋值）
+local sceneExitCallback = nil
+
 -- ============================================================================
 -- 初始化
 -- ============================================================================
@@ -95,9 +98,9 @@ function Start()
         GameData.GameState.currentScene = sceneId
     end
     -- 统一场景出口回调：点击 exit 按钮时切换到目标场景
-    M._sceneExitCallback = function(targetScene)
+    sceneExitCallback = function(targetScene)
         GameData.GameState.currentScene = targetScene
-        SceneManager.EnterScene(targetScene, M._sceneExitCallback)
+        SceneManager.EnterScene(targetScene, sceneExitCallback)
     end
     SceneManager.onClueCollected = function(clueId, name, already)
         ShowClueCollectedToast(clueId, name, already)
@@ -302,7 +305,7 @@ function EnterChapter1()
     -- 第二章开场动画（黑屏时间地点 + 5个分镜对话）
     OpeningSystem.Start("chapter1", function()
         GameData.GameState.currentScene = "hotel_lobby"
-        SceneManager.EnterScene("hotel_lobby", M._sceneExitCallback)
+        SceneManager.EnterScene("hotel_lobby", sceneExitCallback)
         DialogueSystem.Start("chapter1_free_explore", nil)
     end)
 end
@@ -331,7 +334,7 @@ function LoadGame(slotId)
             sceneId = "hotel_lobby"
         end
 
-        SceneManager.EnterScene(sceneId, M._sceneExitCallback)
+        SceneManager.EnterScene(sceneId, sceneExitCallback)
         ResumeGame()
     end
 end
