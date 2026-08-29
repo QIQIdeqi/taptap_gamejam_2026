@@ -212,6 +212,14 @@ local function _destroyUI()
     M._panel, M._overlay = nil, nil
 end
 
+-- 重要：此引擎的 UI.X(parent, props) 不会把控件挂到 parent 上
+-- （parent 被当作 props 吃掉）。必须「单参数创建 + 手动 AddChild」，
+-- 否则控件游离在渲染树外，表现为面板/按钮完全不可见。参考 SceneManager 的 _mk 封装。
+local function _attach(parent, widget)
+    if parent and widget and parent.AddChild then parent:AddChild(widget) end
+    return widget
+end
+
 function M._ShowChoices(title, subtitle, options, onClose)
     _destroyUI()
     local root = UI.GetRoot()
@@ -219,41 +227,46 @@ function M._ShowChoices(title, subtitle, options, onClose)
     local sw, sh = graphics:GetWidth(), graphics:GetHeight()
 
     -- 全屏遮罩，拦截场景点击
-    M._overlay = UI.Button(root, {
+    M._overlay = _attach(root, UI.Button({
+        position = "absolute",
         left = 0, top = 0, width = sw, height = sh,
         backgroundColor = { 0, 0, 0, 150 }, zIndex = 50000, borderWidth = 0,
-    })
+    }))
     M._overlay.props.onClick = function() end
 
     local n = #options
     local panelH = 130 + n * 62
     local panelW = 620
-    M._panel = UI.Panel(root, {
+    M._panel = _attach(root, UI.Panel({
+        position = "absolute",
         left = sw / 2 - panelW / 2, top = sh / 2 - panelH / 2, width = panelW, height = panelH,
         backgroundColor = { 20, 22, 38, 245 }, borderRadius = 14,
         borderWidth = 2, borderColor = { 180, 160, 120, 200 }, zIndex = 50001,
-    })
+    }))
 
-    UI.Label(M._panel, {
+    _attach(M._panel, UI.Label({
+        position = "absolute",
         left = 0, top = 18, width = panelW, height = 32,
         text = title or "", fontSize = 22, fontColor = { 255, 240, 200, 255 }, textAlign = "center",
-    })
+    }))
     if subtitle and subtitle ~= "" then
-        UI.Label(M._panel, {
+        _attach(M._panel, UI.Label({
+            position = "absolute",
             left = 30, top = 56, width = panelW - 60, height = 26,
             text = subtitle, fontSize = 15, fontColor = { 255, 220, 120, 255 }, textAlign = "center",
-        })
+        }))
     end
 
     for i, opt in ipairs(options) do
         local enabled = (opt.enabled ~= false)
-        local b = UI.Button(M._panel, {
+        local b = _attach(M._panel, UI.Button({
+            position = "absolute",
             left = 40, top = 92 + (i - 1) * 62, width = panelW - 80, height = 52,
             text = opt.text, fontSize = 16,
             fontColor = enabled and { 255, 255, 255, 240 } or { 130, 130, 140, 220 },
             backgroundColor = enabled and { 60, 82, 132, 220 } or { 45, 48, 60, 200 },
             borderRadius = 8, borderWidth = 1, borderColor = { 255, 255, 255, 40 },
-        })
+        }))
         b.props.onClick = function()
             if not enabled then return end
             if not _debounce() then return end
@@ -262,6 +275,7 @@ function M._ShowChoices(title, subtitle, options, onClose)
         end
     end
 
+    print(string.format("[INT DEBUG] _ShowChoices shown: title=%s opts=%d", tostring(title), n))
     if onClose then M._onClose = onClose end
 end
 

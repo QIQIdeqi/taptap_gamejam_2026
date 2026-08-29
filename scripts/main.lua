@@ -250,28 +250,39 @@ local function StartC4Deduction()
 end
 
 -- 结案推理：播放推理独白后弹出嫌疑人选择
+-- 引擎的 UI.X(parent, props) 不会挂载控件（parent 被当作 props 吃掉），
+-- 必须单参数创建后手动 AddChild，否则控件游离在渲染树外不可见。
+local function _attach(parent, widget)
+    if parent and widget and parent.AddChild then parent:AddChild(widget) end
+    return widget
+end
+
 local function ShowSuspectChoice()
     local root = UI.GetRoot()
     local sw, sh = graphics:GetWidth(), graphics:GetHeight()
     -- 半透明覆盖层（拦截点击，防止误触场景）
-    local overlay = UI.Button(root, {
+    local overlay = _attach(root, UI.Button({
+        position = "absolute",
         left = 0, top = 0, width = sw, height = sh,
         backgroundColor = "rgba(0,0,0,150)", zIndex = 50000, borderWidth = 0,
-    })
+    }))
     -- 选择面板
-    local panel = UI.Panel(root, {
+    local panel = _attach(root, UI.Panel({
+        position = "absolute",
         left = sw / 2 - 230, top = sh / 2 - 170, width = 460, height = 340,
         backgroundColor = "rgba(20,22,38,240)", borderRadius = 14,
         borderWidth = 2, borderColor = "rgba(255,255,255,60)", zIndex = 50001,
-    })
-    UI.Label(panel, {
+    }))
+    _attach(panel, UI.Label({
+        position = "absolute",
         left = 0, top = 20, width = 460, height = 36,
         text = "指认真凶", fontSize = 24, color = "rgba(255,255,255,245)", textAlign = "center",
-    })
-    local hint = UI.Label(panel, {
+    }))
+    local hint = _attach(panel, UI.Label({
+        position = "absolute",
         left = 30, top = 64, width = 400, height = 28,
         text = "根据线索，谁是凶手？", fontSize = 16, color = "rgba(255,220,120,255)", textAlign = "center",
-    })
+    }))
     local suspects = {
         { key = "ZhaoHeng",  label = "赵恒（副总）" },
         { key = "ZhouWen",   label = "周文（技术骨干）" },
@@ -279,12 +290,13 @@ local function ShowSuspectChoice()
         { key = "external",  label = "外部人员" },
     }
     for i, s in ipairs(suspects) do
-        local b = UI.Button(panel, {
+        local b = _attach(panel, UI.Button({
+            position = "absolute",
             left = 50, top = 104 + (i - 1) * 52, width = 360, height = 44,
             text = s.label, fontSize = 18, color = "rgba(255,255,255,235)",
             backgroundColor = "rgba(60,82,132,210)", borderRadius = 8,
             borderWidth = 1, borderColor = "rgba(255,255,255,40)",
-        })
+        }))
         b.props.onClick = function()
             if s.key == "ZhouWen" then
                 panel:Destroy(); overlay:Destroy()
