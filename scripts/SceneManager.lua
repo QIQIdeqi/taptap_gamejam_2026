@@ -97,7 +97,12 @@ function M.EnterScene(sceneId, onExit)
     -- 若不挂载，整场景游离不渲染，表现为纯黑屏（main.lua 总根背景为纯黑）。
     -- 注意 Panel(nil,...) 不会自动成为根，必须显式 AddChild（OpenScene/Menu 同此约定）。
     local uiRoot = UI.GetRoot()
-    if uiRoot then uiRoot:AddChild(root) end
+    print(string.format("[SM DEBUG] EnterScene: scene=%s uiRoot=%s", tostring(sceneId), tostring(uiRoot)))
+    if uiRoot then
+        uiRoot:AddChild(root)
+    else
+        print("[SM DEBUG] EnterScene: ERROR uiRoot 为 nil，场景未挂载 -> 必然黑屏")
+    end
 
     -- 预加载本场景所有屏的背景图：图片是远程资源、按需异步下载，
     -- 若等到翻页时才加载会先显示 bgColor 兜底色块、过一会儿才出图。
@@ -360,7 +365,14 @@ end
 
 function M:_BuildScreenContent(screenId)
     local screen = M:_GetScreen(screenId)
-    if not screen then return end
+    print(string.format("[SM DEBUG] _BuildScreenContent: id=%s found=%s",
+        tostring(screenId), tostring(screen ~= nil)))
+    if not screen then
+        print("[SM DEBUG] _BuildScreenContent: screen NOT FOUND -> 保持兜底近黑色背景（黑屏）")
+        return
+    end
+    print(string.format("[SM DEBUG] _BuildScreenContent: image=%s bgColor=%s",
+        tostring(screen.image), tostring(screen.bgColor and screen.bgColor[1])))
     M._curScreenId = screenId
     local sw, sh = M.screenW, M.screenH
 
@@ -686,6 +698,21 @@ function M.ExitScene()
         M._btnRight:Destroy()
         M._btnRight = nil
     end
+    -- 线索横幅挂在绝对根上、靠 _bannerTimers 中的定时器销毁。
+    -- 若这里只清空列表而不销毁，正在显示的横幅会变成永不回收的孤儿 UI 残留在屏幕上。
+    if M._bannerTimers then
+        for _, t in ipairs(M._bannerTimers) do
+            if t and t.banner and t.banner.Destroy then
+                pcall(function() t.banner:Destroy() end)
+            end
+        end
+    end
+    if M._activeBanner and M._activeBanner.Destroy then
+        pcall(function() M._activeBanner:Destroy() end)
+    end
+    M._activeBanner = nil
+    M._bannerTimers = nil
+
     if M.ui and M.ui.root then
         M.ui.root:Destroy()
     end
@@ -695,7 +722,6 @@ function M.ExitScene()
     -- 重置防抖状态，避免切场景后残留导致新场景首次点击被误拦截
     M._itemLastId, M._itemLastTime = nil, nil
     M._lastSwitch = nil
-    M._activeBanner = nil
     M.charSprite = nil
     M.titleLabel = nil
     M.scrollHint = nil

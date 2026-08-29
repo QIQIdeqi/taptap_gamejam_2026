@@ -338,16 +338,25 @@ function M.StartInterrogation(npcId, onFinish)
     local GameData = require("scripts.GameData")
     local DialogueSystem = require("scripts.DialogueSystem")
     local cfg = M.Interrogations[npcId]
-    if not cfg then if onFinish then onFinish() end return end
+    print(string.format("[INT DEBUG] StartInterrogation: npc=%s cfg=%s",
+        tostring(npcId), tostring(cfg ~= nil)))
+    if not cfg then
+        print("[INT DEBUG] 无此询问配置，交互被忽略")
+        if onFinish then onFinish() end
+        return
+    end
 
     M.active = true
     M._curNpc = npcId
     M._onFinish = onFinish
 
     local firstFlag = "ask_" .. npcId .. "_first"
-    if cfg.first and not GameData.GetFlag(firstFlag) then
+    local dlg = (cfg.first and not GameData.GetFlag(firstFlag)) and cfg.first or nil
+    print(string.format("[INT DEBUG] firstDlg=%s topics=%d",
+        tostring(dlg), #cfg.topics))
+    if dlg then
         GameData.SetFlag(firstFlag, true)
-        DialogueSystem.Start(cfg.first, function() M._ShowTopics(cfg) end)
+        DialogueSystem.Start(dlg, function() M._ShowTopics(cfg) end)
     else
         M._ShowTopics(cfg)
     end
