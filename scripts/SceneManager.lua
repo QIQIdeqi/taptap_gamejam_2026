@@ -692,6 +692,10 @@ function M.ExitScene()
     M.ui = { root = nil }
     M.bgFixed = {}
     M.layers = {}
+    -- 重置防抖状态，避免切场景后残留导致新场景首次点击被误拦截
+    M._itemLastId, M._itemLastTime = nil, nil
+    M._lastSwitch = nil
+    M._activeBanner = nil
     M.charSprite = nil
     M.titleLabel = nil
     M.scrollHint = nil

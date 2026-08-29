@@ -250,7 +250,9 @@ local function ShowSuspectChoice()
 end
 
 local function StartDeduction()
+    print("[MAIN DEBUG] StartDeduction: calling DialogueSystem.Start crime_deduction")
     DialogueSystem.Start("crime_deduction", function()
+        print("[MAIN DEBUG] crime_deduction finished -> ShowSuspectChoice")
         ShowSuspectChoice()
     end)
 end
