@@ -234,7 +234,10 @@ local function ShowSuspectChoice()
             if s.key == "ZhouWen" then
                 panel:Destroy(); overlay:Destroy()
                 GameData.SetFlag("case_solved", true)
-                DialogueSystem.Start("crime_ending_true", nil)
+                -- 结案：结局对话播完后回到主菜单，否则会停在空场景上黑屏
+                DialogueSystem.Start("crime_ending_true", function()
+                    EnterMainMenu()
+                end)
             else
                 hint:SetText("证据不足，再想想……")
             end
@@ -283,7 +286,10 @@ function HandleSpecialInteract(obj, onComplete)
         end
     elseif obj.onInteract == "deduce" then
         if GameData.GetFlag("case_solved") then
-            DialogueSystem.Start("crime_ending_true", nil)
+            -- 已结案再次推理：重播结局后回到主菜单，避免停在空场景黑屏
+            DialogueSystem.Start("crime_ending_true", function()
+                EnterMainMenu()
+            end)
         elseif not (GameData.GetFlag("clue_smart_device") and GameData.GetFlag("clue_inhaler") and GameData.GetFlag("clue_body_position")) then
             SceneManager:ShowClueBanner("整理线索", "先调查完现场的三处线索，再下结论。")
         else

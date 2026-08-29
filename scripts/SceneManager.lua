@@ -99,6 +99,24 @@ function M.EnterScene(sceneId, onExit)
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(root) end
 
+    -- 预加载本场景所有屏的背景图：图片是远程资源、按需异步下载，
+    -- 若等到翻页时才加载会先显示 bgColor 兜底色块、过一会儿才出图。
+    -- 这里把各屏图片贴到屏幕外的容器中触发提前下载，翻页时即可立刻显示。
+    if sceneData.screens then
+        local preload = Panel(root, {
+            left = -4000, top = 0, width = 1, height = 1,
+            backgroundColor = "rgba(0,0,0,0)", zIndex = 1,
+        })
+        for _, sc in ipairs(sceneData.screens) do
+            if sc.image and sc.image ~= "" then
+                Panel(preload, {
+                    left = 0, top = 0, width = 1, height = 1,
+                    backgroundImage = sc.image, backgroundColor = "rgba(0,0,0,0)",
+                })
+            end
+        end
+    end
+
     -- 屏幕尺寸
     local sw, sh = 1280, 720
     if graphics then
