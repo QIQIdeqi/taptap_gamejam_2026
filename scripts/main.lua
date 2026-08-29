@@ -103,6 +103,11 @@ function Start()
     -- 做防抖：同一目标 600ms 内只响应一次。不可用 os.clock()（CPU 时间，增量远小于真实间隔）。
     local _exitLastTime, _exitLastTarget = 0, nil
     sceneExitCallback = function(targetScene)
+        -- 切场景前必须清理对话层与询问面板：它们挂在 UI 绝对根上，
+        -- ExitScene 只销毁场景层，残留的全屏遮罩会让新场景看起来是黑屏。
+        DialogueSystem.Stop()
+        InterrogationSystem.Close()
+
         -- 搜证阶段（集会询问进行中）封锁现场，禁止离开 2501
         if GameData.GetFlag("c4_in_verify") then
             if SceneManager.ShowClueBanner then
@@ -147,6 +152,7 @@ end
 function EnterMainMenu()
     print("[MAIN DEBUG] EnterMainMenu start; uiRoot=" .. tostring(UI.GetRoot()))
     currentMode = GameMode.MainMenu
+    DialogueSystem.Stop()
     InterrogationSystem.Close()
     SceneManager.ExitScene()
     NoteSystem.Close()
