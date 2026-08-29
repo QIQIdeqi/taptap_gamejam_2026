@@ -396,10 +396,10 @@ function M:_BuildScreenContent(screenId)
 end
 
 function M:_SwitchScreen(dir)
-    -- 防抖：引擎会以约 170ms 周期反复派发 onClick（触发跨越多帧，帧级防抖拦不住），
-    -- 故改用时间防抖：同方向 250ms 内只响应一次，避免一次点击连翻多屏。
+    -- 防抖：引擎会以约 100-170ms 周期反复派发 onClick（场景重建后按钮重新获得焦点）。
+    -- 设 120ms 冷却：刚好拦住引擎连锁（>100ms），但不影响人类连点（>200ms/次）。
     local now = os.clock()
-    if M._lastSwitch and M._lastSwitch.dir == dir and (now - M._lastSwitch.t) < 0.25 then
+    if M._lastSwitch and M._lastSwitch.dir == dir and (now - M._lastSwitch.t) < 0.12 then
         return
     end
     M._lastSwitch = { t = now, dir = dir }
