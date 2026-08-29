@@ -418,18 +418,20 @@ function M:_SwitchScreen(dir)
 end
 
 function M:_RefreshNavButtons(screen)
+    -- 首屏无左邻、末屏无右邻时直接隐藏按钮（而非仅置灰）：
+    -- 半透明按钮仍可点击但点击后无效果，用户会误以为「翻页失效」。
     if M._btnLeft then
         if screen.left then
-            M._btnLeft:SetStyle({ opacity = 1 })
+            M._btnLeft:SetStyle({ visible = true, opacity = 1 })
         else
-            M._btnLeft:SetStyle({ opacity = 0.2 })
+            M._btnLeft:SetStyle({ visible = false })
         end
     end
     if M._btnRight then
         if screen.right then
-            M._btnRight:SetStyle({ opacity = 1 })
+            M._btnRight:SetStyle({ visible = true, opacity = 1 })
         else
-            M._btnRight:SetStyle({ opacity = 0.2 })
+            M._btnRight:SetStyle({ visible = false })
         end
     end
 end
