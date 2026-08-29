@@ -145,6 +145,22 @@ M.Characters = {
         color = { 120, 120, 130, 255 },
         description = "命案现场执勤的市局警察。",
     },
+    Forensic = {
+        id = "Forensic",
+        name = "宋医生",
+        age = nil,
+        role = "市局法医",
+        color = { 170, 200, 190, 255 },
+        description = "市局法医，脾气直爽，看不惯年轻警察过度依赖AI。",
+    },
+    Guard = {
+        id = "Guard",
+        name = "保安",
+        age = nil,
+        role = "庭院入口保安",
+        color = { 140, 150, 160, 255 },
+        description = "酒店庭院入口执勤保安，记性不错。",
+    },
 }
 
 -- ============================================================================
@@ -996,6 +1012,201 @@ M.SceneObjects = {
                       clueId = "body_position", interactText = "严成峰面部朝下倒在地板，身体无明显外伤。" },
                     { id = "deduce", name = "整理线索 · 进行推理", x = 0.70, y = 0.28, w = 0.24, h = 0.18,
                       onInteract = "deduce" },
+                },
+            },
+        },
+    },
+
+    -- ======================================================================
+    -- 第四阶段：调查推理（侦察 → 搜证 → 推理 → 结案）
+    -- 说明：背景图复用既有资源；线索图为本阶段新生成（assets/image/clue_*.png）
+    -- ======================================================================
+
+    -- ===== 2501 房间（案发现场·侦察与搜证主场地）=====
+    c4_2501 = {
+        title = "2501房 · 案发现场",
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "门廊", nx = 0.16, ny = 0.50 },
+                { id = "s2", label = "床头", nx = 0.50, ny = 0.38 },
+                { id = "s3", label = "电视", nx = 0.84, ny = 0.56 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" } },
+            start = "s1",
+        },
+        screens = {
+            {
+                id = "s1", title = "门廊与遗体",
+                image = "assets/image/crime_scene_screen1.png",
+                bgColor = { 45, 60, 95, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "npc_police_a", name = "警察A", x = 0.04, y = 0.18, w = 0.17, h = 0.38,
+                      interactText = "门口执勤的警察，一直守在这里。", onInteract = "ask_police_a" },
+                    { id = "c4_body", name = "严成峰遗体", x = 0.28, y = 0.54, w = 0.26, h = 0.24,
+                      clueId = "c4_body", interactText = "衣物凌乱，脖子上有轻微抓痕，体表没有开放性伤口。" },
+                    { id = "c4_room_mess", name = "凌乱的房间", x = 0.60, y = 0.28, w = 0.20, h = 0.32,
+                      clueId = "c4_room_mess", interactText = "茶几桌椅全部翻倒，地毯掀起一角，床头柜有明显翻找痕迹。" },
+                    { id = "npc_zhang", name = "张承宇", x = 0.82, y = 0.20, w = 0.15, h = 0.34,
+                      interactText = "张承宇正等着你的调查结果。", onInteract = "c4_report" },
+                },
+                exits = {
+                    { id = "to_lobby", label = "电梯→1L大堂", targetScene = "c4_lobby", x = 0.02, y = 0.64, w = 0.14, h = 0.26 },
+                    { id = "to_hall", label = "电梯→1L大厅", targetScene = "c4_hall", x = 0.85, y = 0.62, w = 0.14, h = 0.28 },
+                },
+            },
+            {
+                id = "s2", title = "床头与药瓶",
+                image = "assets/image/crime_scene_screen2.png",
+                bgColor = { 50, 65, 100, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "c4_empty_inhaler", name = "空掉的气体药瓶", x = 0.08, y = 0.58, w = 0.18, h = 0.22,
+                      clueId = "c4_empty_inhaler", interactText = "一支用尽的哮喘气体吸入剂，底部有几道轻微划痕。" },
+                    { id = "c4_capsule", name = "掉在地上的药瓶", x = 0.38, y = 0.62, w = 0.16, h = 0.18,
+                      clueId = "c4_capsule", interactText = "一瓶进口辅酶复合胶囊，治疗哮喘的应急药物，瓶盖已经拧开。" },
+                    { id = "npc_forensic", name = "法医宋医生", x = 0.66, y = 0.30, w = 0.18, h = 0.40,
+                      interactText = "宋医生正在收拾现场取样工具。", onInteract = "ask_forensic" },
+                },
+            },
+            {
+                id = "s3", title = "电视与音响",
+                image = "assets/image/crime_scene_screen3.png",
+                bgColor = { 40, 55, 90, 255 },
+                charPos = { x = 0.30, y = 0.78, scale = 0.58 },
+                left = "s2", right = nil,
+                items = {
+                    { id = "c4_phone", name = "严成峰的手机", x = 0.10, y = 0.58, w = 0.16, h = 0.20,
+                      clueId = "c4_phone", interactText = "手机屏幕碎成蛛网状，机身有明显砸击凹痕，数据损坏严重。" },
+                    { id = "c4_vent", name = "嵌入式空调出风口", x = 0.38, y = 0.08, w = 0.18, h = 0.18,
+                      clueId = "c4_vent", interactText = "出风口格栅上积着一层薄薄的白色粉末，看着像是墙灰。" },
+                    { id = "c4_speaker", name = "电视旁的音响", x = 0.64, y = 0.36, w = 0.16, h = 0.24,
+                      interactText = "一台普通的客房音响，摆在电视柜旁边。", onInteract = "c4_speaker" },
+                    { id = "npc_waiter_a", name = "服务员A", x = 0.06, y = 0.18, w = 0.16, h = 0.32,
+                      interactText = "第一目击者，还惊魂未定地站在角落。", onInteract = "ask_waiter_a" },
+                    { id = "c4_deduce", name = "整理线索 · 进行推理", x = 0.56, y = 0.70, w = 0.28, h = 0.16,
+                      interactText = "把目前掌握的线索全部串起来。", onInteract = "c4_deduce" },
+                },
+            },
+        },
+    },
+
+    -- ===== 1L 大堂（外卖柜 / 垃圾桶 / 安全通道）=====
+    c4_lobby = {
+        title = "1L 大堂",
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "外卖柜", nx = 0.18, ny = 0.45 },
+                { id = "s2", label = "垃圾桶", nx = 0.50, ny = 0.38 },
+                { id = "s3", label = "人员", nx = 0.82, ny = 0.55 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" } },
+            start = "s1",
+        },
+        screens = {
+            {
+                id = "s1", title = "外卖存放箱",
+                image = "assets/image/lobby_screen2.png",
+                bgColor = { 140, 115, 65, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "c4_delivery", name = "外卖存放箱", x = 0.10, y = 0.30, w = 0.24, h = 0.48,
+                      clueId = "c4_delivery", interactText = "一份印着磐安智能字样的同城送药订单，登记抵达时间是18:00。" },
+                },
+                exits = {
+                    { id = "to_2501", label = "电梯→25F", targetScene = "c4_2501", x = 0.70, y = 0.20, w = 0.17, h = 0.34 },
+                    { id = "to_hall", label = "前往大厅", targetScene = "c4_hall", x = 0.88, y = 0.58, w = 0.12, h = 0.28 },
+                },
+            },
+            {
+                id = "s2", title = "垃圾桶与安全通道",
+                image = "assets/image/lobby_screen3.png",
+                bgColor = { 150, 125, 72, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "c4_trash", name = "垃圾桶", x = 0.10, y = 0.50, w = 0.20, h = 0.32,
+                      clueId = "c4_trash", interactText = "桶里塞满擦汗的高级湿纸巾，烟灰缸里堆着几截掐灭的尼龙牌香烟。" },
+                    { id = "c4_stairwell", name = "安全通道", x = 0.44, y = 0.16, w = 0.26, h = 0.56,
+                      clueId = "c4_stairwell", interactText = "可直达所有楼层，门把手上残留着不易察觉的汗渍手印。" },
+                },
+            },
+            {
+                id = "s3", title = "大堂人员",
+                image = "assets/image/lobby_screen4.png",
+                bgColor = { 120, 100, 60, 255 },
+                charPos = { x = 0.30, y = 0.78, scale = 0.58 },
+                left = "s2", right = nil,
+                items = {
+                    { id = "npc_zhouwen", name = "周文", x = 0.08, y = 0.30, w = 0.18, h = 0.36,
+                      interactText = "周文抱着文件夹，正准备回房。", onInteract = "ask_zhouwen" },
+                    { id = "npc_frontdesk", name = "前台接待", x = 0.40, y = 0.34, w = 0.18, h = 0.34,
+                      interactText = "前台小姐仍在值守。", onInteract = "ask_frontdesk" },
+                    { id = "npc_guard", name = "庭院入口保安", x = 0.70, y = 0.28, w = 0.18, h = 0.38,
+                      interactText = "保安笔直地站在庭院入口。", onInteract = "ask_guard" },
+                },
+            },
+        },
+    },
+
+    -- ===== 1L 大厅 / 庭院（席位桌 / 议程看板 / 长桌）=====
+    c4_hall = {
+        title = "1L 大厅与庭院",
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "席位", nx = 0.18, ny = 0.45 },
+                { id = "s2", label = "长桌", nx = 0.50, ny = 0.38 },
+                { id = "s3", label = "庭院", nx = 0.82, ny = 0.55 },
+            },
+            edges = { { "s1", "s2" }, { "s2", "s3" } },
+            start = "s1",
+        },
+        screens = {
+            {
+                id = "s1", title = "磐安席位与议程看板",
+                image = "assets/image/courtyard_screen2.png",
+                bgColor = { 100, 140, 115, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "c4_seat_table", name = "磐安智能席位桌", x = 0.08, y = 0.52, w = 0.28, h = 0.26,
+                      clueId = "c4_seat_table", interactText = "桌上摆着半盒尼龙牌香烟，桌牌显示这是赵恒与严城峰的专座。" },
+                    { id = "c4_agenda", name = "峰会议程电子看板", x = 0.50, y = 0.14, w = 0.24, h = 0.46,
+                      clueId = "c4_agenda", interactText = "15:00 峰会开幕主持人致辞，15:10 自由交流环节。" },
+                },
+                exits = {
+                    { id = "to_2501", label = "电梯→25F", targetScene = "c4_2501", x = 0.84, y = 0.18, w = 0.15, h = 0.32 },
+                    { id = "to_lobby", label = "返回大堂", targetScene = "c4_lobby", x = 0.02, y = 0.62, w = 0.13, h = 0.26 },
+                },
+            },
+            {
+                id = "s2", title = "庭院右侧长桌",
+                image = "assets/image/courtyard_screen1.png",
+                bgColor = { 90, 130, 110, 255 },
+                charPos = { x = 0.30, y = 0.78, scale = 0.58 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "c4_zhouwen_desk", name = "庭院右侧长桌", x = 0.12, y = 0.46, w = 0.36, h = 0.32,
+                      clueId = "c4_zhouwen_desk", interactText = "长桌上摆着一台设了密码的电脑，用户名是周文；旁边是一年半前的磐安技术期刊。" },
+                },
+            },
+            {
+                id = "s3", title = "庭院人员",
+                image = "assets/image/courtyard_screen3.png",
+                bgColor = { 80, 120, 125, 255 },
+                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
+                left = "s2", right = nil,
+                items = {
+                    { id = "npc_xuqinglan", name = "许晴岚", x = 0.14, y = 0.30, w = 0.18, h = 0.36,
+                      interactText = "许晴岚正在安抚其他公司的人。", onInteract = "ask_xuqinglan" },
+                    { id = "npc_zhaoheng", name = "赵恒", x = 0.58, y = 0.28, w = 0.18, h = 0.38,
+                      interactText = "赵恒一个人靠在护栏边，神色慌张。", onInteract = "ask_zhaoheng" },
                 },
             },
         },

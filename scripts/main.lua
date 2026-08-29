@@ -17,6 +17,7 @@ local SceneManager = require("scripts.SceneManager")
 local DialogueSystem = require("scripts.DialogueSystem")
 local NoteSystem = require("scripts.NoteSystem")
 local OpeningSystem = require("scripts.OpeningSystem")
+local InterrogationSystem = require("scripts.InterrogationSystem")
 
 -- ============================================================================
 -- 游戏模式
@@ -102,6 +103,13 @@ function Start()
     -- 做防抖：同一目标 600ms 内只响应一次。不可用 os.clock()（CPU 时间，增量远小于真实间隔）。
     local _exitLastTime, _exitLastTarget = 0, nil
     sceneExitCallback = function(targetScene)
+        -- 搜证阶段（集会询问进行中）封锁现场，禁止离开 2501
+        if GameData.GetFlag("c4_in_verify") then
+            if SceneManager.ShowClueBanner then
+                SceneManager:ShowClueBanner("现场封锁", "张队要求所有人留在 2501，等询问结束再走。")
+            end
+            return
+        end
         local now = SceneManager._gameTime or 0
         if targetScene == _exitLastTarget and (now - _exitLastTime) < 0.6 then
             return
@@ -139,6 +147,7 @@ end
 function EnterMainMenu()
     print("[MAIN DEBUG] EnterMainMenu start; uiRoot=" .. tostring(UI.GetRoot()))
     currentMode = GameMode.MainMenu
+    InterrogationSystem.Close()
     SceneManager.ExitScene()
     NoteSystem.Close()
     MenuSystem.ShowMenu(MenuSystem.MenuType.Main)
@@ -195,6 +204,43 @@ local function countClues()
         end
     end
     return n
+end
+
+-- 第四阶段：侦察阶段需要摸排的 12 处物件线索
+local C4_OBJECT_CLUES = {
+    c4_body = true, c4_capsule = true, c4_phone = true, c4_vent = true,
+    c4_room_mess = true, c4_empty_inhaler = true,
+    c4_delivery = true, c4_trash = true, c4_stairwell = true,
+    c4_seat_table = true, c4_agenda = true, c4_zhouwen_desk = true,
+}
+local function countC4Clues()
+    local flags = (GameData.GameState or {}).flags or {}
+    local n = 0
+    for id in pairs(C4_OBJECT_CLUES) do
+        if flags["clue_" .. id] then n = n + 1 end
+    end
+    return n
+end
+
+-- 第四阶段结案推理：串起全部证据 → 指认赵恒 → 录像 → 认罪 → 收队
+local function StartC4Deduction()
+    GameData.SetFlag("case_solved", true)
+    DialogueSystem.Start("c4d_1", function()
+        DialogueSystem.Start("c4d_2", function()
+            DialogueSystem.Start("c4d_3", function()
+                DialogueSystem.Start("c4d_4", function()
+                    DialogueSystem.Start("c4d_5", function()
+                        DialogueSystem.Start("c4d_6", function()
+                            DialogueSystem.Start("c4d_7", function()
+                                print("[MAIN DEBUG] c4d_7 finished -> EnterMainMenu")
+                                EnterMainMenu()
+                            end)
+                        end)
+                    end)
+                end)
+            end)
+        end)
+    end)
 end
 
 -- 结案推理：播放推理独白后弹出嫌疑人选择
@@ -258,8 +304,80 @@ local function StartDeduction()
 end
 
 function HandleSpecialInteract(obj, onComplete)
+    local act = obj.onInteract
+
+    -- ===== 第四阶段：侦察阶段 NPC 询问（onInteract = "ask_<npcId>"）=====
+    local askId = (type(act) == "string") and act:match("^ask_(.+)$") or nil
+    if askId then
+        -- 搜证阶段结束後，警察A 交还修复好的手机（收信记录）
+        if askId == "police_a" and GameData.GetFlag("c4_verify_done")
+            and not GameData.GetFlag("clue_c4_sms") then
+            DialogueSystem.Start("c4s_phone", function()
+                GameData.CollectClue("c4_sms")
+                GameData.SetFlag("clue_c4_sms", true)
+            end)
+        else
+            InterrogationSystem.StartInterrogation(askId, nil)
+        end
+        return
+    end
+
+    -- 向张承宇汇报 → 开启搜证阶段（集会 + 对证）
+    if act == "c4_report" then
+        if GameData.GetFlag("c4_in_verify") then
+            SceneManager:ShowClueBanner("张承宇", "人都叫来了，先把他们问完再说。")
+        elseif GameData.GetFlag("c4_verify_done") then
+            SceneManager:ShowClueBanner("张承宇", "该问的都问完了，现在就等你的证据。")
+        else
+            local n = countC4Clues()
+            if n < 8 then
+                SceneManager:ShowClueBanner("张承宇", string.format(
+                    "才查到 %d 处，还不够下判断。三个区域都再跑跑，至少要摸清 8 处。", n))
+            else
+                GameData.SetFlag("c4_in_verify", true)
+                DialogueSystem.Start("c4s_open", function()
+                    InterrogationSystem.StartConfrontation(function()
+                        GameData.SetFlag("c4_in_verify", false)
+                        GameData.SetFlag("c4_verify_done", true)
+                        SceneManager:ShowClueBanner("搜证阶段",
+                            "赵恒一直撒谎，可还缺能一锤定音的东西。再在 2501 里找找。")
+                    end)
+                end)
+            end
+        end
+        return
+    end
+
+    -- 音响里的隐藏摄像头（需先在周文对证中被陈雯音捕捉到视线）
+    if act == "c4_speaker" then
+        if not GameData.GetFlag("c4_camera_spotted") then
+            SceneManager:ShowClueBanner("电视旁的音响", "一台普通的客房音响，暂时没看出异常。")
+        elseif GameData.GetFlag("clue_c4_camera") then
+            SceneManager:ShowClueBanner("电视旁的音响", "摄像头已经取出来了。")
+        else
+            DialogueSystem.Start("c4s_camera", function()
+                GameData.CollectClue("c4_camera")
+                GameData.SetFlag("clue_c4_camera", true)
+            end)
+        end
+        return
+    end
+
+    -- 推理与结案
+    if act == "c4_deduce" then
+        if not GameData.GetFlag("c4_verify_done") then
+            SceneManager:ShowClueBanner("整理线索", "先把该问的人都问完，再谈推理。")
+        elseif not (GameData.GetFlag("clue_c4_camera") and GameData.GetFlag("clue_c4_sms")) then
+            SceneManager:ShowClueBanner("整理线索",
+                "还差两样关键东西：能还原现场的画面，和严城峰那条短信。")
+        else
+            StartC4Deduction()
+        end
+        return
+    end
+
     -- 序章引导：点衣柜推进
-    if obj.onInteract == "wardrobe" then
+    if act == "wardrobe" then
         DialogueSystem.Start("opening_prologue_5_after", function()
             GameData.SetFlag("prologue_done", true)
             EnterChapter1()
@@ -267,21 +385,23 @@ function HandleSpecialInteract(obj, onComplete)
     -- 命案发现：收录足够探索线索后，点 2501 房门触发
     elseif obj.onInteract == "enter_crime" then
         if GameData.GetFlag("crime_discovered") then
-            SceneManager.EnterScene("crime_scene")
+            SceneManager.EnterScene("c4_2501", sceneExitCallback)
         else
             local n = countClues()
             if n < 5 then
                 SceneManager:ShowClueBanner("2501 房门", "房门紧锁，似乎还进不去。先多点几处线索调查吧。")
             else
                 GameData.SetFlag("crime_discovered", true)
-                -- 命案发现完整序列（还原 wolai 第四阶段 1.1：闲聊→对讲机→张承宇登场→电梯→查房→登门→现场）
+                -- 命案发现完整序列（wolai 第四阶段 1.1：晚宴闲聊→对讲机报警→大堂遇张承宇→电梯→查房→登门→现场）
                 DialogueSystem.Start("ch4_party_chat", function()
                     DialogueSystem.Start("ch4_discovery", function()
-                        DialogueSystem.Start("crime_found", function()
+                        DialogueSystem.Start("ch4_meet_zhang", function()
                             DialogueSystem.Start("ch4_elevator", function()
                                 DialogueSystem.Start("ch4_police_check", function()
                                     DialogueSystem.Start("ch4_zhang_visit", function()
-                                        SceneManager.EnterScene("crime_scene")
+                                        GameData.GameState.currentChapter = "chapter4"
+                                        GameData.GameState.currentScene = "c4_2501"
+                                        SceneManager.EnterScene("c4_2501", sceneExitCallback)
                                     end)
                                 end)
                             end)
@@ -366,6 +486,7 @@ end
 
 function ReturnToMainMenu()
     currentMode = GameMode.MainMenu
+    InterrogationSystem.Close()
     SceneManager.ExitScene()
     NoteSystem.Close()
     MenuSystem.ShowMenu(MenuSystem.MenuType.Main)
@@ -393,6 +514,8 @@ function HandleInput()
             NoteSystem.Close()
         elseif OpeningSystem.IsActive() then
             -- 过场动画中禁用暂停
+        elseif InterrogationSystem.IsActive() then
+            -- 询问/对证面板打开时禁用暂停（避免选项面板与菜单叠加）
         elseif currentMode == GameMode.Playing then
             PauseGame()
         elseif currentMode == GameMode.Paused then
@@ -402,12 +525,13 @@ function HandleInput()
         end
     end
 
-    -- Tab：呼出/关闭侦探笔记（过场动画中禁用）
+    -- Tab：呼出/关闭侦探笔记（过场动画、对话、询问中禁用）
     if input:GetKeyPress(KEY_TAB) then
         if currentMode == GameMode.Playing then
             if NoteSystem.IsOpen() then
                 NoteSystem.Close()
-            elseif not DialogueSystem.IsActive() and not OpeningSystem.IsActive() then
+            elseif not DialogueSystem.IsActive() and not OpeningSystem.IsActive()
+                and not InterrogationSystem.IsActive() then
                 NoteSystem.Open()
             end
         end

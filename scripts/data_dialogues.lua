@@ -346,6 +346,617 @@ M["ch4_zhang_visit"] = {
     { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[张承宇需要你帮忙；]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[帮忙？]==] },
     { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[这件事桶了很大的篓子，死者严城峰本身还涉及了大量磐安机密]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[上面发了最新的命令，必须要在2小时内解决，现在我这边缺人手；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那我有什么能为张队效劳的？]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[不知道为什么，现在所有的AI全都出现了故障，无法做到正常推理和演算，我需要你跟我去现场，我知道你的能力；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[天杀的老天爷，之前那群蠢货总说我在搞抽象，现在没AI了就知道我的作用了，行吧行吧，爷就勉为其难的答应了]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那...那个小宇，把现在的情况全盘告诉我；]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[你要是再叫我小宇，我就给你头打烂]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[哈哈，有点飘了，有点飘了，毕竟是事务所第一次正儿八经的探案，理解一下，所以现在的情况是？]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[死者严城峰，死因是哮喘，但现场检查有明显的打斗痕迹...死亡时间本地AI推算大概在2小时前；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那看来还需要去现场看看，我们边走边聊吧；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[唉雯雯？你干嘛？舅舅要去工作哦。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音一言不发，只是抓着李志的衣角。]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[雯雯是一个人害怕么？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音摇了摇头。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[你不会是想跟我们一起去2501？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音点了点头。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那可是有死人哦，你不怕么？！]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音又点了点头。]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[那先带上她吧，毕竟也没发现嫌疑人，雯雯在我们身边比她一个人呆在房间安全一点；]==] },
+  },
+};
+M["ch4_meet_zhang"] = {
+  id = "ch4_meet_zhang",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[哟，这不是张大队长吗？大半年没见了，怎么今晚这摊子事……直接把你给惊动了？]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[我倒希望是别人来，省得一出电梯就看见你。]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[这次案件还是个大人物，上面想快点破案就派我来了，倒是你们怎么会在这；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[我可是受特邀来这里参加三个巨头公司峰会的；]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[少在这吹牛皮了，你为什么会来你心里没点数么，好久不见了，张承宇。]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[好吧，许特助，公事归公事，今晚25楼是特大命案，按规矩全场排查。希望澜星的人别给我添麻烦。]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[当然，我们全力配合市局流程。]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[尤其是你，李志。收起你那些爱到处打听的毛病。现场封锁了，刑警办案讲的是真凭实据，不是你那些上不了台面的街头把戏。老实呆在警戒线外面，别让我叫人请你出去。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[行啊，张队办事我向来放心。不过有时候眼睛看见的证据太顺理成章了，可别一头扎进去哦。]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[借过。]==] },
+  },
+};
+M["c4i_police_first"] = {
+  id = "c4i_police_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[抱歉，这里不允许无关人员进来；]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[AI系统不是坏了么，这位是临时特聘的探案专家来辅助我们解决案件的；]==] },
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[是！张队。]==] },
+  },
+};
+M["c4i_police_q1"] = {
+  id = "c4i_police_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[备份缺少了3天的监控内容，有入侵痕迹，但非常隐蔽，需要很长时间才能还原数据。]==] },
+  },
+};
+M["c4i_police_q2"] = {
+  id = "c4i_police_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[之前有个叫周文的来过，他说有些重要的资料留在了房间床头柜里希望取出，不过没有进去，我让里面的法医代拿了出来。]==] },
+  },
+};
+M["c4i_police_q3"] = {
+  id = "c4i_police_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[我检查过了，没有。]==] },
+  },
+};
+M["c4i_police_end"] = {
+  id = "c4i_police_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[没什么别的了，我得继续守着。]==] },
+  },
+};
+M["c4i_forensic_first"] = {
+  id = "c4i_forensic_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[哟，这不是张队么，这次怎么还有几张生面孔；]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[你好，宋医生，这位是这次特批的专员，来协助我们的；]==] },
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[估计是你们那破系统出问题了才找了这么一位专员吧，不然按你们的脾气，会找人帮忙才有鬼了，我就说了你们小年轻别总靠那玩意；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[你好宋医生，我觉得您说的可太对了，这群人就是什么都依赖AI，效率才提不起来；]==] },
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[别贫嘴了，有什么问题就直接问吧]==] },
+  },
+};
+M["c4i_forensic_q1"] = {
+  id = "c4i_forensic_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[那可太多了，鞋印，指纹这些都有，只是因为AI故障，想马上知道是谁的还需要一段时间，他们的系统现在是断网状态，没办法把这些信息上传至总部。]==] },
+  },
+};
+M["c4i_forensic_q2"] = {
+  id = "c4i_forensic_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[除了一些轻微的打斗，并没有其他伤痕，且这些都不致命，对手应该是个力气很小的人。]==] },
+  },
+};
+M["c4i_forensic_q3"] = {
+  id = "c4i_forensic_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[发现一瓶已经用完的吸入剂药盒。]==] },
+  },
+};
+M["c4i_forensic_end"] = {
+  id = "c4i_forensic_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Forensic]==], portrait = [==[]==], clue = [==[]==], text = [==[如果你们还有什么疑问，可以去问问门外的服务员，他是第一目击人。]==] },
+  },
+};
+M["c4i_waiter_first"] = {
+  id = "c4i_waiter_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[WaiterA]==], portrait = [==[]==], clue = [==[]==], text = [==[你...你们好...有什么可以帮到各位的；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[不用紧张，我们只是问你点事；]==] },
+    { speaker = [==[WaiterA]==], portrait = [==[]==], clue = [==[]==], text = [==[好..好的]==] },
+  },
+};
+M["c4i_waiter_q1"] = {
+  id = "c4i_waiter_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[WaiterA]==], portrait = [==[]==], clue = [==[]==], text = [==[当时赵总让我送药给严总，我上楼后发现房间门是半开的，然后我喊了两声没反应，进去后就发现严总躺在地上，房间还很乱，于是我上去探了一下鼻息后发现严总没呼吸了，于是就通过对讲机呼叫了总台。]==] },
+  },
+};
+M["c4i_waiter_q2"] = {
+  id = "c4i_waiter_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[WaiterA]==], portrait = [==[]==], clue = [==[]==], text = [==[没有，只有我一个人。]==] },
+  },
+};
+M["c4i_zhouwen_first"] = {
+  id = "c4i_zhouwen_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[唉！周文！]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[呃...你好，李顾问；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[别那么拘谨周文，刚好有点事想问你。]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[呃...什么事你问吧。]==] },
+  },
+};
+M["c4i_zhouwen_q1"] = {
+  id = "c4i_zhouwen_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[这...他们高层的关系我也不是很清楚，只是从平日来看两人关系应该还不错，毕竟你也跟赵总交流过，赵总不喜欢跟其他人起冲突。]==] },
+  },
+};
+M["c4i_zhouwen_q2"] = {
+  id = "c4i_zhouwen_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[就在露天庭院那处理严总交代的工作；]==] },
+  },
+};
+M["c4i_zhouwen_q3"] = {
+  id = "c4i_zhouwen_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[没有]==] },
+  },
+};
+M["c4i_zhouwen_q4"] = {
+  id = "c4i_zhouwen_q4",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[啊？我不知道啊，显示的外送抵达时间就是16点，我给你看；]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[周文掏出手机递给李志，订单上的送达时间确实是16点。]==] },
+  },
+};
+M["c4i_zhouwen_end"] = {
+  id = "c4i_zhouwen_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[严总真的死了么？]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[很遗憾，是的...]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[这样啊...]==] },
+  },
+};
+M["c4i_frontdesk_first"] = {
+  id = "c4i_frontdesk_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[你好，前台小姐]==] },
+    { speaker = [==[FrontDesk]==], portrait = [==[]==], clue = [==[]==], text = [==[您好，这位先生]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[有些问题我想请教一下，可以么？]==] },
+    { speaker = [==[FrontDesk]==], portrait = [==[]==], clue = [==[]==], text = [==[可以的，这位先生；]==] },
+  },
+};
+M["c4i_frontdesk_q1"] = {
+  id = "c4i_frontdesk_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[FrontDesk]==], portrait = [==[]==], clue = [==[]==], text = [==[没有的，因为这次是被三大公司包场的，因此今日要进入本酒店就需要身份认证，想必这一点您应该很清楚了。]==] },
+  },
+};
+M["c4i_frontdesk_q2"] = {
+  id = "c4i_frontdesk_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[FrontDesk]==], portrait = [==[]==], clue = [==[]==], text = [==[这么一说，好像在核对订单的时候似乎迟疑了很久，不知道是在干嘛。]==] },
+  },
+};
+M["c4i_frontdesk_q3"] = {
+  id = "c4i_frontdesk_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[FrontDesk]==], portrait = [==[]==], clue = [==[]==], text = [==[今天峰会上上下下的人挺多的，所以具体哪些人我也不太清楚；]==] },
+  },
+};
+M["c4i_frontdesk_end"] = {
+  id = "c4i_frontdesk_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[感谢您的回答，下次请你喝咖啡，还未请教您贵姓？；]==] },
+    { speaker = [==[FrontDesk]==], portrait = [==[]==], clue = [==[]==], text = [==[不好意思先生，工作期间我们是不能聊私事的...]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那...]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志话没说完，被陈雯音拖着离开了。]==] },
+  },
+};
+M["c4i_guard_first"] = {
+  id = "c4i_guard_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Guard]==], portrait = [==[]==], clue = [==[]==], text = [==[晚上好先生]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[你好，请问可以问你一些问题么？]==] },
+    { speaker = [==[Guard]==], portrait = [==[]==], clue = [==[]==], text = [==[可以的先生]==] },
+  },
+};
+M["c4i_guard_q1"] = {
+  id = "c4i_guard_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Guard]==], portrait = [==[]==], clue = [==[]==], text = [==[嗯...神色可疑倒是没有，不过奇怪的人倒是有看到，大概在17点左右的时候，有个男人在电梯口等电梯前打转，手里的香烟也是抽一半就掐灭又抽了一根，后来大概过了半小时，我看到他从安全通道里出来，然后手里还拿着很多纸巾丢进了垃圾桶里；]==] },
+  },
+};
+M["c4i_guard_q2"] = {
+  id = "c4i_guard_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Guard]==], portrait = [==[]==], clue = [==[]==], text = [==[不知道，我并不太认识这些参加峰会的人，只是我记得那人手上戴着一块很特别的表；]==] },
+  },
+};
+M["c4i_guard_q3"] = {
+  id = "c4i_guard_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[Guard]==], portrait = [==[]==], clue = [==[]==], text = [==[当然可以先生]==] },
+  },
+};
+M["c4i_guard_end"] = {
+  id = "c4i_guard_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那我试试看能不能找到那个人，如果找到了，还需要你指认一下]==] },
+    { speaker = [==[Guard]==], portrait = [==[]==], clue = [==[]==], text = [==[好的先生，有需要帮助的可以随时联系我，我会一直在这；]==] },
+  },
+};
+M["c4i_xuqinglan_first"] = {
+  id = "c4i_xuqinglan_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[抱歉，可以打断一下各位么？]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[咋了，都调查到我头上来了？]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[嘿嘿，不过还真有点事想问问你；]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[说吧]==] },
+  },
+};
+M["c4i_xuqinglan_q1"] = {
+  id = "c4i_xuqinglan_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[你这么一说我倒还真想起来了，大概一年半前，周文那时候好像是磐安的核心技术人员，当时还跟大姐有过交流，这一年不知道发生了什么，真是模样大变，我还真没认出来。]==] },
+  },
+};
+M["c4i_xuqinglan_q2"] = {
+  id = "c4i_xuqinglan_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[要说可疑，磐安那几个都挺可疑的，其他人倒是还好。]==] },
+  },
+};
+M["c4i_xuqinglan_end"] = {
+  id = "c4i_xuqinglan_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[好吧，那不打扰你了。]==] },
+  },
+};
+M["c4i_zhaoheng_first"] = {
+  id = "c4i_zhaoheng_first",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[赵总，一个人在这吹风呢？]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[呃……是李顾问啊。张队他们那边……查出什么结果了吗？]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[还没呢，所有一些问题想问问赵总]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[好吧，有什么尽管问吧。]==] },
+  },
+};
+M["c4i_zhaoheng_q1"] = {
+  id = "c4i_zhaoheng_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[严城峰当时告诉我药4点送到，当时已经迟到半小时了，所以希望我如果可以就上去看看，如果有就帮忙送上去，但药一直到6点左右才送到，当时正好我也在跟资方谈话，所以就让服务员代劳了。]==] },
+  },
+};
+M["c4i_zhaoheng_q2"] = {
+  id = "c4i_zhaoheng_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[没有，不过当时我有在会场找过周文，大概15点半左右，但没找到他；]==] },
+  },
+};
+M["c4i_zhaoheng_q3"] = {
+  id = "c4i_zhaoheng_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[...呃，是的，已经抽了很多年了。]==] },
+  },
+};
+M["c4s_open"] = {
+  id = "c4s_open",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[怎么样，有发现什么没？]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[有不少收获，但疑点也很多，我把名单给你，你看能不能传唤这些人先上来集合先；]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[行。]==] },
+  },
+};
+M["c4c_zhao_q1"] = {
+  id = "c4c_zhao_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[赵总，当时庭院的保安有看到你大概在17点左右有上楼，请问你上楼去干什么了？]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[应...应该是保安看错了吧...]==] },
+  },
+};
+M["c4c_zhao_q1_ok"] = {
+  id = "c4c_zhao_q1_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[啊...我...我只是想回房间去拿点治头晕的药，我当时有点不舒服...]==] },
+  },
+};
+M["c4c_zhao_q2"] = {
+  id = "c4c_zhao_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[不舒服为什么要从安全通道下来？]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[不不...我没有...我没有从安全通道下来，那可是25楼，我怎么会从25楼下来。]==] },
+  },
+};
+M["c4c_zhao_q2_ok"] = {
+  id = "c4c_zhao_q2_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[应该还是那个保安看错了吧，我记得我是坐电梯下来的...]==] },
+  },
+};
+M["c4c_zhao_q3"] = {
+  id = "c4c_zhao_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那你怎么解释垃圾桶里的纸巾？保安说有看到你擦汗丢进了垃圾桶。]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[不会吧李顾问，总不能我擦个汗水就说明我从安全通道出来吧？]==] },
+  },
+};
+M["c4c_zhao_q3_ok"] = {
+  id = "c4c_zhao_q3_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[25楼和1楼的安全通道把手上都有汗渍痕迹，张队可以通过本地的AI跟纸巾进行比对，如果是一致那就很明显了。]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[啊？！这...这...]==] },
+  },
+};
+M["c4c_zhao_tail"] = {
+  id = "c4c_zhao_tail",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[所以你还是老实交代你干嘛去了吧，还有如果你没问题，你在25楼是否有碰到什么人？]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[我...我也忘了为什么从安全通道下来了...当时25楼好像没什么人，我也没太注意...]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志心想：接着问他应该也还会一直撒谎，似乎还缺少什么关键的东西...]==] },
+  },
+};
+M["c4c_zhou_q1"] = {
+  id = "c4c_zhou_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[15:30左右，赵恒说有找过你，但发现你人好像不在庭院，那时候你干嘛去了？]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[当时严总让我帮他回房间去拿一份文件...]==] },
+  },
+};
+M["c4c_zhou_q1a"] = {
+  id = "c4c_zhou_q1a",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[当时25楼除了我没有其他人。]==] },
+  },
+};
+M["c4c_zhou_q1b"] = {
+  id = "c4c_zhou_q1b",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[是的，严总特意让我在前台办了一张备用房卡，方便再有需要的时候我帮他拿些东西什么的。]==] },
+  },
+};
+M["c4c_zhou_q2"] = {
+  id = "c4c_zhou_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[当时有位警察同志说在案发后你有来拿一份文件，是什么文件需要你这种时候来拿？]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[那份文件是严总反复提及的重要报表，如果不小心弄丢了说是会严重影响到公司进程，所以当时我才希望可以先拿在手上，虽然有警察在，但万一慌乱中被人拿走就不好了；]==] },
+  },
+};
+M["c4c_zhou_q2_ok"] = {
+  id = "c4c_zhou_q2_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[因...因为严总之前有提到过放在了那...]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[周文下意识地看了一眼电视机旁边的音响。陈雯音顺着他的视线，也盯住了那台音响。]==] },
+  },
+};
+M["c4c_zhou_q3"] = {
+  id = "c4c_zhou_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[听说你以前是磐安的核心开发人员，怎么现在变成一个普通职员了？]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[犯了错，被严总降级而已。]==] },
+  },
+};
+M["c4c_zhou_q3a"] = {
+  id = "c4c_zhou_q3a",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[以前的倒是还行，后面更新迭代了不少版本就不太清楚了，这些的话赵总应该比我清楚；]==] },
+  },
+};
+M["c4c_zhou_q3b"] = {
+  id = "c4c_zhou_q3b",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[嗯，确实是我们公司做的，但是为什么迟到了2小时我也不是很清楚...可能是出现什么故障了吧；]==] },
+  },
+};
+M["c4c_zhou_q4"] = {
+  id = "c4c_zhou_q4",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[说到故障，貌似这家酒店的安保系统也是你们公司提供的吧，似乎这段时间安保全部瘫痪了，监控也还丢了3天的数据？]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[是的，当年其实是想交给澜星他们做的，但后来赵总极力争取下，就交到我们这边来弄了，当时这个项目我也是总负责人...，但瘫痪原因我就不清楚了。]==] },
+  },
+};
+M["c4c_zhou_q4_ok"] = {
+  id = "c4c_zhou_q4_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[可以，不过你们找赵总应该会更好，他现在对这套系统应该是最了解的。]==] },
+  },
+};
+M["c4c_xu_q1"] = {
+  id = "c4c_xu_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[现在情况如何？]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[线索还是太少了，现在只能勉强推出个不那么靠谱的结论]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[那你想到什么可以问我，我看我能不能帮上忙？]==] },
+  },
+};
+M["c4c_xu_q1_ok"] = {
+  id = "c4c_xu_q1_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[你还真别说，我也是刚才打听到的，磐安这几年为了吃政企算力补贴，财务账目烂得跟筛子一样，然后据小道消息，赵恒因此开了空壳公司和磐石合作进行套现。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那如果是这样的话，只要严城峰手上有赵恒的把柄，两人自然就有起冲突的可能。]==] },
+  },
+};
+M["c4c_xu_q2"] = {
+  id = "c4c_xu_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[还有一件事想确认一下。]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[说吧，我尽量。]==] },
+  },
+};
+M["c4c_xu_q2_ok"] = {
+  id = "c4c_xu_q2_ok",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[你还真会掐准时间问，刚才打听到的，据说是因为严城峰想提拔他小舅子，然后看周文最好欺负，所以在某次版本迭代时故意卡环节导致周文犯错后连降几级变成了现在这样，但周文自己不知道，公司知情的人也瞒着他；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[看来周文在公司的处境也不是很好。]==] },
+  },
+};
+M["c4s_camera"] = {
+  id = "c4s_camera",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音忽然扯了扯李志的衣角，指向电视机旁的音响。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[怎么了雯雯？……等等，这音响里是？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志从音响的缝隙里取出一台微型无线摄像头。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[好小子，藏得够深。]==] },
+  },
+};
+M["c4s_phone"] = {
+  id = "c4s_phone",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[手机的恢复情况如何了？]==] },
+    { speaker = [==[PoliceA]==], portrait = [==[]==], clue = [==[]==], text = [==[你好李顾问，手机里内容已经拷贝完毕，其中有一条短信是发给赵恒的，内容是如果不想贪污的事被其他人知道，那就来我房间。]==] },
+  },
+};
+M["c4d_1"] = {
+  id = "c4d_1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志把找到的隐藏摄像头交给张承宇，张承宇用本地端口接入后查明了设备主人。虽然看不到录像内容，李志还是叫来了所有人。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[首先，14:30左右，严城峰准备回房，而我是最后一个见到严城峰的人；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[当时严城峰告诉我要回房间处理一些私事，按照当时的情况，他应该很快就能回到房间；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[但在回到房间后，严城峰给某人发了一条短信，也许正是这条短信给他招来了杀身之祸；]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[一旁的赵恒一听，身子颤了颤。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[严城峰似乎抓住了这个人的把柄，我猜他原本打算利用这个把柄威胁这个人，但不巧的是，这时严城峰的哮喘发作了；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[而这个人刚好来到了严城峰的房间，他可能误以为严城峰是在为把柄的事生气，所以一见面就往他身上扑，结果自己也一下惊慌失措。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[然后两人就这么扭打在一起，最终那个人失手干掉了正在哮喘发作的严城峰。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[而那个人见到严城峰死了，一下惊慌失措，他害怕暴露，所以砸坏了严城峰的手机企图隐瞒那条短信。当时太心慌，跑出去的时候门也没关，直接往安全通道冲了下去。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志顿了一下。接下来就是他准备已久的台词——这句话他在心里已经演练了无数次了。当了这么多年侦探，每天不是帮忙跟踪出轨就是找猫，他早就厌烦了。而现在的李志，嘴角已经快压不下去了。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[我说的没错吧！赵恒赵总！]==] },
+  },
+};
+M["c4d_2"] = {
+  id = "c4d_2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[胡...胡说，我根本就没收到什么短信；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[赵总，你真当警察是吃干饭的么，严城峰的手机数据早就已经复原了，你说你没有，那这是什么。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志拿出警察提交的数据，上面赫然写着：如果不想贪污的事被其他人知道，那就来我房间。发信人是严城峰，收信人则是赵恒。]==] },
+  },
+};
+M["c4d_3"] = {
+  id = "c4d_3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[那又怎么样？！他给我发短信我就一定会去么？！]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[不不不，赵总，你一定在这个时间到了25楼。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[安全通道把手上的汗渍，还有我刚才询问过你的内容——你都已经承认自己回到了25楼拿药；]==] },
+  },
+};
+M["c4d_4"] = {
+  id = "c4d_4",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[我...我...我当时是头晕，对，我头晕回自己房间拿药了，你有什么证据能证明我去了25楼就一定会去严城峰房间？！]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[好像确实没有什么证据，毕竟走廊的摄像头也坏了。]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[什...什么嘛，所以你连证据都没有，就在这里咄咄逼人是么？小心我告诉你们李总，让他开除你！]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[赵总别啊，我没证据，不代表其他人没证据啊；]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[什...什么意思...]==] },
+  },
+};
+M["c4d_5"] = {
+  id = "c4d_5",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那么周文同志，要不你来说两句？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[周文看着李志手上的摄像头，脑子嗡嗡地响着。]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[额...我...我...]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[周文，这是怎么回事？！你说啊？]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[对...对不起，赵总...其实在你进房间之前，我就在房间安装了摄像头...]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[啊？！]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那么为什么呢，周文。]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[我从小道消息那听说，严总那有赵总的贪污证明，所以我想通过这个摄像头找到那份贪污文件，以此来威胁赵总给我一笔钱...]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[这家破公司我早就不想呆了，但我家里条件又差，每天还要被严总压榨欺负，之前降职降薪让我真的快撑不住了，所以...]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[那么周文，把录像放出来吧。]==] },
+  },
+};
+M["c4d_6"] = {
+  id = "c4d_6",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[赵恒真急了，想冲上来抢周文的电脑，但被张承宇和警察A拦住。周文默默把手上的电脑接入了房间的电视机。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[画面中的严城峰刚进到房间，随后打开了空调，整了整衣领后坐了下来。不一会，他的动作变得扭曲，表情尽显痛苦，似乎是哮喘犯了。同时，门外传来了敲门声。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[严城峰像抓住救命稻草一样，痛苦着打开了房门。门口站着的赫然是赵恒。但开门的瞬间，严城峰控制不住地扑向赵恒，赵恒一下没反应过来，一把推开了他。]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[（录像中）不...不是兄弟，我们认识这么多年，就因为我拿了公司一点钱你就要这样么？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[录像里的赵恒表情是懵的，因为心虚，他完全没想到严城峰是哮喘犯了。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[赵恒越是没意识到，严城峰就越急。听着赵恒嘴里还说着贪污的事，严城峰眼睛已经变得血红，随即又向赵恒扑了过去，不一会两人就扭打在了一起。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[两人把房间打得乱糟糟的。因为严城峰哮喘还在发作，他被赵恒压在地上打。随着时间过去，身下的严城峰已经一动不动。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[这时赵恒才反应过来，探了探严城峰的鼻息，随后惊恐地往后爬着。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[蒙了一下后，赵恒马上拿起刚才打架时掉出来的严城峰的手机，一下一下往地上砸，直到手机完全开不了机，才慌忙跑出了门口。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[看完录像的赵恒已经不说话了，他没想到自己的作案经过早就被全录了下来。]==] },
+  },
+};
+M["c4d_7"] = {
+  id = "c4d_7",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[所以一开始你不愿意说，也是因为你还想敲赵恒一笔钱吧？]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[嗯...本来我很害怕的，我怕如果赵总知道了，会不会把我也...所以我也一直在考虑到底还要不要跟赵总说...]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[本来我早就想回收的，但那时警察已经在房间了。这时我想起，赵总当时走的时候很慌张，完全忘了还要找房间里的贪污文件。]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[所以去房间的时候，我才会想着把这份文件拿出来...]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[真是该死啊...我认了，我认了...]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[但我这算过失吧！我不是故意杀他的！如果他当时没有朝我扑来，我也不会！也不会！]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[这话留着给法官说去吧，带走！]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[说罢，警察A就给赵恒戴上手铐押了出去。]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[那么，事情已经水落石出...]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[走吧，张队，收完队咱们去吃个宵夜如何？]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[谁要跟你吃宵夜；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[喂喂喂，不是吧，我帮你这么大个忙，你连宵夜都不请我吃么？]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[对啊张队，我可是也出了不少力啊，怎么连夜宵也不请一个呢；]==] },
+    { speaker = [==[ZhangChengyu]==], portrait = [==[]==], clue = [==[]==], text = [==[唉，得得得，吃吃吃，等下晚点我回局里汇报下情况再过来；]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[记得要过来哦！别放我们鸽子啊！]==] },
   },
 };
 return M

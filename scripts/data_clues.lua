@@ -263,4 +263,229 @@ M["char_zhangchengyu"] = {
   detail = [==[口嫌体正直，表面冷嘲热讽实际高度认可李志能力。]==],
   image = [==[]==],
 };
+M["c4_body"] = {
+  id = "c4_body",
+  name = [==[严成峰遗体]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[经检查有明显的打斗痕迹，脖子上有轻微的抓痕。]==],
+  detail = [==[遗体倒在客房地板上，衣物凌乱，脖子处有几道轻微抓痕，体表无开放性伤口。法医判定死因为哮喘引发的窒息。]==],
+  image = [==[assets/image/clue_body_struggle.png]==],
+};
+M["c4_capsule"] = {
+  id = "c4_capsule",
+  name = [==[掉在地上的药瓶]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[一瓶进口辅酶复合胶囊，治疗哮喘的应急药物。]==],
+  detail = [==[一瓶进口辅酶复合胶囊，是治疗哮喘的应急药物。药瓶滚落在遗体不远处，瓶盖已经拧开。]==],
+  image = [==[assets/image/clue_medicine_capsule.png]==],
+};
+M["c4_phone"] = {
+  id = "c4_phone",
+  name = [==[严成峰的手机]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[手机已经被敲碎，要还原里面的数据还需要一些时间。]==],
+  detail = [==[手机屏幕碎成蛛网状，机身有明显被反复砸击的凹痕。数据损坏严重，交给技术部门修复需要时间。]==],
+  image = [==[assets/image/clue_broken_phone.png]==],
+};
+M["c4_vent"] = {
+  id = "c4_vent",
+  name = [==[嵌入式空调出风口]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[出风口有一些普通粉末，经检查似乎是普通的墙灰。]==],
+  detail = [==[出风口格栅上积着一层薄薄的白色粉末，取样化验后确认只是普通墙灰，与案件似乎并无关联。]==],
+  image = [==[assets/image/clue_air_vent.png]==],
+};
+M["c4_room_mess"] = {
+  id = "c4_room_mess",
+  name = [==[凌乱的房间]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[房间内的茶几桌椅全都打翻，地毯也散落，床头柜有明显的翻找痕迹。]==],
+  detail = [==[茶几与座椅全部翻倒，地毯被掀起一角，床头柜抽屉被拉开过，里面的物品被翻得乱七八糟，像是有人在急切地寻找什么。]==],
+  image = [==[]==],
+};
+M["c4_empty_inhaler"] = {
+  id = "c4_empty_inhaler",
+  name = [==[空掉的气体药瓶]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[似乎是没有扔掉治疗哮喘的气体药瓶，药瓶底部有轻微的划痕。]==],
+  detail = [==[一支已经用尽的哮喘气体吸入剂，被随手丢在房间角落。药瓶底部有几道轻微划痕，像是被人反复摩擦过。]==],
+  image = [==[assets/image/clue_empty_inhaler.png]==],
+};
+M["c4_delivery"] = {
+  id = "c4_delivery",
+  name = [==[外卖存放箱]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[查询记录看到有一份同城外卖抵达的时间是18：00，存放箱上印着磐安智能的字样。]==],
+  detail = [==[大堂的智能外卖存放箱。调取记录显示，一份印有磐安智能字样的同城送药订单，实际抵达时间被登记为18:00。]==],
+  image = [==[assets/image/clue_delivery_locker.png]==],
+};
+M["c4_trash"] = {
+  id = "c4_trash",
+  name = [==[垃圾桶]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[垃圾桶有不少擦汗用的高级湿纸巾，垃圾桶上的烟灰缸中有不少半截被掐灭的尼龙牌香烟。]==],
+  detail = [==[大堂垃圾桶里塞满了高级湿纸巾，像是有人反复擦汗后丢弃的。桶上烟灰缸里堆着几截被掐灭的尼龙牌香烟——一个普通人很难搞到的牌子。]==],
+  image = [==[assets/image/clue_trash_bin.png]==],
+};
+M["c4_stairwell"] = {
+  id = "c4_stairwell",
+  name = [==[安全通道]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[可以通向所有楼层的通道，门把上残留着不易察觉的汗渍手印。]==],
+  detail = [==[安全通道可直达所有楼层。门把手上残留着一层不易察觉的汗渍手印，说明不久前有人反复推过这扇门。]==],
+  image = [==[assets/image/clue_stair_door.png]==],
+};
+M["c4_seat_table"] = {
+  id = "c4_seat_table",
+  name = [==[磐安智能席位桌]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[桌上放着半盒尼龙牌香烟，座位是赵恒和严城峰两位董事的专座。]==],
+  detail = [==[会场磐安智能的席位桌上摆着半盒尼龙牌香烟，桌牌显示这是赵恒与严城峰两位董事的专座。]==],
+  image = [==[assets/image/clue_cigarette.png]==],
+};
+M["c4_agenda"] = {
+  id = "c4_agenda",
+  name = [==[峰会议程电子看板]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[记录着今日峰会各环节的时间表。]==],
+  detail = [==[电子看板滚动播放今日峰会议程：15:00 峰会开幕主持人致辞，15:10 自由交流环节。]==],
+  image = [==[assets/image/clue_agenda_board.png]==],
+};
+M["c4_zhouwen_desk"] = {
+  id = "c4_zhouwen_desk",
+  name = [==[庭院右侧长桌]==],
+  category = [==[trace]==],
+  chapter = [==[chapter4]==],
+  description = [==[长桌上放着一台电脑和一些物料，电脑设有密码，用户名写着周文。]==],
+  detail = [==[庭院右侧的木制长桌上摆着一台设了密码的电脑，登录用户名是周文。旁边是一年半前磐安智能的内部技术期刊，封面刊登着年度核心研发骨干团队合影，周文站在最中间，神采奕奕地笑着。]==],
+  image = [==[assets/image/clue_laptop_journal.png]==],
+};
+M["c4_camera"] = {
+  id = "c4_camera",
+  name = [==[隐藏摄像头]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[藏在电视旁音响里的微型摄像头。]==],
+  detail = [==[一台微型无线摄像头，被巧妙地藏在房间电视旁的音响内部。接入本地端口后可以查到设备主人。]==],
+  image = [==[assets/image/clue_hidden_camera.png]==],
+};
+M["c4_sms"] = {
+  id = "c4_sms",
+  name = [==[复原的短信记录]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[严成峰发给赵恒的威胁短信。]==],
+  detail = [==[从碎屏手机中复原出的短信：发信人严成峰，收信人赵恒，内容为如果不想贪污的事被其他人知道，那就来我房间。]==],
+  image = [==[]==],
+};
+M["c4_sweat"] = {
+  id = "c4_sweat",
+  name = [==[安全通道汗渍]==],
+  category = [==[evidence]==],
+  chapter = [==[chapter4]==],
+  description = [==[25楼与1楼安全通道把手上都留有汗渍。]==],
+  detail = [==[25楼与1楼的安全通道门把手上都提取到了汗渍痕迹，可与大堂垃圾桶里的湿纸巾做成分比对。]==],
+  image = [==[assets/image/clue_stair_door.png]==],
+};
+M["c4_tes_monitor"] = {
+  id = "c4_tes_monitor",
+  name = [==[监控缺失三天]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[走廊监控备份缺少了3天的内容，有隐蔽的入侵痕迹。]==],
+  detail = [==[警察A：走廊监控的备份缺少了3天的内容，有入侵痕迹，但非常隐蔽，需要很长时间才能还原数据。]==],
+  image = [==[]==],
+};
+M["c4_tes_zhouwen_file"] = {
+  id = "c4_tes_zhouwen_file",
+  name = [==[周文曾来取文件]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[案发后周文曾来到2501，请法医代取床头柜里的重要资料。]==],
+  detail = [==[警察A：之前有个叫周文的来过，他说有些重要的资料留在房间床头柜里希望取出，不过没有进去，我让里面的法医代拿了出来。]==],
+  image = [==[]==],
+};
+M["c4_tes_forensic"] = {
+  id = "c4_tes_forensic",
+  name = [==[法医证词]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[除轻微打斗外无致命伤，凶手应该是个力气很小的人。]==],
+  detail = [==[宋医生：除了一些轻微的打斗，并没有其他伤痕，且这些都不致命，对手应该是个力气很小的人。另外死者身上发现一瓶已经用完的吸入剂药盒。]==],
+  image = [==[]==],
+};
+M["c4_tes_waiter"] = {
+  id = "c4_tes_waiter",
+  name = [==[第一目击者证词]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[服务员A受赵恒委托送药，上楼后发现严成峰已经没了呼吸。]==],
+  detail = [==[服务员A：当时赵总让我送药给严总，我上楼后发现房间门是半开的，喊了两声没反应，进去后就发现严总躺在地上，房间还很乱，探了鼻息发现没呼吸了，于是通过对讲机呼叫了总台。]==],
+  image = [==[]==],
+};
+M["c4_tes_guard"] = {
+  id = "c4_tes_guard",
+  name = [==[保安证词]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[17点左右有名男子在电梯口徘徊，半小时后从安全通道出来并丢弃大量纸巾。]==],
+  detail = [==[保安：大概17点左右，有个男人在电梯口打转，手里的香烟抽一半就掐灭又点一根。过了半小时，我看到他从安全通道里出来，手里拿着很多纸巾丢进了垃圾桶。]==],
+  image = [==[]==],
+};
+M["c4_tes_order"] = {
+  id = "c4_tes_order",
+  name = [==[外卖订单时间]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[周文手机上的订单显示16点送达，外卖柜记录却显示18点。]==],
+  detail = [==[周文掏出手机展示订单，上面确实写着16点送达；而外卖柜的系统记录却显示实际抵达时间为18点，中间整整差了两个小时。]==],
+  image = [==[]==],
+};
+M["c4_tes_zhao_med"] = {
+  id = "c4_tes_zhao_med",
+  name = [==[赵恒托送药]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[赵恒称严成峰说药4点送到，迟迟未到才托服务员代送。]==],
+  detail = [==[赵恒：严城峰当时告诉我药4点送到，当时已经迟到半小时了，所以希望我如果可以就上去看看，但药一直到6点左右才送到，正好我在跟资方谈话，就让服务员代劳了。]==],
+  image = [==[]==],
+};
+M["c4_tes_zhao_smoke"] = {
+  id = "c4_tes_zhao_smoke",
+  name = [==[赵恒的香烟习惯]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[赵恒承认自己抽了很多年尼龙牌香烟。]==],
+  detail = [==[赵恒：呃……是的，已经抽了很多年了。]==],
+  image = [==[]==],
+};
+M["c4_tes_zhouwen_past"] = {
+  id = "c4_tes_zhouwen_past",
+  name = [==[周文的过去]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[一年半前周文还是磐安的核心研发骨干。]==],
+  detail = [==[许晴岚：大概一年半前，周文那时候好像是磐安的核心技术人员。这中间不知发生了什么，模样大变，我还真没认出来。]==],
+  image = [==[]==],
+};
+M["c4_tes_zhao_corrupt"] = {
+  id = "c4_tes_zhao_corrupt",
+  name = [==[赵恒的财务问题]==],
+  category = [==[testimony]==],
+  chapter = [==[chapter4]==],
+  description = [==[赵恒开了空壳公司与磐石合作套现。]==],
+  detail = [==[许晴岚：磐安这几年为了吃政企算力补贴，财务账目烂得跟筛子一样。据小道消息，赵恒因此开了空壳公司和磐石合作进行套现。]==],
+  image = [==[]==],
+};
 return M
