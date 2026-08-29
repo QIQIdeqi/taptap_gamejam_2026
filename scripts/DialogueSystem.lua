@@ -72,6 +72,9 @@ function M.Start(dialogueId, onComplete, showSkip)
     M.onComplete = onComplete
 
     M.BuildUI(showSkip ~= false)
+    print(string.format("[DLG DEBUG] Start: id=%s lines=%d uiRoot=%s",
+        tostring(type(dialogueId) == "string" and dialogueId or "<table>"),
+        dialogue.lines and #dialogue.lines or -1, tostring(M.ui.root ~= nil)))
     M.StartLine(1)
 end
 
@@ -192,29 +195,43 @@ function M.StartLine(index)
     M.state.timer = 0
     M.state.isLineComplete = false
 
-    local GameData = require("scripts.GameData")
-    if line.speaker and line.speaker ~= "" then
-        local char = GameData.GetCharacter(line.speaker)
-        if char then
-            M.ui.nameLabel:SetText(char.name)
-            M.ui.nameLabel:SetStyle({ fontColor = { char.color[1], char.color[2], char.color[3], 255 } })
+    -- 说话人处理包 pcall：此处报错会被 UI 事件系统静默吞掉，
+    -- 表现为"对话框弹出来了但点不动、一片空白"，极难定位。
+    local ok, err = pcall(function()
+        local GameData = require("scripts.GameData")
+        if line.speaker and line.speaker ~= "" then
+            local char = GameData.GetCharacter(line.speaker)
+            if char then
+                M.ui.nameLabel:SetText(char.name)
+                if char.color then
+                    M.ui.nameLabel:SetStyle({
+                        fontColor = { char.color[1], char.color[2], char.color[3], 255 }
+                    })
+                end
+            else
+                M.ui.nameLabel:SetText(line.speaker)
+            end
+            local portraitPath = M.portraitMap[line.speaker]
+            if portraitPath and M.ui.portrait then
+                M.ui.portrait:SetBackgroundImage(portraitPath)
+                M.ui.portrait:SetVisible(true)
+            elseif M.ui.portrait then
+                M.ui.portrait:SetVisible(false)
+            end
         else
-            M.ui.nameLabel:SetText(line.speaker)
+            M.ui.nameLabel:SetText("")
+            if M.ui.portrait then M.ui.portrait:SetVisible(false) end
         end
-        local portraitPath = M.portraitMap[line.speaker]
-        if portraitPath and M.ui.portrait then
-            M.ui.portrait:SetBackgroundImage(portraitPath)
-            M.ui.portrait:SetVisible(true)
-        elseif M.ui.portrait then
-            M.ui.portrait:SetVisible(false)
-        end
-    else
-        M.ui.nameLabel:SetText("")
-        if M.ui.portrait then M.ui.portrait:SetVisible(false) end
+    end)
+    if not ok then
+        print(string.format("[DLG ERROR] StartLine(%d) speaker=%s 处理失败: %s",
+            index, tostring(line.speaker), tostring(err)))
     end
 
     M.ui.continueHint:SetVisible(false)
     M.ui.textLabel:SetText("")
+    print(string.format("[DLG DEBUG] StartLine: idx=%d speaker=%s len=%d",
+        index, tostring(line.speaker), #M.state.fullText))
 end
 
 -- ============================================================================
@@ -264,6 +281,8 @@ end
 -- ============================================================================
 
 function M.OnClick()
+    print(string.format("[DLG DEBUG] OnClick: active=%s line=%d complete=%s",
+        tostring(M.state.isActive), M.state.lineIndex or -1, tostring(M.state.isLineComplete)))
     if not M.state.isActive then return false end
 
     if not M.state.isLineComplete then
