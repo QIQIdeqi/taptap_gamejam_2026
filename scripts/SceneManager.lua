@@ -533,8 +533,13 @@ function M:_onItemInteract(item)
     -- 同一物件 600ms 内只响应一次，避免重复弹横幅/重复收录（不可用 os.clock()）。
     local now = M._gameTime or 0
     if item.id == M._itemLastId and (now - (M._itemLastTime or 0)) < 0.6 then
+        print(string.format("[SM DEBUG] _onItemInteract SKIPPED(debounce): id=%s dt=%.3f",
+            tostring(item.id), now - (M._itemLastTime or 0)))
         return
     end
+    print(string.format("[SM DEBUG] _onItemInteract RUN: id=%s clueId=%s dialogueId=%s onInteract=%s gt=%.2f",
+        tostring(item.id), tostring(item.clueId), tostring(item.dialogueId),
+        tostring(item.onInteract), now))
     M._itemLastId, M._itemLastTime = item.id, now
     if item.clueId then
         local isNew = GameData.CollectClue(item.clueId)

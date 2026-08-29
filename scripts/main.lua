@@ -137,10 +137,13 @@ end
 -- ============================================================================
 
 function EnterMainMenu()
+    print("[MAIN DEBUG] EnterMainMenu start; uiRoot=" .. tostring(UI.GetRoot()))
     currentMode = GameMode.MainMenu
     SceneManager.ExitScene()
     NoteSystem.Close()
     MenuSystem.ShowMenu(MenuSystem.MenuType.Main)
+    print("[MAIN DEBUG] EnterMainMenu done; uiRoot=" .. tostring(UI.GetRoot())
+        .. " menuOpen=" .. tostring(MenuSystem.IsOpen()))
 end
 
 -- ============================================================================
@@ -236,6 +239,7 @@ local function ShowSuspectChoice()
                 GameData.SetFlag("case_solved", true)
                 -- 结案：结局对话播完后回到主菜单，否则会停在空场景上黑屏
                 DialogueSystem.Start("crime_ending_true", function()
+                    print("[MAIN DEBUG] crime_ending_true finished -> EnterMainMenu")
                     EnterMainMenu()
                 end)
             else
@@ -285,6 +289,11 @@ function HandleSpecialInteract(obj, onComplete)
             end
         end
     elseif obj.onInteract == "deduce" then
+        print(string.format("[MAIN DEBUG] deduce: case_solved=%s smart=%s inhaler=%s body=%s",
+            tostring(GameData.GetFlag("case_solved")),
+            tostring(GameData.GetFlag("clue_smart_device")),
+            tostring(GameData.GetFlag("clue_inhaler")),
+            tostring(GameData.GetFlag("clue_body_position"))))
         if GameData.GetFlag("case_solved") then
             -- 已结案再次推理：重播结局后回到主菜单，避免停在空场景黑屏
             DialogueSystem.Start("crime_ending_true", function()
