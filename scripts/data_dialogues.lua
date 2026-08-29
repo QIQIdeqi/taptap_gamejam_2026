@@ -959,4 +959,122 @@ M["c4d_7"] = {
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[记得要过来哦！别放我们鸽子啊！]==] },
   },
 };
+M["c1i_zhaoheng_q1"] = {
+  id = "c1i_zhaoheng_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[我主要负责商务和政企对接，技术那块以前是严总亲自抓，现在嘛……交给下面的人在做了。]==] },
+  },
+};
+M["c1i_zhaoheng_q2"] = {
+  id = "c1i_zhaoheng_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[当然重要，这三家如果能谈成联合算力调度，磐安明年的补贴就不用愁了。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[赵恒苦笑了一下，压低声音。]==] },
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[不过严总似乎另有打算，他这个人……从来不做亏本买卖。]==] },
+  },
+};
+M["c1i_zhaoheng_q3"] = {
+  id = "c1i_zhaoheng_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[呃……应酬的时候偶尔来一根，怎么，李顾问也要来一支？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[他从口袋里摸出一包烟，是市面上很难买到的尼龙牌。]==] },
+  },
+};
+M["c1i_zhaoheng_end"] = {
+  id = "c1i_zhaoheng_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhaoHeng]==], portrait = [==[]==], clue = [==[]==], text = [==[失陪一下，我去看看严总那边。]==] },
+  },
+};
+M["c1i_xuqinglan_q1"] = {
+  id = "c1i_xuqinglan_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[当然是抢下联合调度的主导权，我们澜星的技术可比某些公司扎实多了。]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[不过磐安那边的账目……哼，我可不想替他们背锅。]==] },
+  },
+};
+M["c1i_xuqinglan_q2"] = {
+  id = "c1i_xuqinglan_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[严城峰是只老狐狸，什么都要攥在自己手里。]==] },
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[赵恒嘛……看着老实，可老实人被逼急了，也是会咬人的。]==] },
+  },
+};
+M["c1i_xuqinglan_end"] = {
+  id = "c1i_xuqinglan_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[XuQinglan]==], portrait = [==[]==], clue = [==[]==], text = [==[行啦，不说了，再说就该被人听见了。]==] },
+  },
+};
+M["c1i_zhouwen_q1"] = {
+  id = "c1i_zhouwen_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[呃……我负责安防和调度系统的运维，以前还做过一些开发。]==] },
+  },
+};
+M["c1i_zhouwen_q2"] = {
+  id = "c1i_zhouwen_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[是的……其实这套酒店的安保也是我们做的。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[周文的声音越来越小。]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[不过最近老出问题，我也在查。]==] },
+  },
+};
+M["c1i_zhouwen_q3"] = {
+  id = "c1i_zhouwen_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[啊？还……还行吧。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[周文低下头，手指无意识地攥紧了工具包。]==] },
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[严总对我……挺器重的。]==] },
+  },
+};
+M["c1i_zhouwen_end"] = {
+  id = "c1i_zhouwen_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[ZhouWen]==], portrait = [==[]==], clue = [==[]==], text = [==[不好意思，那边设备好像又报警了，我先去看看。]==] },
+  },
+};
+M["c1i_yanchengfeng_q1"] = {
+  id = "c1i_yanchengfeng_q1",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[YanChengfeng]==], portrait = [==[]==], clue = [==[]==], text = [==[期待？哈。]==] },
+    { speaker = [==[YanChengfeng]==], portrait = [==[]==], clue = [==[]==], text = [==[我期待的是别被人背后捅刀子。]==] },
+  },
+};
+M["c1i_yanchengfeng_q2"] = {
+  id = "c1i_yanchengfeng_q2",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[YanChengfeng]==], portrait = [==[]==], clue = [==[]==], text = [==[系统？系统从来不是问题，人才是。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[严成峰意味深长地朝周文的方向瞥了一眼。]==] },
+  },
+};
+M["c1i_yanchengfeng_q3"] = {
+  id = "c1i_yanchengfeng_q3",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[YanChengfeng]==], portrait = [==[]==], clue = [==[]==], text = [==[老毛病，哮喘。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[他拍了拍西装口袋，里面传来药瓶的轻响。]==] },
+    { speaker = [==[YanChengfeng]==], portrait = [==[]==], clue = [==[]==], text = [==[药我随时带着，死不了。]==] },
+  },
+};
+M["c1i_yanchengfeng_end"] = {
+  id = "c1i_yanchengfeng_end",
+  background = [==[]==],
+  lines = {
+    { speaker = [==[YanChengfeng]==], portrait = [==[]==], clue = [==[]==], text = [==[李顾问，失陪，我上楼处理点私事。]==] },
+  },
+};
 return M

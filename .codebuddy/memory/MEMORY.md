@@ -23,7 +23,7 @@
 ## 关键约定（致命坑精简）
 - 长度米、Y-up 左手坐标系
 - `graphics`/`input` 是全局变量（勿 require）；无 SetMode；`GetKeyPress` 仅此、无鼠标坐标（滚动用方向键）
-- UI 构造仅 `UI.Panel/Label/Button`，单参数 `UI.X({...})`；**双参数 `UI.X(parent,props)` 第二参被吞→黑屏**（最致命坑）
+- UI 构造仅 `UI.Panel/Label/Button`。**必须单参数 `UI.X({...})` 创建，再 `parent:AddChild(w)` 手动挂载**；双参数 `UI.X(parent,props)` 的第二参会被吞 → 控件无样式且不挂载 → 完全不可见（**本项目最致命坑，已踩 4 次**：场景黑屏、`ShowSuspectChoice` 选项看不见、询问/对证面板看不见、选项按钮点不到）。标准写法见 `SceneManager._mk` 与 `main.lua`/`InterrogationSystem` 的 `_attach(parent, widget)` 辅助函数。凡是"面板弹了但看不见/点不动"，先查是不是用了双参数构造
 - 事件回调写 `widget.props.onX`（onClick/onPointerEnter/onPointerLeave），**非** `widget:onX()` **非** `widget.onX=`
 - `SetStyle` 仅单 table 参数；颜色 table 或 `"rgba(...)"`
 - `Widget:AddChild` 返回 **self**（非 child）；图片用 `backgroundImage`(项目相对路径)，**无 `UI.Image`**

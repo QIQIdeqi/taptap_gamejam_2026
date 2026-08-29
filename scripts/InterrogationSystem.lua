@@ -35,9 +35,60 @@ end
 -- clue:         回答播完后收录的线索
 -- ============================================================================
 M.Interrogations = {
+    -- ===== 第一章：庭院交流会（铺垫阶段多问题询问）=====
+    -- first 复用原有剧情对话，首次点击播剧情，之后再点进入追问环节
+    ch1_zhaoheng = {
+        name = "赵恒",
+        portrait = "assets/image/char_zhaoheng.png",
+        first = "ch3_npc_zhaoheng",
+        topics = {
+            { id = "q1", text = "赵总在磐安主要负责哪块业务？", answer = "c1i_zhaoheng_q1" },
+            { id = "q2", text = "这次峰会对磐安很重要吧？", answer = "c1i_zhaoheng_q2" },
+            { id = "q3", text = "赵总平时抽烟么？", answer = "c1i_zhaoheng_q3" },
+        },
+        ending = "c1i_zhaoheng_end",
+        repeatText = "劳驾……我现在有点事要忙，回头再聊。",
+    },
+    ch1_xuqinglan = {
+        name = "许晴岚",
+        portrait = "assets/image/char_xuqinglan.png",
+        first = "ch3_npc_xuqinglan",
+        topics = {
+            { id = "q1", text = "这次峰会澜星的目标是什么？", answer = "c1i_xuqinglan_q1" },
+            { id = "q2", text = "你怎么看磐安那两位？", answer = "c1i_xuqinglan_q2" },
+        },
+        ending = "c1i_xuqinglan_end",
+        repeatText = "行啦，我还有一堆人要应付，回头聊。",
+    },
+    ch1_zhouwen = {
+        name = "周文",
+        portrait = "assets/image/char_zhouwen.png",
+        first = "ch3_npc_zhouwen",
+        topics = {
+            { id = "q1", text = "小周，你在磐安主要负责什么？", answer = "c1i_zhouwen_q1" },
+            { id = "q2", text = "这套酒店的安保系统也是你们做的？", answer = "c1i_zhouwen_q2" },
+            { id = "q3", text = "在磐安工作还顺心么？", answer = "c1i_zhouwen_q3" },
+        },
+        ending = "c1i_zhouwen_end",
+        repeatText = "不好意思，我得去看下设备了。",
+    },
+    ch1_yanchengfeng = {
+        name = "严成峰",
+        portrait = "assets/image/char_yanchengfeng.png",
+        first = "ch3_npc_yanchengfeng",
+        topics = {
+            { id = "q1", text = "严总，这次峰会有什么期待？", answer = "c1i_yanchengfeng_q1" },
+            { id = "q2", text = "听说磐安最近在推新的调度系统？", answer = "c1i_yanchengfeng_q2" },
+            { id = "q3", text = "严总身体还好么？", answer = "c1i_yanchengfeng_q3" },
+        },
+        ending = "c1i_yanchengfeng_end",
+        repeatText = "李顾问，我还有事要处理，失陪。",
+    },
+
     -- ===== 2501 房间 =====
     police_a = {
         name = "警察A",
+        portrait = "assets/image/char_police.png",
         first = "c4i_police_first",
         topics = {
             { id = "q1", text = "有查看外面走廊的监控么？", answer = "c4i_police_q1", clue = "c4_tes_monitor" },
@@ -49,6 +100,7 @@ M.Interrogations = {
     },
     forensic = {
         name = "法医宋医生",
+        portrait = "assets/image/char_doctor.png",
         first = "c4i_forensic_first",
         topics = {
             { id = "q1", text = "现场留有什么其他痕迹么？", answer = "c4i_forensic_q1" },
@@ -60,6 +112,7 @@ M.Interrogations = {
     },
     waiter_a = {
         name = "服务员A",
+        portrait = "assets/image/char_waiter.png",
         first = "c4i_waiter_first",
         topics = {
             { id = "q1", text = "你是怎么发现尸体的？", answer = "c4i_waiter_q1", clue = "c4_tes_waiter" },
@@ -71,6 +124,7 @@ M.Interrogations = {
     -- ===== 1L 大堂 =====
     zhouwen = {
         name = "周文",
+        portrait = "assets/image/char_zhouwen.png",
         first = "c4i_zhouwen_first",
         topics = {
             { id = "q1", text = "你们公司的赵总和严总平时关系如何？", answer = "c4i_zhouwen_q1" },
@@ -84,6 +138,7 @@ M.Interrogations = {
     },
     frontdesk = {
         name = "前台接待",
+        portrait = "assets/image/char_receptionist.png",
         first = "c4i_frontdesk_first",
         topics = {
             { id = "q1", text = "峰会举办期间，是否有人可以随意进入酒店？", answer = "c4i_frontdesk_q1" },
@@ -95,6 +150,7 @@ M.Interrogations = {
     },
     guard = {
         name = "庭院入口保安",
+        portrait = "assets/image/char_guard.png",
         first = "c4i_guard_first",
         topics = {
             { id = "q1", text = "你在这工作时，有看到什么神色可疑或奇怪的人么？", answer = "c4i_guard_q1", clue = "c4_tes_guard" },
@@ -107,6 +163,7 @@ M.Interrogations = {
     -- ===== 1L 大厅 / 庭院 =====
     xuqinglan = {
         name = "许晴岚",
+        portrait = "assets/image/char_xuqinglan.png",
         first = "c4i_xuqinglan_first",
         topics = {
             { id = "q1", text = "关于周文，你知道些什么？", answer = "c4i_xuqinglan_q1", clue = "c4_tes_zhouwen_past" },
@@ -117,6 +174,7 @@ M.Interrogations = {
     },
     zhaoheng = {
         name = "赵恒",
+        portrait = "assets/image/char_zhaoheng.png",
         first = "c4i_zhaoheng_first",
         topics = {
             { id = "q1", text = "你让服务员去给严总送药是怎么回事？", answer = "c4i_zhaoheng_q1", clue = "c4_tes_zhao_med" },
@@ -136,6 +194,7 @@ M.Interrogations = {
 M.Confrontations = {
     {
         id = "zhaoheng", name = "赵恒",
+        portrait = "assets/image/char_zhaoheng.png",
         questions = {
             { ask = "c4c_zhao_q1",
               options = {
@@ -163,6 +222,7 @@ M.Confrontations = {
     },
     {
         id = "zhouwen", name = "周文",
+        portrait = "assets/image/char_zhouwen.png",
         questions = {
             -- multi：两个选项都是有效追问，需全部问完才进入下一题
             { ask = "c4c_zhou_q1", multi = true,
@@ -190,6 +250,7 @@ M.Confrontations = {
     },
     {
         id = "xuqinglan", name = "许晴岚",
+        portrait = "assets/image/char_xuqinglan.png",
         questions = {
             { ask = "c4c_xu_q1",
               options = { { text = "A：赵恒和严城峰两人私下有没有什么过节？", correct = true } },
@@ -220,7 +281,7 @@ local function _attach(parent, widget)
     return widget
 end
 
-function M._ShowChoices(title, subtitle, options, onClose)
+function M._ShowChoices(title, subtitle, options, onClose, portrait)
     _destroyUI()
     local root = UI.GetRoot()
     if not root then if onClose then onClose() end return end
@@ -234,15 +295,30 @@ function M._ShowChoices(title, subtitle, options, onClose)
     }))
     M._overlay.props.onClick = function() end
 
+    -- 立绘区：有立绘时面板加宽，立绘居左、选项居右，形成审讯对峙的画面
     local n = #options
-    local panelH = 130 + n * 62
-    local panelW = 620
+    local hasPortrait = (type(portrait) == "string") and (portrait ~= "")
+    local portraitW = hasPortrait and 200 or 0
+    local panelH = math.max(300, 130 + n * 62)
+    local panelW = 620 + portraitW
+    local optLeft = hasPortrait and (portraitW + 24) or 40
+    local optW = panelW - optLeft - 40
+
     M._panel = _attach(root, UI.Panel({
         position = "absolute",
         left = sw / 2 - panelW / 2, top = sh / 2 - panelH / 2, width = panelW, height = panelH,
         backgroundColor = { 20, 22, 38, 245 }, borderRadius = 14,
         borderWidth = 2, borderColor = { 180, 160, 120, 200 }, zIndex = 50001,
     }))
+
+    if hasPortrait then
+        _attach(M._panel, UI.Panel({
+            position = "absolute",
+            left = 24, top = 92, width = portraitW - 48, height = panelH - 116,
+            backgroundImage = portrait, backgroundFit = "contain",
+            backgroundColor = { 0, 0, 0, 0 }, pointerEvents = "none",
+        }))
+    end
 
     _attach(M._panel, UI.Label({
         position = "absolute",
@@ -261,7 +337,7 @@ function M._ShowChoices(title, subtitle, options, onClose)
         local enabled = (opt.enabled ~= false)
         local b = _attach(M._panel, UI.Button({
             position = "absolute",
-            left = 40, top = 92 + (i - 1) * 62, width = panelW - 80, height = 52,
+            left = optLeft, top = 92 + (i - 1) * 62, width = optW, height = 52,
             text = opt.text, fontSize = 16,
             fontColor = enabled and { 255, 255, 255, 240 } or { 130, 130, 140, 220 },
             backgroundColor = enabled and { 60, 82, 132, 220 } or { 45, 48, 60, 200 },
@@ -345,7 +421,7 @@ function M._ShowTopics(cfg)
         text = "（结束询问）",
         onPick = function() M.Finish() end,
     }
-    M._ShowChoices("询问 · " .. cfg.name, "选择要追问的内容", opts, M.Finish)
+    M._ShowChoices("询问 · " .. cfg.name, "选择要追问的内容", opts, M.Finish, cfg.portrait)
 end
 
 function M.StartInterrogation(npcId, onFinish)
@@ -431,7 +507,7 @@ function M._RunMulti(person, qi, onPersonDone)
                 end,
             }
         end
-        M._ShowChoices("对证 · " .. person.name, "继续追问", opts, nil)
+        M._ShowChoices("对证 · " .. person.name, "继续追问", opts, nil, person.portrait)
     end
 
     if not GameData.GetFlag(_cflag(person.id, qi, "ask")) then
@@ -486,7 +562,7 @@ function M._RunQuestion(person, qi, onPersonDone)
                 end,
             }
         end
-        M._ShowChoices("对证 · " .. person.name, "用证据指出他话里的破绽", opts, nil)
+        M._ShowChoices("对证 · " .. person.name, "用证据指出他话里的破绽", opts, nil, person.portrait)
     end)
 end
 
@@ -520,7 +596,7 @@ function M._RunQuestionRetry(person, qi, onPersonDone)
             end,
         }
     end
-    M._ShowChoices("对证 · " .. person.name, "用证据指出他话里的破绽", opts, nil)
+    M._ShowChoices("对证 · " .. person.name, "用证据指出他话里的破绽", opts, nil, person.portrait)
 end
 
 function M.StartConfrontation(onFinish)

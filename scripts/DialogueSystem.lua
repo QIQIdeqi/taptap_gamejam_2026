@@ -37,6 +37,11 @@ M.portraitMap = {
     FrontDesk = "assets/image/char_receptionist.png",       -- 酒店前台
     PanganEmployee = "assets/image/char_technician.png",    -- 磐安智能技术员/中层组长
     NewsAnchor = "assets/image/ui_news_anchor.png",         -- 平板 AI 新闻播报
+    -- 第四阶段新增（2026-08-29 生成接入）
+    PoliceA = "assets/image/char_police.png",               -- 执勤警察
+    Forensic = "assets/image/char_doctor.png",              -- 法医宋医生
+    WaiterA = "assets/image/char_waiter.png",               -- 服务员A
+    Guard = "assets/image/char_guard.png",                  -- 庭院入口保安
 }
 
 -- ============================================================================
