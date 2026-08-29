@@ -396,9 +396,10 @@ function M:_BuildScreenContent(screenId)
 end
 
 function M:_SwitchScreen(dir)
-    -- 防抖：引擎会以约 100-170ms 周期反复派发 onClick（场景重建后按钮重新获得焦点）。
-    -- 设 120ms 冷却：刚好拦住引擎连锁（>100ms），但不影响人类连点（>200ms/次）。
-    local now = os.clock()
+    -- 防抖：引擎会以约 100-180ms 周期反复派发 onClick（场景重建后按钮重新获得焦点）。
+    -- 用 M._gameTime（Update 中按 dt 累加的真实墙钟时间）判断，不可用 os.clock()。
+    -- 冷却 120ms：拦住引擎连锁（>100ms），但不影响人类连点（>200ms/次）。
+    local now = M._gameTime or 0
     if M._lastSwitch and M._lastSwitch.dir == dir and (now - M._lastSwitch.t) < 0.12 then
         return
     end
@@ -510,9 +511,9 @@ end
 -- 交互逻辑（两模式共用）
 -- ============================================================
 function M:_onItemInteract(item)
-    -- 引擎会以约 170ms 周期反复派发 onClick，帧级防抖拦不住（触发跨越多帧），
-    -- 故改用时间防抖：同一物件 600ms 内只响应一次，避免重复弹横幅/重复收录
-    local now = os.clock()
+    -- 引擎会周期性反复派发 onClick，用 M._gameTime（真实墙钟时间）做防抖，
+    -- 同一物件 600ms 内只响应一次，避免重复弹横幅/重复收录（不可用 os.clock()）。
+    local now = M._gameTime or 0
     if item.id == M._itemLastId and (now - (M._itemLastTime or 0)) < 0.6 then
         return
     end
@@ -606,6 +607,9 @@ end
 -- ============================================================
 function M.Update(dt)
     M._frameCount = (M._frameCount or 0) + 1
+    -- 真实经过时间（秒）。注意：不能用 os.clock()——它返回 CPU 时间而非墙钟时间，
+    -- Lua 脚本执行极快导致其增量远小于真实间隔，会使所有时间防抖误判为「短时间内重复」。
+    M._gameTime = (M._gameTime or 0) + (dt or 0)
     if M._switchCD > 0 then M._switchCD = M._switchCD - (dt or 0) end
 
     -- 处理横幅自动消失定时器

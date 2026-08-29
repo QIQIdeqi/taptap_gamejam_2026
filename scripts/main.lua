@@ -98,11 +98,11 @@ function Start()
         GameData.GameState.currentScene = sceneId
     end
     -- 统一场景出口回调：点击 exit 按钮时切换到目标场景
-    -- 引擎会以约 170ms 周期反复派发 onClick（场景重建后按钮重新获得焦点所致），
-    -- 帧级防抖拦不住（触发跨越多帧），故改用时间防抖：同一目标 600ms 内只响应一次
+    -- 引擎会周期性反复派发 onClick，用 SceneManager._gameTime（Update 按 dt 累加的真实墙钟时间）
+    -- 做防抖：同一目标 600ms 内只响应一次。不可用 os.clock()（CPU 时间，增量远小于真实间隔）。
     local _exitLastTime, _exitLastTarget = 0, nil
     sceneExitCallback = function(targetScene)
-        local now = os.clock()
+        local now = SceneManager._gameTime or 0
         if targetScene == _exitLastTarget and (now - _exitLastTime) < 0.6 then
             return
         end
