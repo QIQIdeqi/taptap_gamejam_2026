@@ -751,6 +751,58 @@ M.OpeningShots = {
             { sprite = "assets/image/char_wenyin.png",  x = 0.70, y = 0.90, h = 0.40, ratio = 0.671 },
         },
     },
+    -- 序章镜5的行内切镜：换背景时保留李志和陈雯音的站位。
+    opening_prologue_5_after = {
+        caption = "黄昏事务所",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",   x = 0.34, y = 0.92, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.70, y = 0.90, h = 0.40, ratio = 0.671 },
+        },
+    },
+    -- 第一阶段：酒店前台，人物站位依据 dialogues.csv 的登场顺序。
+    opening_chapter1_1 = {
+        caption = "万丽海湾大酒店 · 前台",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",          x = 0.30, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",         x = 0.42, y = 0.94, h = 0.42, ratio = 0.671 },
+            { sprite = "assets/image/char_receptionist.png",   x = 0.57, y = 0.72, h = 0.30, ratio = 0.671 },
+        },
+    },
+    opening_chapter1_2 = {
+        caption = "万丽海湾大酒店 · 前台右侧",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",          x = 0.27, y = 0.94, h = 0.52, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",         x = 0.39, y = 0.94, h = 0.40, ratio = 0.671 },
+            { sprite = "assets/image/char_xuqinglan.png",      x = 0.60, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_receptionist.png",   x = 0.78, y = 0.72, h = 0.30, ratio = 0.671 },
+        },
+    },
+    opening_chapter1_3 = {
+        caption = "万丽海湾大酒店 · 入口",
+        actors = {
+            { sprite = "assets/image/char_yanchengfeng.png",  x = 0.30, y = 0.94, h = 0.58, ratio = 0.671 },
+            { sprite = "assets/image/char_zhaoheng.png",      x = 0.42, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_technician.png",    x = 0.54, y = 0.94, h = 0.46, ratio = 0.671 },
+            { sprite = "assets/image/char_technician.png",    x = 0.64, y = 0.94, h = 0.46, ratio = 0.671 },
+            { sprite = "assets/image/char_zhouwen.png",       x = 0.76, y = 0.94, h = 0.48, ratio = 0.671 },
+        },
+    },
+    opening_chapter1_4 = {
+        caption = "万丽海湾大酒店 · 大厅",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",          x = 0.30, y = 0.94, h = 0.52, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",         x = 0.42, y = 0.94, h = 0.40, ratio = 0.671 },
+            { sprite = "assets/image/char_xuqinglan.png",      x = 0.63, y = 0.94, h = 0.54, ratio = 0.671 },
+        },
+    },
+    opening_chapter1_5 = {
+        caption = "万丽海湾大酒店 · 2510房",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",          x = 0.38, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",         x = 0.53, y = 0.94, h = 0.40, ratio = 0.671 },
+            { sprite = "assets/image/char_sister.png",         x = 0.74, y = 0.94, h = 0.52, ratio = 0.671 },
+        },
+    },
 }
 
 -- ============================================================================
