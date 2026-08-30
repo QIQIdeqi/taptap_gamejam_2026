@@ -15,6 +15,8 @@ M.state = {
     panel = nil,
     player = nil,
     finishing = false,   -- 防重入：onEnded 与点击跳过可能同时触发
+    subtitles = nil,     -- 字幕表：{ {start=秒, finish=秒, speaker="李志", text="..."}, ... }
+    subtitleLabel = nil, -- 底部字幕 Label
 }
 
 function M.IsSupported()
@@ -26,8 +28,11 @@ function M.IsActive()
 end
 
 -- 播放 CG 视频；src 为资源路径（如 "assets/video/opening_cg.mp4"）
+-- opts.subtitles 可选：{ {start=秒, finish=秒, speaker="李志", text="..."}, ... }
 -- 视频不支持 / 根节点缺失时直接回调 onComplete，保证流程不断
-function M.Play(src, onComplete)
+function M.Play(src, onComplete, opts)
+    opts = opts or {}
+
     if not M.IsSupported() then
         print("[CG] 视频播放不支持（非 WASM 平台），跳过 CG")
         if onComplete then onComplete() end
@@ -46,6 +51,7 @@ function M.Play(src, onComplete)
     M.state.active = true
     M.state.finishing = false
     M.state.onComplete = onComplete
+    M.state.subtitles = opts.subtitles
 
     local player = nil
 
@@ -82,10 +88,44 @@ function M.Play(src, onComplete)
             print("[CG] 视频播放结束")
             M.Finish()
         end,
+        onTimeUpdate = function(self, time, duration)
+            M.UpdateSubtitle(time)
+        end,
     })
 
     panel:AddChild(player)
     panel:AddChild(tapLayer)
+
+    -- 底部字幕层（穿透点击，仅显示）
+    if M.state.subtitles and #M.state.subtitles > 0 then
+        local subContainer = UI.Panel({
+            position = "absolute",
+            left = 0, right = 0, bottom = 64,
+            alignItems = "center",
+            justifyContent = "center",
+            backgroundColor = { 0, 0, 0, 0 },
+            pointerEvents = "none",
+            zIndex = 100000,
+        })
+        local subLabel = UI.Label({
+            text = "",
+            fontSize = 24,
+            fontColor = { 255, 255, 255, 255 },
+            textAlign = "center",
+            whiteSpace = "normal",
+            lineHeight = 1.5,
+            paddingLeft = 24, paddingRight = 24, paddingTop = 12, paddingBottom = 12,
+            backgroundColor = { 0, 0, 0, 150 },
+            borderRadius = 8,
+            textShadow = { offsetX = 0, offsetY = 2, blur = 4, color = { 0, 0, 0, 200 } },
+            maxWidth = "80%",
+            pointerEvents = "none",
+        })
+        subContainer:AddChild(subLabel)
+        panel:AddChild(subContainer)
+        M.state.subtitleLabel = subLabel
+        subLabel:SetVisible(false)
+    end
 
     -- 跳过提示（右下角）
     panel:AddChild(UI.Label({
@@ -105,6 +145,36 @@ function M.Play(src, onComplete)
 
     print("[CG] 开始播放片头动画：" .. tostring(src))
     return true
+end
+
+-- 根据当前播放时间更新底部字幕
+function M.UpdateSubtitle(time)
+    local subs = M.state.subtitles
+    local label = M.state.subtitleLabel
+    if not subs or not label then return end
+
+    local found = nil
+    for _, s in ipairs(subs) do
+        if time >= s.start and time < s.finish then
+            found = s
+            break
+        end
+    end
+
+    if found then
+        local txt
+        if found.speaker and found.speaker ~= "" then
+            txt = found.speaker .. "：" .. found.text
+        else
+            txt = found.text
+        end
+        if label:GetText() ~= txt then
+            label:SetText(txt)
+        end
+        label:SetVisible(true)
+    else
+        label:SetVisible(false)
+    end
 end
 
 -- 结束（播放完或跳过）：清理并回调
@@ -127,6 +197,8 @@ function M.Stop()
     M.state.panel = nil
     M.state.player = nil
     M.state.onComplete = nil
+    M.state.subtitles = nil
+    M.state.subtitleLabel = nil
 end
 
 return M

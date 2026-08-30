@@ -167,6 +167,28 @@ end
 -- 开始新游戏
 -- ============================================================================
 
+-- 序章片头 CG 字幕（时长 8+10+15+12+10=55s，start/finish 为拼接后绝对秒）
+local openingSubtitles = {
+    -- 分镜1：地铺叫醒（0-8s）
+    { start = 0.5,  finish = 5.5,  speaker = "李志", text = "几点了…1点？雯雯你是不是饿了？" },
+    -- 分镜2：煮泡面（8-18s）
+    { start = 8.5,  finish = 13.5, speaker = "李志", text = "热水器就在这，自己泡面都不会？" },
+    { start = 14.0, finish = 17.8, speaker = "李志", text = "你以前还会叫我舅舅的…现在怎么不说话了呢？" },
+    -- 分镜3：回忆·姐姐托付（18-33s）
+    { start = 18.5, finish = 21.0, speaker = "",     text = "2036年8月8日 14:20" },
+    { start = 21.3, finish = 24.0, speaker = "李志", text = "老姐，你真放心把女儿交给我带？" },
+    { start = 24.3, finish = 27.0, speaker = "姐姐", text = "爸妈出去旅游了，不找你找谁？" },
+    { start = 27.3, finish = 31.0, speaker = "姐姐", text = "十万块，两个月的养育费，外加万丽海湾3日住宿。" },
+    { start = 31.3, finish = 32.8, speaker = "李志", text = "遵命！雯雯就放心交给我吧。" },
+    -- 分镜4：AI新闻·签证（33-45s）
+    { start = 33.5, finish = 37.5, speaker = "新闻", text = "近10年来第一次AI错误，磐安智能正全力排查。" },
+    { start = 38.2, finish = 41.8, speaker = "李志", text = "你就是因为这次AI事故，签证没签下来吧？" },
+    { start = 42.5, finish = 44.8, speaker = "李志", text = "行李收拾好了吗？明天一早就出发。" },
+    -- 分镜5：收拾行李（45-55s）
+    { start = 45.5, finish = 49.5, speaker = "李志", text = "雯雯，有看到我的袜子吗？" },
+    { start = 50.5, finish = 54.5, speaker = "李志", text = "还得是你，比我还了解这个家，嘿嘿。" },
+}
+
 function StartNewGame()
     GameData.ResetGameState()
     playTimer = 0
@@ -180,7 +202,7 @@ function StartNewGame()
     -- 序章片头 CG 动画（Seedance 分镜视频，替代静态分镜对话）
     VideoCGSystem.Play("assets/video/opening_cg.mp4", function()
         EnterPrologueScene()
-    end)
+    end, { subtitles = openingSubtitles })
 end
 
 -- 进入序章场景（新手引导：书柜/衣柜/床铺）

@@ -19,6 +19,7 @@
 - `DialogueSystem.lua`：打字机；对话行支持 `line.clue`（播毕触发证言提取收录）
 - `MenuSystem.lua`：菜单/存档/读档/设置；槽位按钮含缩略图+删除按钮
 - `SaveSystem.lua`：10槽+自动存档；`GetSceneThumbnail` 场景→缩略图映射
+- `VideoCGSystem.lua`：片头 CG 视频播放（`Video.VideoPlayer` + 点击/ESC 跳过，`Finish()` 防重入）；`StartNewGame` 用它替代 `OpeningSystem.Start("prologue")` 播 Seedance 序章动画
 
 ## 关键约定（致命坑精简）
 - 长度米、Y-up 左手坐标系
@@ -51,6 +52,12 @@
 - 已删除 `tools/gen_csv.js` 等一次性提取脚本，避免误用其以 GameData 兜底数据覆盖用户编辑后的 CSV（CSV 现为唯一编辑源）
 - 顺带修复 bug：序章办公室 4 对话（of_bookshelf/of_desk/of_bed/of_lamp_mislead）原先被错误嵌套进 `crime_ending_true` 表内（缩进层级错），致 `M.Dialogues["of_bookshelf"]` 为 nil、办公室物件点击无反应；CSV 化按 id 扁平化到顶层已修复，内嵌兜底也已补为顶层条目
 - Lua 文件 IO：`File(path,FILE_READ)` / `fileSystem:FileExists(path)` 用相对路径（引擎自动项目+用户隔离）；`io` 库已移除，禁用 `loadfile/dofile`，统一用 `require`
+
+## Seedance 视频 / 视频播放（2026-08-30）
+- 序章 CG 用 Seedance 生成：`image_gen` 出分镜首帧插画 → `create_video_task`(mode=`first_frame`, model=`2.0`) 出动态视频 → ffmpeg `concat -c copy` 拼成 `assets/video/opening_cg.mp4`。
+- `create_video_task` **首次调用必 MCP 超时但任务已提交**；再调一次会报「并发超限」并返回 `task_id`；`query_video_task` 每 120s 轮询。并发上限 1/1，多段串行。Seedance 2.0：4-15s/720p/16:9，首帧图 ≤30MiB。
+- `maker_build_current_directory` 只传 `target_dir/entry/scriptsPath/message/timeout_ms`，**别塞多余字段**（否则 -32001 超时）。
+- 视频播放：`require("urhox-libs/Video")` → `Video.VideoPlayer{src="assets/video/x.mp4", autoPlay=true, objectFit="contain", onEnded=...}`；`Video.isSupported`（仅 WASM）。`VideoPlayer` 自带点击播放/暂停，需在其上叠透明 Panel 拦截实现「点击跳过」。
 
 ## 可拓展方向（用户授权"自行思考拓展"）
 - 同样模式可把 场景物件交互文字(name/interactText/misleading) 与 角色介绍 也抽出 CSV，loader 按 item id 回填 SceneManager/Characters（当前未做，按需再扩）
