@@ -32,6 +32,9 @@ M.ui = {
 -- 默认镜头切换时长（秒）
 local DEFAULT_SHOT_FADE = 0.6
 
+-- 诊断角标开关：画面左上角显示当前分镜信息，验证无误后置 false
+M.debugCorner = true
+
 -- ============================================================================
 -- 启动开场动画
 -- ============================================================================
@@ -206,21 +209,34 @@ function M.FillShot(panel, dialogueId)
     panel._actorLayer = actorLayer
 
     local shot = GameData.OpeningShots and GameData.OpeningShots[dialogueId]
-    if not (shot and shot.actors) then return end
-
     local sw, sh = graphics:GetWidth(), graphics:GetHeight()
-    for _, a in ipairs(shot.actors) do
-        -- 立绘按原始比例绘制，底部对齐 a.y、水平以 a.x 为中心
-        local ph = (a.h or 0.5) * sh
-        local pw = ph * (a.ratio or 0.671)
-        actorLayer:AddChild(UI.Panel {
+
+    if shot and shot.actors then
+        for _, a in ipairs(shot.actors) do
+            -- 立绘按原始比例绘制，底部对齐 a.y、水平以 a.x 为中心
+            local ph = (a.h or 0.5) * sh
+            local pw = ph * (a.ratio or 0.671)
+            actorLayer:AddChild(UI.Panel {
+                position = "absolute",
+                left = (a.x or 0.5) * sw - pw / 2,
+                top = (a.y or 0.9) * sh - ph,
+                width = pw, height = ph,
+                backgroundImage = a.sprite,
+                backgroundFit = "contain",
+                backgroundColor = { 0, 0, 0, 0 },
+            })
+        end
+    end
+
+    -- 诊断角标：用于确认分镜代码是否真的执行、背景取到的是哪张图
+    if M.debugCorner then
+        local shortBg = tostring(bg):match("([^/]+)$") or "?"
+        panel:AddChild(UI.Label {
             position = "absolute",
-            left = (a.x or 0.5) * sw - pw / 2,
-            top = (a.y or 0.9) * sh - ph,
-            width = pw, height = ph,
-            backgroundImage = a.sprite,
-            backgroundFit = "contain",
-            backgroundColor = { 0, 0, 0, 0 },
+            left = 12, top = 10, width = 820, height = 26,
+            text = string.format("[分镜] %s | %s | 角色%d | %dx%d",
+                tostring(dialogueId), shortBg, shot and #shot.actors or 0, sw, sh),
+            fontSize = 14, fontColor = { 255, 220, 120, 235 },
         })
     end
 end
