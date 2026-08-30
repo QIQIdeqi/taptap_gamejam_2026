@@ -734,12 +734,14 @@ M.OpeningShots = {
             { sprite = "assets/image/char_wenyin.png",  x = 0.80, y = 0.90, h = 0.38, ratio = 0.671 },
         },
     },
-    -- 镜4/5：沿用回忆背景，姐姐与雯音
+    -- 镜4：切回事务所，桌前吃泡面 + 平板播AI新闻
+    -- ⚠️ 原配置误写为「回忆·房间门 / 姐姐+雯音」，与 wolai 3.1 序列4（切回原场景、登场=李志+陈雯音）
+    --    及台词（ NewsAnchor 1 句 + 李志 3 句）不符：会导致李志说了 3 句话却不在画面上。
     opening_prologue_4 = {
-        caption = "回忆 · 房间门",
+        caption = "事务所 · 桌前",
         actors = {
-            { sprite = "assets/image/char_sister.png",  x = 0.42, y = 0.94, h = 0.54, ratio = 0.671 },
-            { sprite = "assets/image/char_wenyin.png",  x = 0.70, y = 0.90, h = 0.38, ratio = 0.671 },
+            { sprite = "assets/image/char_lizhi.png",   x = 0.36, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.68, y = 0.92, h = 0.40, ratio = 0.671 },
         },
     },
     opening_prologue_5 = {
