@@ -189,6 +189,7 @@ function M.FillShot(panel, dialogueId)
     local dlg = GameData.GetDialogue(dialogueId)
     local bg = (dlg and dlg.background and dlg.background ~= "") and dlg.background or ""
     pcall(function() panel:SetStyle({ backgroundImage = bg }) end)
+    print(string.format("[OPEN DEBUG] FillShot: id=%s bg=%s", tostring(dialogueId), tostring(bg)))
 
     -- 清掉上一镜的角色层
     if panel._actorLayer then
@@ -236,6 +237,7 @@ function M.TransitionToShot(dialogueId)
     back:SetStyle({ opacity = 0 })
     front:SetStyle({ opacity = 1 })
     M.state.transition = { t = 0, dur = dur, from = front, to = back }
+    print(string.format("[OPEN DEBUG] 镜头切换 -> %s (%.2fs)", tostring(dialogueId), dur))
 end
 
 function M.DestroyShotPanels()
