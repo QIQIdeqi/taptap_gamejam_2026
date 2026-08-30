@@ -238,14 +238,17 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     -- zIndex 需低于热区按钮(100)，保证立绘在按钮下方。
     local hasSprite = (type(item.sprite) == "string") and (item.sprite ~= "")
     if hasSprite then
+        -- 按立绘原始比例(2:3)算出绘制区，底部贴齐热区底边、水平居中，
+        -- 这样人物是"站在地上"而不是悬在热区中央，且不依赖 backgroundPosition 取值支持。
         local s = item.spriteScale or 1.0
-        local pw, ph = w * s, h * s
+        local ratio = item.spriteRatio or (2.0 / 3.0)
+        local ph, pw = h * s, h * s * ratio
+        if pw > w then pw, ph = w, w / ratio end
         Panel(parent, {
             position = "absolute",
             left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
             backgroundImage = item.sprite,
             backgroundFit = "contain",
-            backgroundPosition = "bottom center",
             backgroundColor = "rgba(0,0,0,0)",
             zIndex = 50,
             pointerEvents = "none",
