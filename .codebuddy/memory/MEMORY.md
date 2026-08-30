@@ -63,13 +63,17 @@
 - ffmpeg `concat` demuxer 的 `file '...'` 相对路径相对**列表文件所在目录**（非 cwd），列表放 `assets/video/` 时写纯文件名。
 - git 同步：远端 `sync` 提交领先时先 `git pull --rebase`；`maker_build_current_directory` -32001 超时后 push 可能已成功/构建已后台启动，先查 `git log origin/main` 再决定，盲目重试会 `409 Conflict`。
 
-## 角色配音（ElevenLabs，2026-08-30 已落地 7 位主要角色）
-- 音色映射已持久化到 Maker，voiceId 见 `.codebuddy/memory/2026-08-30.md` 表格；`text_to_dialogue(character_name, text)` 自动复用，**无需传 voice_id**。
-- 7 位：LiZhi / ChenWenyin / XuQinglan / YanChengfeng / ZhaoHeng / ZhouWen / ZhangChengyu。次要角色（LiZhiSister/FrontDesk/PanganEmployee/NewsAnchor/PoliceA/Forensic/WaiterA/Guard）尚未配音。
+## 角色配音（ElevenLabs，2026-08-30 已完成 9 位 + 接入游戏）
+> **完整流程规范见 `docs/workflows-voice-video-build.md`**（配音 / CG视频 / 构建发布 三条链路 + 踩坑速查表）。以下内容为要点，细节以文档为准。
+- 音色映射持久化在 `.project/elevenlabs-voice-mapping.json`；`text_to_dialogue(character_name, text)` 自动复用，**无需传 voice_id**。
+- 9 位已配音：LiZhi / ChenWenyin / XuQinglan / YanChengfeng / ZhaoHeng / ZhouWen / ZhangChengyu / LiZhiSister / NewsAnchor（voiceId 见文档表格）。待配音：FrontDesk / PanganEmployee / PoliceA / Forensic / WaiterA / Guard。
 - **`audition_voices_for_character` 必须设 `candidate_count=1`**：默认 3 会 MCP -32001 超时，且超时≠已提交（无任务、无产物）。
-- **安全审核**：description/audition_line 出现「儿童具体年龄+疾病脆弱」「窒息/喉咙/死亡」等会被 403 `blocked_generation`；改写为中性表述即可通过。
-- `confirm_character_voice` 每调一次消耗 1 个 ElevenLabs Voice Slot，不可并行。
-- 对话语音尚未接入 `DialogueSystem`（现为纯文字打字机），待做。
+- **安全审核**：description/audition_line 出现「儿童具体年龄+疾病脆弱」「窒息/喉咙/死亡」会被 403 `blocked_generation`；改中性表述即可通过。
+- `confirm_character_voice` 每次消耗 1 个 ElevenLabs Voice Slot，不可并行。
+- 音频实为 **Ogg Vorbis**（接口报 `ogg_opus` 是错的），Urho3D `LoadOggVorbis` 直读，**无需 ffmpeg 转码**。
+- **已接入游戏**：`scripts/VoiceSystem.lua`（`Node()`+`CreateComponent("SoundSource")`，全部 pcall 包裹）+ `DialogueSystem`（StartLine 播 / End·Stop 停）。序章 20 句已生效，runtime.log 已验证无报错。
+- ⚠️ **配音生效前提**：该段对话必须经 `DialogueSystem`，且 `Start` 收到的是 **id 字符串**（传 table 时 `dialogueId` 为 nil → 配音静默失效）。
+- ⚠️ **序章已改回对话模式**（2026-08-30 决策 B）：`StartNewGame` 用 `OpeningSystem.Start("prologue",...)` 而非 `VideoCGSystem`，否则序章配音听不到。`openingSubtitles` 表保留备用。
 
 ## 可拓展方向（用户授权"自行思考拓展"）
 - 同样模式可把 场景物件交互文字(name/interactText/misleading) 与 角色介绍 也抽出 CSV，loader 按 item id 回填 SceneManager/Characters（当前未做，按需再扩）
