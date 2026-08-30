@@ -174,13 +174,17 @@ function M.CreateShotPanel()
         top = 0, left = 0, right = 0, bottom = 0,
         pointerEvents = "none",
     }
-    -- 暗化遮罩：保证对话文字可读
-    panel:AddChild(UI.Panel {
+    -- 容器：所有"内容层"（暗化遮罩 / 角色 / 诊断角标）都挂在它下面
+    -- 这样每次 FillShot 只需销毁容器重建，背景图（panel 自身）保持不动
+    local content = UI.Panel {
         width = "100%", height = "100%",
-        backgroundColor = { 0, 0, 0, 150 },
+        backgroundColor = { 0, 0, 0, 0 },
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
-    })
+        pointerEvents = "none",
+    }
+    panel:AddChild(content)
+    panel._content = content
     return panel
 end
 
@@ -194,19 +198,27 @@ function M.FillShot(panel, dialogueId)
     pcall(function() panel:SetStyle({ backgroundImage = bg }) end)
     print(string.format("[OPEN DEBUG] FillShot: id=%s bg=%s", tostring(dialogueId), tostring(bg)))
 
-    -- 清掉上一镜的角色层
-    if panel._actorLayer then
-        pcall(function() panel._actorLayer:Destroy() end)
-        panel._actorLayer = nil
+    -- 清掉上一镜的所有内容（暗化遮罩 / 角色 / 诊断角标），保留 panel 自身
+    if panel._content then
+        pcall(function() panel._content:Destroy() end)
     end
-    local actorLayer = UI.Panel {
+    local content = UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = { 0, 0, 0, 0 },
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
+        pointerEvents = "none",
     }
-    panel:AddChild(actorLayer)
-    panel._actorLayer = actorLayer
+    panel:AddChild(content)
+    panel._content = content
+
+    -- 暗化遮罩：保证对话文字可读
+    content:AddChild(UI.Panel {
+        width = "100%", height = "100%",
+        backgroundColor = { 0, 0, 0, 150 },
+        position = "absolute",
+        top = 0, left = 0, right = 0, bottom = 0,
+    })
 
     local shot = GameData.OpeningShots and GameData.OpeningShots[dialogueId]
     local sw, sh = graphics:GetWidth(), graphics:GetHeight()
@@ -216,7 +228,7 @@ function M.FillShot(panel, dialogueId)
             -- 立绘按原始比例绘制，底部对齐 a.y、水平以 a.x 为中心
             local ph = (a.h or 0.5) * sh
             local pw = ph * (a.ratio or 0.671)
-            actorLayer:AddChild(UI.Panel {
+            content:AddChild(UI.Panel {
                 position = "absolute",
                 left = (a.x or 0.5) * sw - pw / 2,
                 top = (a.y or 0.9) * sh - ph,
@@ -231,7 +243,7 @@ function M.FillShot(panel, dialogueId)
     -- 诊断角标：用于确认分镜代码是否真的执行、背景取到的是哪张图
     if M.debugCorner then
         local shortBg = tostring(bg):match("([^/]+)$") or "?"
-        panel:AddChild(UI.Label {
+        content:AddChild(UI.Label {
             position = "absolute",
             left = 12, top = 10, width = 820, height = 26,
             text = string.format("[分镜] %s | %s | 角色%d | %dx%d",
@@ -260,7 +272,6 @@ function M.DestroyShotPanels()
     for _, k in ipairs({ "shotA", "shotB" }) do
         local p = M.ui[k]
         if p then
-            if p._actorLayer then pcall(function() p._actorLayer:Destroy() end) end
             pcall(function() p:Destroy() end)
             M.ui[k] = nil
         end
