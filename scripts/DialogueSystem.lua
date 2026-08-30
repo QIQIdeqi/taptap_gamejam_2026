@@ -236,6 +236,20 @@ function M.StartLine(index)
             index, tostring(line.speaker), tostring(err)))
     end
 
+    -- 行内镜头切换：本行配置了与所在分镜默认不同的背景时，交叉淡入换镜。
+    -- 只有 OpeningSystem 过场正在进行时才真正执行，其余场景（探索/询问）自动忽略。
+    local okShot, errShot = pcall(function()
+        if line.background and line.background ~= "" then
+            local OpeningSystem = require("scripts.OpeningSystem")
+            if OpeningSystem and OpeningSystem.TransitionToLineShot then
+                OpeningSystem.TransitionToLineShot(line.background)
+            end
+        end
+    end)
+    if not okShot then
+        print("[DLG WARN] 行内切镜头异常: " .. tostring(errShot))
+    end
+
     -- 播放本句角色配音（该句未配置音频则静默跳过，不影响对话进行）
     local okVoice, errVoice = pcall(function()
         VoiceSystem.Play(M.state.dialogueId, index)

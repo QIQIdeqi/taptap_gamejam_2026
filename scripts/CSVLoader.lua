@@ -114,16 +114,17 @@ function M.LoadDialogues(csvText)
             dialogues[did] = dialogues[did] or { id = did, lines = {}, background = "" }
             temp[did] = temp[did] or {}
             local ln = tonumber(row[col.line_no]) or (#(temp[did]) + 1)
+            local bg = row[col.background] or ""
+            if dialogues[did].background == "" and bg ~= "" then
+                dialogues[did].background = bg
+            end
             temp[did][ln] = {
                 speaker  = row[col.speaker]  or "",
                 text     = row[col.text]     or "",
                 portrait = row[col.portrait] or "",
                 clue     = row[col.clue]     or "",
+                background = bg,
             }
-            local bg = row[col.background] or ""
-            if dialogues[did].background == "" and bg ~= "" then
-                dialogues[did].background = bg
-            end
         end
     end
     -- 按 line_no 排序重建为连续数组（行数即句数）
@@ -132,7 +133,14 @@ function M.LoadDialogues(csvText)
         for k, _ in pairs(t) do keys[#keys + 1] = k end
         table.sort(keys, function(a, b) return a < b end)
         local arr = {}
-        for _, k in ipairs(keys) do arr[#arr + 1] = t[k] end
+        for _, k in ipairs(keys) do
+            local ln = t[k]
+            -- 与组默认背景相同则不保留行级 background（语义：该行不切镜头）
+            if ln.background == dialogues[did].background then
+                ln.background = nil
+            end
+            arr[#arr + 1] = ln
+        end
         dialogues[did].lines = arr
     end
     return dialogues

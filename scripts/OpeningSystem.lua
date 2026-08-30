@@ -31,6 +31,8 @@ M.ui = {
 
 -- 默认镜头切换时长（秒）
 local DEFAULT_SHOT_FADE = 0.6
+-- 行内镜头切换时长（秒）：同一分镜内换景别，比整镜切换更快
+local LINE_SHOT_FADE = 0.35
 
 -- 诊断角标开关：画面左上角显示当前分镜信息，验证无误后置 false
 M.debugCorner = true
@@ -189,12 +191,16 @@ function M.CreateShotPanel()
 end
 
 -- 把某个分镜的内容（背景 + 角色站位）填进镜头面板
-function M.FillShot(panel, dialogueId)
+function M.FillShot(panel, dialogueId, overrideBg)
     if not panel then return end
     local GameData = require("scripts.GameData")
 
     local dlg = GameData.GetDialogue(dialogueId)
-    local bg = (dlg and dlg.background and dlg.background ~= "") and dlg.background or ""
+    -- overrideBg：行内切镜头时只换背景，角色站位沿用当前分镜
+    local bg = overrideBg
+    if not bg or bg == "" then
+        bg = (dlg and dlg.background and dlg.background ~= "") and dlg.background or ""
+    end
     pcall(function() panel:SetStyle({ backgroundImage = bg }) end)
     print(string.format("[OPEN DEBUG] FillShot: id=%s bg=%s", tostring(dialogueId), tostring(bg)))
 
@@ -261,11 +267,33 @@ function M.TransitionToShot(dialogueId)
     local shot = GameData.OpeningShots and GameData.OpeningShots[dialogueId]
     local dur = (shot and shot.transitionDur) or DEFAULT_SHOT_FADE
 
+    -- 记录当前分镜：行内切镜头时需沿用它的角色站位
+    M.state.currentShotId = dialogueId
+    M.state.currentLineBg = nil
+
     M.FillShot(back, dialogueId)
     back:SetStyle({ opacity = 0 })
     front:SetStyle({ opacity = 1 })
     M.state.transition = { t = 0, dur = dur, from = front, to = back }
     print(string.format("[OPEN DEBUG] 镜头切换 -> %s (%.2fs)", tostring(dialogueId), dur))
+end
+
+-- 行内镜头切换：同一分镜内，台词推进到配置了不同背景的行时交叉淡入换镜。
+-- 只换背景，角色站位沿用当前分镜（currentShotId），避免人物跟着背景一起跳。
+function M.TransitionToLineShot(bg)
+    if not M.state.active then return end
+    if not bg or bg == "" then return end
+    if bg == M.state.currentLineBg then return end
+
+    local front, back = M.ui.shotFront, M.ui.shotBack
+    if not (front and back) then return end
+
+    M.state.currentLineBg = bg
+    M.FillShot(back, M.state.currentShotId, bg)
+    back:SetStyle({ opacity = 0 })
+    front:SetStyle({ opacity = 1 })
+    M.state.transition = { t = 0, dur = LINE_SHOT_FADE, from = front, to = back }
+    print(string.format("[OPEN DEBUG] 行内切镜头 -> %s", tostring(bg):match("([^/]+)$") or tostring(bg)))
 end
 
 function M.DestroyShotPanels()
