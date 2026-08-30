@@ -15,14 +15,22 @@ M.state = {
     opening = nil,
     dialogueIndex = 1,
     onComplete = nil,
+    transition = nil,       -- 镜头切换过渡 { t, dur, from, to }
 }
 
 M.ui = {
     root = nil,
     timeLabel = nil,
     locationLabel = nil,
-    backdrop = nil,   -- 对话阶段的暗色背景
+    -- 分镜画面：双缓冲，切换时前后景交叉淡入淡出实现"镜头切换"
+    shotA = nil,
+    shotB = nil,
+    shotFront = nil,
+    shotBack = nil,
 }
+
+-- 默认镜头切换时长（秒）
+local DEFAULT_SHOT_FADE = 0.6
 
 -- ============================================================================
 -- 启动开场动画
@@ -143,32 +151,104 @@ function M.DestroyUI()
         M.ui.root:Destroy()
         M.ui.root = nil
     end
-    if M.ui.backdrop then
-        M.ui.backdrop:Destroy()
-        M.ui.backdrop = nil
-    end
+    M.DestroyShotPanels()
     M.ui.timeLabel = nil
     M.ui.locationLabel = nil
 end
 
--- 创建带背景图与暗化遮罩的全屏面板（保证文字可读）
-function M.CreateBackdropPanel(imagePath)
+-- ============================================================================
+-- 分镜画面（镜头）
+-- 一个"镜头" = 全屏背景图 + 暗化遮罩 + 角色立绘层
+-- 双缓冲：切换时前后景交叉淡入淡出，做出真正的镜头切换，而不是瞬间换图
+-- ============================================================================
+
+function M.CreateShotPanel()
     local panel = UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = { 6, 5, 12, 255 },
-        backgroundImage = imagePath,
         backgroundFit = "cover",
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
+        pointerEvents = "none",
     }
-    local overlay = UI.Panel {
+    -- 暗化遮罩：保证对话文字可读
+    panel:AddChild(UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = { 0, 0, 0, 150 },
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
-    }
-    panel:AddChild(overlay)
+    })
     return panel
+end
+
+-- 把某个分镜的内容（背景 + 角色站位）填进镜头面板
+function M.FillShot(panel, dialogueId)
+    if not panel then return end
+    local GameData = require("scripts.GameData")
+
+    local dlg = GameData.GetDialogue(dialogueId)
+    local bg = (dlg and dlg.background and dlg.background ~= "") and dlg.background or ""
+    pcall(function() panel:SetStyle({ backgroundImage = bg }) end)
+
+    -- 清掉上一镜的角色层
+    if panel._actorLayer then
+        pcall(function() panel._actorLayer:Destroy() end)
+        panel._actorLayer = nil
+    end
+    local actorLayer = UI.Panel {
+        width = "100%", height = "100%",
+        backgroundColor = { 0, 0, 0, 0 },
+        position = "absolute",
+        top = 0, left = 0, right = 0, bottom = 0,
+    }
+    panel:AddChild(actorLayer)
+    panel._actorLayer = actorLayer
+
+    local shot = GameData.OpeningShots and GameData.OpeningShots[dialogueId]
+    if not (shot and shot.actors) then return end
+
+    local sw, sh = graphics:GetWidth(), graphics:GetHeight()
+    for _, a in ipairs(shot.actors) do
+        -- 立绘按原始比例绘制，底部对齐 a.y、水平以 a.x 为中心
+        local ph = (a.h or 0.5) * sh
+        local pw = ph * (a.ratio or 0.671)
+        actorLayer:AddChild(UI.Panel {
+            position = "absolute",
+            left = (a.x or 0.5) * sw - pw / 2,
+            top = (a.y or 0.9) * sh - ph,
+            width = pw, height = ph,
+            backgroundImage = a.sprite,
+            backgroundFit = "contain",
+            backgroundColor = { 0, 0, 0, 0 },
+        })
+    end
+end
+
+-- 切到指定分镜：后景填好内容后与前景交叉淡入淡出
+function M.TransitionToShot(dialogueId)
+    local front, back = M.ui.shotFront, M.ui.shotBack
+    if not (front and back) then return end
+    local GameData = require("scripts.GameData")
+    local shot = GameData.OpeningShots and GameData.OpeningShots[dialogueId]
+    local dur = (shot and shot.transitionDur) or DEFAULT_SHOT_FADE
+
+    M.FillShot(back, dialogueId)
+    back:SetStyle({ opacity = 0 })
+    front:SetStyle({ opacity = 1 })
+    M.state.transition = { t = 0, dur = dur, from = front, to = back }
+end
+
+function M.DestroyShotPanels()
+    for _, k in ipairs({ "shotA", "shotB" }) do
+        local p = M.ui[k]
+        if p then
+            if p._actorLayer then pcall(function() p._actorLayer:Destroy() end) end
+            pcall(function() p:Destroy() end)
+            M.ui[k] = nil
+        end
+    end
+    M.ui.shotFront, M.ui.shotBack = nil, nil
+    M.state.transition = nil
 end
 
 -- 读取当前过场分镜（按 dialogueIndex）对应的背景图
@@ -197,11 +277,23 @@ function M.GetOpeningDialogueBackground(index)
     return nil
 end
 
--- 对话阶段背景：显示当前分镜的背景图（覆盖全屏，避免透出旧场景）
+-- 对话阶段：建立双缓冲镜头并显示第一镜
 function M.BuildBackdrop()
-    M.ui.backdrop = M.CreateBackdropPanel(M.GetCurrentDialogueBackground())
+    M.DestroyShotPanels()
+    M.ui.shotA = M.CreateShotPanel()
+    M.ui.shotB = M.CreateShotPanel()
     local uiRoot = UI.GetRoot()
-    if uiRoot then uiRoot:AddChild(M.ui.backdrop) end
+    if uiRoot then
+        uiRoot:AddChild(M.ui.shotA)
+        uiRoot:AddChild(M.ui.shotB)
+    end
+    M.ui.shotFront = M.ui.shotA
+    M.ui.shotBack = M.ui.shotB
+
+    local firstId = (M.state.opening and M.state.opening.dialogues or {})[1]
+    M.FillShot(M.ui.shotFront, firstId)
+    M.ui.shotFront:SetStyle({ opacity = 1 })
+    M.ui.shotBack:SetStyle({ opacity = 0 })
     M._skipBtn = _AddSkipButton()
 end
 
@@ -210,6 +302,21 @@ end
 -- ============================================================================
 function M.Update(deltaTime)
     if not M.state.active then return end
+
+    -- 镜头切换过渡：前后景交叉淡入淡出
+    local tr = M.state.transition
+    if tr then
+        tr.t = tr.t + deltaTime
+        local k = (tr.dur > 0) and (tr.t / tr.dur) or 1
+        if k > 1 then k = 1 end
+        pcall(function() tr.to:SetStyle({ opacity = k }) end)
+        pcall(function() tr.from:SetStyle({ opacity = 1 - k }) end)
+        if k >= 1 then
+            -- 刚淡入的成为新的前景，原前景转为待用的后景
+            M.ui.shotFront, M.ui.shotBack = tr.to, tr.from
+            M.state.transition = nil
+        end
+    end
 
     local GameData = require("scripts.GameData")
     local DialogueSystem = require("scripts.DialogueSystem")
@@ -265,11 +372,8 @@ function M.PlayNextDialogue()
     local dialogueId = dialogues[M.state.dialogueIndex]
     M.state.dialogueIndex = M.state.dialogueIndex + 1
 
-    -- 切换到该分镜对应的背景图（pcall 防止背景图缺失导致崩溃）
-    local dlg = GameData.GetDialogue(dialogueId)
-    if M.ui.backdrop and dlg and dlg.background and dlg.background ~= "" then
-        pcall(function() M.ui.backdrop:SetBackgroundImage(dlg.background) end)
-    end
+    -- 镜头切到该分镜：背景 + 角色站位，交叉淡入淡出
+    M.TransitionToShot(dialogueId)
 
     DialogueSystem.Start(dialogueId, function()
         M.PlayNextDialogue()

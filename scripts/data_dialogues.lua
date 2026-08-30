@@ -4,7 +4,7 @@
 local M = {}
 M["opening_prologue_1"] = {
   id = "opening_prologue_1",
-  background = [==[assets/image/bg_office.png]==],
+  background = [==[assets/image/bg_office_futon.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[男女主在事务所内，李志正睡在地铺上。已是下午13点，陈雯音坐在李志身上打了他一个耳光，李志被吓醒坐起，陈雯音已坐到了一旁的凳子上。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[几点了？]==] },
@@ -15,7 +15,7 @@ M["opening_prologue_1"] = {
 };
 M["opening_prologue_2"] = {
   id = "opening_prologue_2",
-  background = [==[assets/image/bg_office.png]==],
+  background = [==[assets/image/bg_office_kitchen.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[镜头切换，李志站在厨台前煮着泡面，陈雯音在一旁看着。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[你说热水器就在这里，你为什么就不能自己用来泡面呢？]==] },
@@ -26,7 +26,7 @@ M["opening_prologue_2"] = {
 };
 M["opening_prologue_3"] = {
   id = "opening_prologue_3",
-  background = [==[assets/image/bg_office.png]==],
+  background = [==[assets/image/bg_flashback_door.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[（画面切入回忆，黑屏显示：2036年8月8日 14:20）]==] },
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志在房间门内，李志姐姐和陈雯音在房间门外。]==] },

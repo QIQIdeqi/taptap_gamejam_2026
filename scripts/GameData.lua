@@ -702,6 +702,56 @@ M.Openings = {
 }
 
 -- ============================================================================
+-- 开场分镜表（镜头 / 角色站位）
+-- key = 分镜对话 id；背景图取自 dialogues.csv 的 background 列
+-- actor: x/y = 角色「底部中心」的归一化屏幕坐标，h = 占屏高比例，ratio = 立绘宽高比
+-- 立绘实际比例均为 805x1200 = 0.671
+-- ============================================================================
+M.OpeningShots = {
+    -- 镜1：事务所地铺，李志被叫醒
+    opening_prologue_1 = {
+        caption = "事务所 · 地铺",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",   x = 0.30, y = 0.90, h = 0.52, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.68, y = 0.86, h = 0.40, ratio = 0.671 },
+        },
+    },
+    -- 镜2：镜头切到厨台，李志煮泡面，陈雯音一旁看着
+    opening_prologue_2 = {
+        caption = "事务所 · 厨台",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",   x = 0.34, y = 0.94, h = 0.56, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.72, y = 0.92, h = 0.42, ratio = 0.671 },
+        },
+    },
+    -- 镜3：切入回忆，房间门口（李志门内 / 姐姐与雯音门外）
+    opening_prologue_3 = {
+        caption = "回忆 · 房间门",
+        transitionDur = 1.1,   -- 切入回忆，切换放慢
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",   x = 0.22, y = 0.92, h = 0.52, ratio = 0.671 },
+            { sprite = "assets/image/char_sister.png",  x = 0.54, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.80, y = 0.90, h = 0.38, ratio = 0.671 },
+        },
+    },
+    -- 镜4/5：沿用回忆背景，姐姐与雯音
+    opening_prologue_4 = {
+        caption = "回忆 · 房间门",
+        actors = {
+            { sprite = "assets/image/char_sister.png",  x = 0.42, y = 0.94, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.70, y = 0.90, h = 0.38, ratio = 0.671 },
+        },
+    },
+    opening_prologue_5 = {
+        caption = "黄昏事务所",
+        actors = {
+            { sprite = "assets/image/char_lizhi.png",   x = 0.34, y = 0.92, h = 0.54, ratio = 0.671 },
+            { sprite = "assets/image/char_wenyin.png",  x = 0.70, y = 0.90, h = 0.40, ratio = 0.671 },
+        },
+    },
+}
+
+-- ============================================================================
 -- 场景物件数据
 -- x/y/w/h 为相对比例坐标（0~1）
 -- ============================================================================
