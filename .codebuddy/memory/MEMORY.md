@@ -19,7 +19,7 @@
 - `DialogueSystem.lua`：打字机；对话行支持 `line.clue`（播毕触发证言提取收录）
 - `MenuSystem.lua`：菜单/存档/读档/设置；槽位按钮含缩略图+删除按钮
 - `SaveSystem.lua`：10槽+自动存档；`GetSceneThumbnail` 场景→缩略图映射
-- `VideoCGSystem.lua`：片头 CG 视频播放（`Video.VideoPlayer` + 点击/ESC 跳过，`Finish()` 防重入）；`StartNewGame` 用它替代 `OpeningSystem.Start("prologue")` 播 Seedance 序章动画
+- `VideoCGSystem.lua`：片头 CG 视频播放（`Video.VideoPlayer` + 点击/ESC 跳过，`Finish()` 防重入）；`Play(src,onComplete,{subtitles=...})` 第三参支持底部字幕层（`onTimeUpdate`→`UpdateSubtitle` 按 `{start,finish,speaker,text}` 显隐 `UI.Label`，`pointerEvents="none"` 穿透 + `zIndex=100000` 置于视频层上）；`StartNewGame` 用它替代 `OpeningSystem.Start("prologue")` 播 Seedance 序章动画
 
 ## 关键约定（致命坑精简）
 - 长度米、Y-up 左手坐标系
@@ -58,6 +58,18 @@
 - `create_video_task` **首次调用必 MCP 超时但任务已提交**；再调一次会报「并发超限」并返回 `task_id`；`query_video_task` 每 120s 轮询。并发上限 1/1，多段串行。Seedance 2.0：4-15s/720p/16:9，首帧图 ≤30MiB。
 - `maker_build_current_directory` 只传 `target_dir/entry/scriptsPath/message/timeout_ms`，**别塞多余字段**（否则 -32001 超时）。
 - 视频播放：`require("urhox-libs/Video")` → `Video.VideoPlayer{src="assets/video/x.mp4", autoPlay=true, objectFit="contain", onEnded=...}`；`Video.isSupported`（仅 WASM）。`VideoPlayer` 自带点击播放/暂停，需在其上叠透明 Panel 拦截实现「点击跳过」。
+- 序章 CG 重做（08-30 晚）：首帧角色形象与立绘不符→用 `edit_image`（prompt 强调「沿用构图只改角色脸/发色/服装」）重绘首帧再喂 Seedance；分 5 段（8/10/15/12/10s）串行生成，`concat -c copy` 拼 55s。字幕在 `main.lua` 的 `openingSubtitles` 表（绝对秒时间轴）。
+- `UI.Label` 支持 `textShadow`/`textStroke`/`GetText()`/`SetText()`；`whiteSpace="normal"` 自动换行。
+- ffmpeg `concat` demuxer 的 `file '...'` 相对路径相对**列表文件所在目录**（非 cwd），列表放 `assets/video/` 时写纯文件名。
+- git 同步：远端 `sync` 提交领先时先 `git pull --rebase`；`maker_build_current_directory` -32001 超时后 push 可能已成功/构建已后台启动，先查 `git log origin/main` 再决定，盲目重试会 `409 Conflict`。
+
+## 角色配音（ElevenLabs，2026-08-30 已落地 7 位主要角色）
+- 音色映射已持久化到 Maker，voiceId 见 `.codebuddy/memory/2026-08-30.md` 表格；`text_to_dialogue(character_name, text)` 自动复用，**无需传 voice_id**。
+- 7 位：LiZhi / ChenWenyin / XuQinglan / YanChengfeng / ZhaoHeng / ZhouWen / ZhangChengyu。次要角色（LiZhiSister/FrontDesk/PanganEmployee/NewsAnchor/PoliceA/Forensic/WaiterA/Guard）尚未配音。
+- **`audition_voices_for_character` 必须设 `candidate_count=1`**：默认 3 会 MCP -32001 超时，且超时≠已提交（无任务、无产物）。
+- **安全审核**：description/audition_line 出现「儿童具体年龄+疾病脆弱」「窒息/喉咙/死亡」等会被 403 `blocked_generation`；改写为中性表述即可通过。
+- `confirm_character_voice` 每调一次消耗 1 个 ElevenLabs Voice Slot，不可并行。
+- 对话语音尚未接入 `DialogueSystem`（现为纯文字打字机），待做。
 
 ## 可拓展方向（用户授权"自行思考拓展"）
 - 同样模式可把 场景物件交互文字(name/interactText/misleading) 与 角色介绍 也抽出 CSV，loader 按 item id 回填 SceneManager/Characters（当前未做，按需再扩）

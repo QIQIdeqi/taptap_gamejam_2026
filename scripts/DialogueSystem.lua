@@ -5,6 +5,7 @@
 -- ============================================================================
 
 local UI = require("urhox-libs.UI")
+local VoiceSystem = require("scripts.VoiceSystem")
 
 local M = {}
 
@@ -68,6 +69,8 @@ function M.Start(dialogueId, onComplete, showSkip)
     end
 
     M.state.dialogue = dialogue
+    -- 记录对话 id 供 VoiceSystem 定位台词音频（table 形式传入时无 id，配音自动跳过）
+    M.state.dialogueId = (type(dialogueId) == "string") and dialogueId or nil
     M.state.lineIndex = 1
     M.state.isActive = true
     M.state.charIndex = 0
@@ -233,6 +236,14 @@ function M.StartLine(index)
             index, tostring(line.speaker), tostring(err)))
     end
 
+    -- 播放本句角色配音（该句未配置音频则静默跳过，不影响对话进行）
+    local okVoice, errVoice = pcall(function()
+        VoiceSystem.Play(M.state.dialogueId, index)
+    end)
+    if not okVoice then
+        print("[DLG WARN] 配音播放异常: " .. tostring(errVoice))
+    end
+
     M.ui.continueHint:SetVisible(false)
     M.ui.textLabel:SetText("")
     print(string.format("[DLG DEBUG] StartLine: idx=%d speaker=%s len=%d",
@@ -310,6 +321,7 @@ end
 -- ============================================================================
 
 function M.End()
+    VoiceSystem.Stop()
     M.state.isActive = false
     M.state.dialogue = nil
     M._CleanUI()
@@ -322,6 +334,7 @@ end
 
 -- Stop: 外部调用的安全停止接口（OpeningSystem.Finish 等使用）
 function M.Stop()
+    VoiceSystem.Stop()
     M.state.isActive = false
     M.state.dialogue = nil
     M._CleanUI()

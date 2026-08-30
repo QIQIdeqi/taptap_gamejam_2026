@@ -168,6 +168,8 @@ end
 -- ============================================================================
 
 -- 序章片头 CG 字幕（时长 8+10+15+12+10=55s，start/finish 为拼接后绝对秒）
+-- CG 视频模式的字幕时间轴（绝对秒）。序章已改回对话模式（2026-08-30 决策 B），
+-- 此表暂不使用；若将来切回 VideoCGSystem.Play(..., {subtitles=openingSubtitles}) 可直接复用。
 local openingSubtitles = {
     -- 分镜1：地铺叫醒（0-8s）
     { start = 0.5,  finish = 5.5,  speaker = "李志", text = "几点了…1点？雯雯你是不是饿了？" },
@@ -199,10 +201,12 @@ function StartNewGame()
     GameData.GameState.currentChapter = "prologue"
     GameData.GameState.currentScene = "office"
 
-    -- 序章片头 CG 动画（Seedance 分镜视频，替代静态分镜对话）
-    VideoCGSystem.Play("assets/video/opening_cg.mp4", function()
+    -- 序章走「静态分镜 + 立绘对话」（OpeningSystem）。
+    -- 曾用 Seedance CG 视频替代，但那样 opening_prologue_1~5 不经过 DialogueSystem，
+    -- 角色配音无法播放，故改回对话模式（2026-08-30 决策 B）。
+    OpeningSystem.Start("prologue", function()
         EnterPrologueScene()
-    end, { subtitles = openingSubtitles })
+    end)
 end
 
 -- 进入序章场景（新手引导：书柜/衣柜/床铺）
