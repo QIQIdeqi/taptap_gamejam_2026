@@ -233,11 +233,34 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
+    -- NPC/物件立绘：item.sprite 存在时把角色画像渲染到场景上（站在热区底部居中）。
+    -- 必须 pointerEvents="none"，否则立绘会吃掉点击、热区收不到 onClick。
+    -- zIndex 需低于热区按钮(100)，保证立绘在按钮下方。
+    local hasSprite = (type(item.sprite) == "string") and (item.sprite ~= "")
+    if hasSprite then
+        local s = item.spriteScale or 1.0
+        local pw, ph = w * s, h * s
+        Panel(parent, {
+            position = "absolute",
+            left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
+            backgroundImage = item.sprite,
+            backgroundFit = "contain",
+            backgroundPosition = "bottom center",
+            backgroundColor = "rgba(0,0,0,0)",
+            zIndex = 50,
+            pointerEvents = "none",
+        })
+    end
+
+    -- 有立绘时平时不画边框（立绘本身就是视觉标识），hover 时才亮金框
+    local idleBorderW = hasSprite and 0 or 2
+    local idleBorderC = hasSprite and "rgba(255,255,255,0)" or "rgba(255,255,255,55)"
+
     local btn = Button(parent, {
         position = "absolute",
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(255,255,255,0)",
-        borderWidth = 2, borderColor = "rgba(255,255,255,55)",
+        borderWidth = idleBorderW, borderColor = idleBorderC,
         zIndex = 100,
     })
     btn.props.onPointerEnter = function(event, widget)
@@ -248,7 +271,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         end
     end
     btn.props.onPointerLeave = function(event, widget)
-        btn:SetStyle({ borderColor = "rgba(255,255,255,55)", borderWidth = 2, backgroundColor = "rgba(255,255,255,0)" })
+        btn:SetStyle({ borderColor = idleBorderC, borderWidth = idleBorderW, backgroundColor = "rgba(255,255,255,0)" })
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
     end
     btn.props.onClick = function()
