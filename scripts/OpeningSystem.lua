@@ -34,6 +34,22 @@ local DEFAULT_SHOT_FADE = 0.6
 -- 行内镜头切换时长（秒）：同一分镜内换景别，比整镜切换更快
 local LINE_SHOT_FADE = 0.35
 
+-- 每个分镜的轻微推拉和横移，避免背景只做静态交叉淡入。
+-- x/y 是镜头在可移动范围内的归一化焦点位置，zoom 为背景缩放倍率。
+local CAMERA_PRESETS = {
+    opening_prologue_1 = { from = { zoom = 1.00, x = 0.35, y = 0.48 }, to = { zoom = 1.06, x = 0.52, y = 0.46 } },
+    opening_prologue_2 = { from = { zoom = 1.04, x = 0.68, y = 0.48 }, to = { zoom = 1.10, x = 0.46, y = 0.46 } },
+    opening_prologue_3 = { from = { zoom = 1.02, x = 0.38, y = 0.48 }, to = { zoom = 1.12, x = 0.52, y = 0.44 } },
+    opening_prologue_4 = { from = { zoom = 1.06, x = 0.64, y = 0.46 }, to = { zoom = 1.02, x = 0.42, y = 0.48 } },
+    opening_prologue_5 = { from = { zoom = 1.00, x = 0.54, y = 0.48 }, to = { zoom = 1.08, x = 0.44, y = 0.44 } },
+    opening_prologue_5_after = { from = { zoom = 1.08, x = 0.44, y = 0.44 }, to = { zoom = 1.12, x = 0.58, y = 0.42 } },
+    opening_chapter1_1 = { from = { zoom = 1.02, x = 0.40, y = 0.48 }, to = { zoom = 1.08, x = 0.52, y = 0.46 } },
+    opening_chapter1_2 = { from = { zoom = 1.05, x = 0.70, y = 0.46 }, to = { zoom = 1.02, x = 0.42, y = 0.48 } },
+    opening_chapter1_3 = { from = { zoom = 1.00, x = 0.24, y = 0.48 }, to = { zoom = 1.08, x = 0.56, y = 0.44 } },
+    opening_chapter1_4 = { from = { zoom = 1.04, x = 0.62, y = 0.46 }, to = { zoom = 1.10, x = 0.44, y = 0.44 } },
+    opening_chapter1_5 = { from = { zoom = 1.02, x = 0.52, y = 0.48 }, to = { zoom = 1.08, x = 0.66, y = 0.44 } },
+}
+
 -- 诊断角标开关：画面左上角显示当前分镜信息，验证无误后置 false
 M.debugCorner = true
 
@@ -167,25 +183,97 @@ end
 -- 双缓冲：切换时前后景交叉淡入淡出，做出真正的镜头切换，而不是瞬间换图
 -- ============================================================================
 
+local function _EaseInOut(t)
+    if t < 0.5 then return 2 * t * t end
+    return 1 - ((-2 * t + 2) ^ 2) / 2
+end
+
+local function _CopyCamera(camera)
+    return {
+        zoom = camera.zoom or 1.0,
+        x = camera.x or 0.5,
+        y = camera.y or 0.5,
+    }
+end
+
+local function _SetCamera(panel, camera)
+    if not panel or not panel._scene then return end
+    local sw, sh = graphics:GetWidth(), graphics:GetHeight()
+    local zoom = camera.zoom or 1.0
+    local sceneW, sceneH = sw * zoom, sh * zoom
+    local maxX, maxY = sceneW - sw, sceneH - sh
+    local left = -maxX * (camera.x or 0.5)
+    local top = -maxY * (camera.y or 0.5)
+    pcall(function()
+        panel._scene:SetStyle({ left = left, top = top, width = sceneW, height = sceneH })
+    end)
+end
+
+local function _GetCameraPlan(dialogueId)
+    return CAMERA_PRESETS[dialogueId] or {
+        from = { zoom = 1.01, x = 0.42, y = 0.48 },
+        to = { zoom = 1.06, x = 0.58, y = 0.45 },
+    }
+end
+
+local function _StartCamera(panel, dialogueId, duration, lineShot)
+    if not panel then return end
+    local plan = _GetCameraPlan(dialogueId)
+    local from = _CopyCamera(plan.from)
+    local to = _CopyCamera(plan.to)
+    if lineShot then
+        from.zoom = math.max(from.zoom, 1.04)
+        to.zoom = math.max(to.zoom, from.zoom + 0.02)
+    end
+    panel._camera = {
+        t = 0,
+        dur = math.max(duration or 0, lineShot and 2.2 or 3.4),
+        from = from,
+        to = to,
+    }
+    _SetCamera(panel, from)
+end
+
+local function _UpdateCamera(panel, deltaTime)
+    local camera = panel and panel._camera
+    if not camera then return end
+    camera.t = math.min(camera.t + deltaTime, camera.dur)
+    local k = _EaseInOut(camera.dur > 0 and camera.t / camera.dur or 1)
+    local current = {
+        zoom = camera.from.zoom + (camera.to.zoom - camera.from.zoom) * k,
+        x = camera.from.x + (camera.to.x - camera.from.x) * k,
+        y = camera.from.y + (camera.to.y - camera.from.y) * k,
+    }
+    _SetCamera(panel, current)
+end
+
 function M.CreateShotPanel()
     local panel = UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = { 6, 5, 12, 255 },
-        backgroundFit = "cover",
         position = "absolute",
         top = 0, left = 0, right = 0, bottom = 0,
+        overflow = "hidden",
         pointerEvents = "none",
     }
-    -- 容器：所有"内容层"（暗化遮罩 / 角色 / 诊断角标）都挂在它下面
-    -- 这样每次 FillShot 只需销毁容器重建，背景图（panel 自身）保持不动
+    local scene = UI.Panel {
+        width = "100%", height = "100%",
+        backgroundColor = { 6, 5, 12, 255 },
+        backgroundFit = "cover",
+        position = "absolute",
+        top = 0, left = 0,
+        pointerEvents = "none",
+    }
+    panel:AddChild(scene)
+    panel._scene = scene
     local content = UI.Panel {
         width = "100%", height = "100%",
         backgroundColor = { 0, 0, 0, 0 },
         position = "absolute",
-        top = 0, left = 0, right = 0, bottom = 0,
+        top = 0, left = 0,
         pointerEvents = "none",
     }
-    panel:AddChild(content)
+    scene:AddChild(content)
     panel._content = content
     return panel
 end
@@ -201,10 +289,9 @@ function M.FillShot(panel, dialogueId, overrideBg)
     if not bg or bg == "" then
         bg = (dlg and dlg.background and dlg.background ~= "") and dlg.background or ""
     end
-    pcall(function() panel:SetStyle({ backgroundImage = bg }) end)
+    pcall(function() panel._scene:SetStyle({ backgroundImage = bg, backgroundFit = "cover" }) end)
     print(string.format("[OPEN DEBUG] FillShot: id=%s bg=%s", tostring(dialogueId), tostring(bg)))
 
-    -- 清掉上一镜的所有内容（暗化遮罩 / 角色 / 诊断角标），保留 panel 自身
     if panel._content then
         pcall(function() panel._content:Destroy() end)
     end
@@ -212,10 +299,10 @@ function M.FillShot(panel, dialogueId, overrideBg)
         width = "100%", height = "100%",
         backgroundColor = { 0, 0, 0, 0 },
         position = "absolute",
-        top = 0, left = 0, right = 0, bottom = 0,
+        top = 0, left = 0,
         pointerEvents = "none",
     }
-    panel:AddChild(content)
+    panel._scene:AddChild(content)
     panel._content = content
 
     -- 暗化遮罩：保证对话文字可读
@@ -231,14 +318,14 @@ function M.FillShot(panel, dialogueId, overrideBg)
 
     if shot and shot.actors then
         for _, a in ipairs(shot.actors) do
-            -- 立绘按原始比例绘制，底部对齐 a.y、水平以 a.x 为中心
-            local ph = (a.h or 0.5) * sh
-            local pw = ph * (a.ratio or 0.671)
+            local h = a.h or 0.5
+            local ratio = a.ratio or 0.671
             content:AddChild(UI.Panel {
                 position = "absolute",
-                left = (a.x or 0.5) * sw - pw / 2,
-                top = (a.y or 0.9) * sh - ph,
-                width = pw, height = ph,
+                left = string.format("%.3f%%", ((a.x or 0.5) - ratio * h / 2) * 100),
+                top = string.format("%.3f%%", ((a.y or 0.9) - h) * 100),
+                width = string.format("%.3f%%", ratio * h * 100),
+                height = string.format("%.3f%%", h * 100),
                 backgroundImage = a.sprite,
                 backgroundFit = "contain",
                 backgroundColor = { 0, 0, 0, 0 },
@@ -272,6 +359,7 @@ function M.TransitionToShot(dialogueId)
     M.state.currentLineBg = nil
 
     M.FillShot(back, dialogueId)
+    _StartCamera(back, dialogueId, dur, false)
     back:SetStyle({ opacity = 0 })
     front:SetStyle({ opacity = 1 })
     M.state.transition = { t = 0, dur = dur, from = front, to = back }
@@ -290,6 +378,7 @@ function M.TransitionToLineShot(bg)
 
     M.state.currentLineBg = bg
     M.FillShot(back, M.state.currentShotId, bg)
+    _StartCamera(back, M.state.currentShotId, LINE_SHOT_FADE, true)
     back:SetStyle({ opacity = 0 })
     front:SetStyle({ opacity = 1 })
     M.state.transition = { t = 0, dur = LINE_SHOT_FADE, from = front, to = back }
@@ -349,6 +438,7 @@ function M.BuildBackdrop()
 
     local firstId = (M.state.opening and M.state.opening.dialogues or {})[1]
     M.FillShot(M.ui.shotFront, firstId)
+    _StartCamera(M.ui.shotFront, firstId, 0, false)
     M.ui.shotFront:SetStyle({ opacity = 1 })
     M.ui.shotBack:SetStyle({ opacity = 0 })
     M._skipBtn = _AddSkipButton()
@@ -359,6 +449,11 @@ end
 -- ============================================================================
 function M.Update(deltaTime)
     if not M.state.active then return end
+
+    _UpdateCamera(M.ui.shotFront, deltaTime)
+    if M.ui.shotBack ~= M.ui.shotFront then
+        _UpdateCamera(M.ui.shotBack, deltaTime)
+    end
 
     -- 镜头切换过渡：前后景交叉淡入淡出
     local tr = M.state.transition
