@@ -18,6 +18,7 @@ local DialogueSystem = require("scripts.DialogueSystem")
 local NoteSystem = require("scripts.NoteSystem")
 local OpeningSystem = require("scripts.OpeningSystem")
 local InterrogationSystem = require("scripts.InterrogationSystem")
+local VideoCGSystem = require("scripts.VideoCGSystem")
 
 -- ============================================================================
 -- 游戏模式
@@ -154,6 +155,7 @@ function EnterMainMenu()
     currentMode = GameMode.MainMenu
     DialogueSystem.Stop()
     InterrogationSystem.Close()
+    VideoCGSystem.Stop()
     SceneManager.ExitScene()
     NoteSystem.Close()
     MenuSystem.ShowMenu(MenuSystem.MenuType.Main)
@@ -175,8 +177,8 @@ function StartNewGame()
     GameData.GameState.currentChapter = "prologue"
     GameData.GameState.currentScene = "office"
 
-    -- 序章开场动画（黑屏时间地点 + 5个分镜对话）
-    OpeningSystem.Start("prologue", function()
+    -- 序章片头 CG 动画（Seedance 分镜视频，替代静态分镜对话）
+    VideoCGSystem.Play("assets/video/opening_cg.mp4", function()
         EnterPrologueScene()
     end)
 end
@@ -505,6 +507,7 @@ end
 function ReturnToMainMenu()
     currentMode = GameMode.MainMenu
     InterrogationSystem.Close()
+    VideoCGSystem.Stop()
     SceneManager.ExitScene()
     NoteSystem.Close()
     MenuSystem.ShowMenu(MenuSystem.MenuType.Main)
@@ -530,6 +533,9 @@ function HandleInput()
     if input:GetKeyPress(KEY_ESCAPE) then
         if NoteSystem.IsOpen() then
             NoteSystem.Close()
+        elseif VideoCGSystem.IsActive() then
+            -- CG 播放中按 ESC 跳过
+            VideoCGSystem.Finish()
         elseif OpeningSystem.IsActive() then
             -- 过场动画中禁用暂停
         elseif InterrogationSystem.IsActive() then
@@ -549,7 +555,7 @@ function HandleInput()
             if NoteSystem.IsOpen() then
                 NoteSystem.Close()
             elseif not DialogueSystem.IsActive() and not OpeningSystem.IsActive()
-                and not InterrogationSystem.IsActive() then
+                and not InterrogationSystem.IsActive() and not VideoCGSystem.IsActive() then
                 NoteSystem.Open()
             end
         end
