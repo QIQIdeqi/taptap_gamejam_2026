@@ -446,7 +446,7 @@ M.Dialogues = {
     -- ===== 第一段开场动画（5个序列） =====
     opening_prologue_1 = {
         id = "opening_prologue_1",
-        background = "assets/image/bg_office.png",
+        background = "assets/image/office_livingroom.png",
         lines = {
             { speaker = "", text = "男女主在事务所内，李志正睡在地铺上。已是下午13点，陈雯音坐在李志身上打了他一个耳光，李志被吓醒坐起，陈雯音已坐到了一旁的凳子上。" },
             { speaker = "LiZhi", text = "几点了？" },
@@ -457,7 +457,7 @@ M.Dialogues = {
     },
     opening_prologue_2 = {
         id = "opening_prologue_2",
-        background = "assets/image/bg_office.png",
+        background = "assets/image/office_livingroom.png",
         lines = {
             { speaker = "", text = "镜头切换，李志站在厨台前煮着泡面，陈雯音在一旁看着。" },
             { speaker = "LiZhi", text = "你说热水器就在这里，你为什么就不能自己用来泡面呢？" },
@@ -468,7 +468,7 @@ M.Dialogues = {
     },
     opening_prologue_3 = {
         id = "opening_prologue_3",
-        background = "assets/image/bg_office.png",
+        background = "assets/image/office_bedroom.png",
         lines = {
             { speaker = "", text = "（画面切入回忆，黑屏显示：2036年8月8日 14:20）" },
             { speaker = "", text = "李志在房间门内，李志姐姐和陈雯音在房间门外。" },
@@ -487,7 +487,7 @@ M.Dialogues = {
     },
     opening_prologue_4 = {
         id = "opening_prologue_4",
-        background = "assets/image/bg_office.png",
+        background = "assets/image/office_livingroom.png",
         lines = {
             { speaker = "", text = "切回原场景。两人坐在桌前吃泡面，桌子中间放着一台播放AI新闻的平板。" },
             { speaker = "NewsAnchor", text = "据悉，这是近10年来第一次出现AI错误，目前磐安智能正在全力排查故障原因。" },
@@ -501,7 +501,7 @@ M.Dialogues = {
     },
     opening_prologue_5 = {
         id = "opening_prologue_5",
-        background = "assets/image/bg_office.png",
+        background = "assets/image/office_bedroom.png",
         lines = {
             { speaker = "", text = "切换到事务所卧室，李志正对着衣柜翻找着什么。" },
             { speaker = "LiZhi", text = "雯雯，有看到我的袜子吗？" },
@@ -509,6 +509,7 @@ M.Dialogues = {
     },
     opening_prologue_5_after = {
         id = "opening_prologue_5_after",
+        background = "assets/image/office_bedroom.png",
         lines = {
             { speaker = "", text = "陈雯音嫌弃地指了指柜子底层。" },
             { speaker = "LiZhi", text = "看到了看到了，还得是雯雯，住几天比我还了解这个家，嘿嘿。" },
@@ -810,55 +811,43 @@ M.OpeningShots = {
 -- x/y/w/h 为相对比例坐标（0~1）
 -- ============================================================================
 M.SceneObjects = {
-    -- ===== 第一段：事务所（新手引导）· 侧视横版 =====
-    -- 坐标说明：x/w 为「世界像素」（横向滚动用绝对像素），y/h 为「屏幕高比例」（自适应）
+    -- ===== 第一段：事务所（新手引导）· 一层横版卷轴 =====
+    -- 采用两张确认过的连续背景：客厅 / 卧室；两者均为同一层。
     office = {
         title = "黄昏事务所",
         mode = "screens",
         minimap = {
             nodes = {
-                { id = "s1", label = "书柜", nx = 0.20, ny = 0.55 },
-                { id = "s2", label = "办公桌", nx = 0.50, ny = 0.40 },
-                { id = "s3", label = "衣柜", nx = 0.80, ny = 0.55 },
+                { id = "s1", label = "客厅", nx = 0.28, ny = 0.55 },
+                { id = "s2", label = "卧室", nx = 0.72, ny = 0.55 },
             },
-            edges = { { "s1", "s2" }, { "s2", "s3" } },
-            start = "s2",
+            edges = { { "s1", "s2" } },
+            start = "s1",
         },
         screens = {
             {
-                id = "s1", title = "书柜区",
-                image = "assets/image/office_screen1.png",
+                id = "s1", title = "客厅与办公区",
+                image = "assets/image/office_livingroom.png",
                 bgColor = { 150, 120, 70, 255 },
-                charPos = { x = 0.30, y = 0.78, scale = 0.60 },
+                charPos = { x = 0.22, y = 0.78, scale = 0.60 },
                 left = nil, right = "s2",
                 items = {
-                    { id = "bookshelf", name = "书柜", x = 0.10, y = 0.18, w = 0.30, h = 0.60,
-                      clueId = "bookshelf", dialogueId = "of_bookshelf", interactText = "书柜里摆满了侦探小说，大多都是一名叫'秋白'的作者写的。" },
-                },
-            },
-            {
-                id = "s2", title = "办公桌区",
-                image = "assets/image/office_screen2.png",
-                bgColor = { 145, 115, 68, 255 },
-                charPos = { x = 0.45, y = 0.78, scale = 0.60 },
-                left = "s1", right = "s3",
-                items = {
-                    { id = "desk", name = "办公桌", x = 0.40, y = 0.50, w = 0.30, h = 0.30,
+                    { id = "desk", name = "办公桌", x = 0.08, y = 0.52, w = 0.22, h = 0.28,
                       clueId = "desk", dialogueId = "of_desk", interactText = "桌上散落着未结案的委托档案和空泡面杯。" },
-                    { id = "lamp", name = "台灯", x = 0.74, y = 0.44, w = 0.10, h = 0.24,
+                    { id = "lamp", name = "台灯", x = 0.24, y = 0.42, w = 0.10, h = 0.20,
                       dialogueId = "of_lamp_mislead", misleading = true },
                 },
             },
             {
-                id = "s3", title = "衣柜与地铺区",
-                image = "assets/image/office_screen3.png",
+                id = "s2", title = "卧室",
+                image = "assets/image/office_bedroom.png",
                 bgColor = { 130, 105, 62, 255 },
-                charPos = { x = 0.50, y = 0.78, scale = 0.60 },
-                left = "s2", right = nil,
+                charPos = { x = 0.42, y = 0.78, scale = 0.60 },
+                left = "s1", right = nil,
                 items = {
-                    { id = "wardrobe", name = "衣柜", x = 0.58, y = 0.20, w = 0.30, h = 0.58,
+                    { id = "wardrobe", name = "衣柜", x = 0.62, y = 0.18, w = 0.28, h = 0.42,
                       clueId = "wardrobe", interactText = "衣柜里堆满了深色的衣服，衣服堆下面似乎埋着李志的袜子。", onInteract = "wardrobe" },
-                    { id = "bed", name = "床铺", x = 0.10, y = 0.62, w = 0.30, h = 0.28,
+                    { id = "bed", name = "床铺", x = 0.10, y = 0.55, w = 0.34, h = 0.28,
                       clueId = "bed", dialogueId = "of_bed", interactText = "这段时间都由陈雯音睡在这张床上。" },
                 },
             },
