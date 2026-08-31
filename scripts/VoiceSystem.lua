@@ -12,7 +12,7 @@
 
 local M = {}
 
-M.enabled = true          -- 总开关（设置里可关）
+M.enabled = false         -- 音频暂时全部关闭
 M.node = nil              -- 承载 SoundSource 的节点
 M.source = nil            -- SoundSource 组件
 M.currentPath = nil       -- 当前正在播的音频路径

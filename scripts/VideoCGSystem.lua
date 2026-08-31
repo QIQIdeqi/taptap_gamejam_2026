@@ -79,6 +79,8 @@ function M.Play(src, onComplete, opts)
         width = "100%", height = "100%",
         autoPlay = true,
         loop = false,
+        muted = true,
+        volume = 0,
         objectFit = "contain",
         backgroundColor = { 0, 0, 0, 255 },
         onReady = function(self)

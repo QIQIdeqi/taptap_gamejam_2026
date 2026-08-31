@@ -29,6 +29,15 @@ M["bed"] = {
   detail = [==[这张床收拾得整整齐齐，被褥叠得方方正正。这段时间都由陈雯音睡在这里。]==],
   image = [==[]==],
 };
+M["desk"] = {
+  id = "desk",
+  name = [==[办公桌]==],
+  category = [==[trace]==],
+  chapter = [==[prologue]==],
+  description = [==[桌上堆着侦探档案和泡面杯，是李志平时工作的地方。]==],
+  detail = [==[办公桌上的档案、电话和台灯都被使用得很频繁，桌角还放着没收拾的泡面杯。]==],
+  image = [==[]==],
+};
 M["lobby_fountain"] = {
   id = "lobby_fountain",
   name = [==[室内流水假山]==],

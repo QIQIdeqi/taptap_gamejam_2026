@@ -4,7 +4,7 @@
 local M = {}
 M["opening_prologue_1"] = {
   id = "opening_prologue_1",
-  background = [==[assets/image/office_livingroom.png]==],
+  background = [==[assets/image/bg_prologue_living_desk_20260831144801.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[事务所内，李志正睡在地铺上。现在已是下午13点，陈雯音此时正坐在李志身，随后打了他一个耳光，李志被吓醒坐起，陈雯音则是迅速的坐到了一旁的凳子上。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[几点了？]==] },
@@ -15,18 +15,18 @@ M["opening_prologue_1"] = {
 };
 M["opening_prologue_2"] = {
   id = "opening_prologue_2",
-  background = [==[assets/image/office_livingroom.png]==],
+  background = [==[assets/image/bg_prologue_living_kitchen_20260831144830.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[此时李志站在厨台前煮着泡面，陈雯音在一旁看着。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[你说热水壶就在这里，你饿了不会自己泡泡面么...]==] },
     { speaker = [==[ChenWenyin]==], portrait = [==[]==], clue = [==[]==], text = [==[…]==] },
-    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志扭头看了陈雯音一眼。]==] },
-    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[唉…我记得你以前还会叫我舅舅的，现在怎么都不会说话了呢？]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], background = [==[assets/image/bg_prologue_living_sofa_20260831145041.png]==], text = [==[李志扭头看了陈雯音一眼。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], background = [==[assets/image/bg_prologue_living_sofa_20260831145041.png]==], text = [==[唉…我记得你以前还会叫我舅舅的，现在怎么都不会说话了呢？]==] },
   },
 };
 M["opening_prologue_3"] = {
   id = "opening_prologue_3",
-  background = [==[assets/image/office_bedroom.png]==],
+  background = [==[assets/image/bg_prologue_bedroom_wide_20260831144913.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[（画面切入回忆，黑屏显示：2036年8月8日 14:20）]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[不是吧老姐，你真放心把你女儿让我来带啊？]==] },
@@ -44,27 +44,27 @@ M["opening_prologue_3"] = {
 };
 M["opening_prologue_4"] = {
   id = "opening_prologue_4",
-  background = [==[assets/image/office_livingroom.png]==],
+  background = [==[assets/image/bg_prologue_living_sofa_20260831145041.png]==],
   lines = {
     { speaker = [==[NewsAnchor]==], portrait = [==[]==], clue = [==[]==], text = [==[据悉，这是近10年来第一次出现AI系统错误，目前磐安智能正在全力排查故障原因。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[好像你就是因为这次AI事故导致签证没能签下来是吧？]==] },
-    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音点了点头，继续吃着面条。]==] },
-    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[所以我就说吧，人类现在还是太依赖AI了，这么基本的问题换成是人早就当即解决了，真是有意思。]==] },
-    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[李志埋头嗦了一口面条。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], background = [==[assets/image/bg_prologue_living_kitchen_20260831144830.png]==], text = [==[陈雯音点了点头，继续吃着面条。]==] },
+    { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], background = [==[assets/image/bg_prologue_living_kitchen_20260831144830.png]==], text = [==[所以我就说吧，人类现在还是太依赖AI了，这么基本的问题换成是人早就当即解决了，真是有意思。]==] },
+    { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], background = [==[assets/image/bg_prologue_living_kitchen_20260831144830.png]==], text = [==[李志埋头嗦了一口面条。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[话说雯雯你行李收拾好了么？我们明天一早就出发咯。]==] },
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音点头示意。]==] },
   },
 };
 M["opening_prologue_5"] = {
   id = "opening_prologue_5",
-  background = [==[assets/image/office_bedroom.png]==],
+  background = [==[assets/image/bg_prologue_bedroom_wardrobe_20260831145010.png]==],
   lines = {
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[雯雯，有看到我的袜子吗？]==] },
   },
 };
 M["opening_prologue_5_after"] = {
   id = "opening_prologue_5_after",
-  background = [==[assets/image/office_bedroom.png]==],
+  background = [==[assets/image/bg_prologue_bedroom_wardrobe_20260831145010.png]==],
   lines = {
     { speaker = [==[]==], portrait = [==[]==], clue = [==[]==], text = [==[陈雯音嫌弃地指了指柜子底层。]==] },
     { speaker = [==[LiZhi]==], portrait = [==[]==], clue = [==[]==], text = [==[看到了看到了，还得是雯雯，住几天比我还了解这个家，嘿嘿。]==] },

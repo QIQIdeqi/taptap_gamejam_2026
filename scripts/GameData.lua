@@ -446,7 +446,7 @@ M.Dialogues = {
     -- ===== 第一段开场动画（5个序列） =====
     opening_prologue_1 = {
         id = "opening_prologue_1",
-        background = "assets/image/office_livingroom.png",
+        background = "assets/image/bg_prologue_living_desk_20260831144801.png",
         lines = {
             { speaker = "", text = "男女主在事务所内，李志正睡在地铺上。已是下午13点，陈雯音坐在李志身上打了他一个耳光，李志被吓醒坐起，陈雯音已坐到了一旁的凳子上。" },
             { speaker = "LiZhi", text = "几点了？" },
@@ -457,7 +457,7 @@ M.Dialogues = {
     },
     opening_prologue_2 = {
         id = "opening_prologue_2",
-        background = "assets/image/office_livingroom.png",
+        background = "assets/image/bg_prologue_living_kitchen_20260831144830.png",
         lines = {
             { speaker = "", text = "镜头切换，李志站在厨台前煮着泡面，陈雯音在一旁看着。" },
             { speaker = "LiZhi", text = "你说热水器就在这里，你为什么就不能自己用来泡面呢？" },
@@ -468,7 +468,7 @@ M.Dialogues = {
     },
     opening_prologue_3 = {
         id = "opening_prologue_3",
-        background = "assets/image/office_bedroom.png",
+        background = "assets/image/bg_prologue_bedroom_wide_20260831144913.png",
         lines = {
             { speaker = "", text = "（画面切入回忆，黑屏显示：2036年8月8日 14:20）" },
             { speaker = "", text = "李志在房间门内，李志姐姐和陈雯音在房间门外。" },
@@ -487,7 +487,7 @@ M.Dialogues = {
     },
     opening_prologue_4 = {
         id = "opening_prologue_4",
-        background = "assets/image/office_livingroom.png",
+        background = "assets/image/bg_prologue_living_sofa_20260831145041.png",
         lines = {
             { speaker = "", text = "切回原场景。两人坐在桌前吃泡面，桌子中间放着一台播放AI新闻的平板。" },
             { speaker = "NewsAnchor", text = "据悉，这是近10年来第一次出现AI错误，目前磐安智能正在全力排查故障原因。" },
@@ -501,7 +501,7 @@ M.Dialogues = {
     },
     opening_prologue_5 = {
         id = "opening_prologue_5",
-        background = "assets/image/office_bedroom.png",
+        background = "assets/image/bg_prologue_bedroom_wardrobe_20260831145010.png",
         lines = {
             { speaker = "", text = "切换到事务所卧室，李志正对着衣柜翻找着什么。" },
             { speaker = "LiZhi", text = "雯雯，有看到我的袜子吗？" },
@@ -509,7 +509,7 @@ M.Dialogues = {
     },
     opening_prologue_5_after = {
         id = "opening_prologue_5_after",
-        background = "assets/image/office_bedroom.png",
+        background = "assets/image/bg_prologue_bedroom_wardrobe_20260831145010.png",
         lines = {
             { speaker = "", text = "陈雯音嫌弃地指了指柜子底层。" },
             { speaker = "LiZhi", text = "看到了看到了，还得是雯雯，住几天比我还了解这个家，嘿嘿。" },
@@ -832,23 +832,35 @@ M.SceneObjects = {
                 charPos = { x = 0.22, y = 0.78, scale = 0.60 },
                 left = nil, right = "s2",
                 items = {
-                    { id = "desk", name = "办公桌", x = 0.08, y = 0.52, w = 0.22, h = 0.28,
+                    { id = "desk", name = "办公桌", x = 0.10, y = 0.54, w = 0.22, h = 0.30,
                       clueId = "desk", dialogueId = "of_desk", interactText = "桌上散落着未结案的委托档案和空泡面杯。" },
-                    { id = "lamp", name = "台灯", x = 0.24, y = 0.42, w = 0.10, h = 0.20,
+                    { id = "lamp", name = "台灯", x = 0.23, y = 0.40, w = 0.10, h = 0.20,
                       dialogueId = "of_lamp_mislead", misleading = true },
+                    { id = "sofa_left", name = "左侧沙发", x = 0.32, y = 0.48, w = 0.18, h = 0.24,
+                      interactText = "沙发靠垫有些塌，看来这里经常有人坐着。" },
+                    { id = "sofa_right", name = "右侧沙发", x = 0.47, y = 0.48, w = 0.14, h = 0.24,
+                      interactText = "另一张沙发正对着茶几，旁边留出了通往餐桌的过道。" },
+                    { id = "dining_table", name = "餐桌", x = 0.67, y = 0.54, w = 0.20, h = 0.28,
+                      interactText = "餐桌周围摆着四把椅子，桌面上还留着吃泡面的痕迹。" },
+                    { id = "stove", name = "灶台", x = 0.87, y = 0.43, w = 0.13, h = 0.36,
+                      interactText = "靠墙的灶台和操作台很简陋，但足够煮一锅泡面。" },
                 },
             },
             {
                 id = "s2", title = "卧室",
                 image = "assets/image/office_bedroom.png",
                 bgColor = { 130, 105, 62, 255 },
-                charPos = { x = 0.42, y = 0.78, scale = 0.60 },
+                charPos = { x = 0.44, y = 0.78, scale = 0.60 },
                 left = "s1", right = nil,
                 items = {
-                    { id = "wardrobe", name = "衣柜", x = 0.62, y = 0.18, w = 0.28, h = 0.42,
-                      clueId = "wardrobe", interactText = "衣柜里堆满了深色的衣服，衣服堆下面似乎埋着李志的袜子。", onInteract = "wardrobe" },
-                    { id = "bed", name = "床铺", x = 0.10, y = 0.55, w = 0.34, h = 0.28,
+                    { id = "bedroom_desk", name = "卧室桌子", x = 0.04, y = 0.56, w = 0.17, h = 0.28,
+                      interactText = "卧室里的小桌子靠近入口，椅子紧挨在桌子右侧。" },
+                    { id = "bedroom_chair", name = "卧室椅子", x = 0.14, y = 0.64, w = 0.10, h = 0.22,
+                      interactText = "椅子正好放在桌子右边，旁边留着进出的空隙。" },
+                    { id = "bed", name = "床铺", x = 0.19, y = 0.53, w = 0.30, h = 0.30,
                       clueId = "bed", dialogueId = "of_bed", interactText = "这段时间都由陈雯音睡在这张床上。" },
+                    { id = "wardrobe", name = "衣柜", x = 0.62, y = 0.25, w = 0.28, h = 0.45,
+                      clueId = "wardrobe", interactText = "右侧墙边并排放着两个衣柜，柜子底层似乎露出了一只袜子。", onInteract = "wardrobe" },
                 },
             },
         },
