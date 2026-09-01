@@ -7,6 +7,7 @@
 local UI = require("urhox-libs.UI")
 
 local M = {}
+M.showSceneActors = false
 
 M.state = {
     active = false,
@@ -316,7 +317,7 @@ function M.FillShot(panel, dialogueId, overrideBg)
     local shot = GameData.OpeningShots and GameData.OpeningShots[dialogueId]
     local sw, sh = graphics:GetWidth(), graphics:GetHeight()
 
-    if shot and shot.actors then
+    if M.showSceneActors and shot and shot.actors then
         for _, a in ipairs(shot.actors) do
             local h = a.h or 0.5
             local ratio = a.ratio or 0.671

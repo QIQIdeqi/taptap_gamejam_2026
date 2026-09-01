@@ -26,6 +26,7 @@ local Button = function(parent, props) return _mk(parent, props, UI_Button) end
 M.onSceneChanged = nil
 M.onClueCollected = nil
 M.onSpecialInteract = nil
+M.showSceneCharacterSprites = false
 
 -- 运行状态（screens 模式复用）
 M.currentSceneId = nil
@@ -236,7 +237,8 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     -- NPC/物件立绘：item.sprite 存在时把角色画像渲染到场景上（站在热区底部居中）。
     -- 必须 pointerEvents="none"，否则立绘会吃掉点击、热区收不到 onClick。
     -- zIndex 需低于热区按钮(100)，保证立绘在按钮下方。
-    local hasSprite = (type(item.sprite) == "string") and (item.sprite ~= "")
+    local hasSprite = M.showSceneCharacterSprites
+        and (type(item.sprite) == "string") and (item.sprite ~= "")
     if hasSprite then
         -- 按立绘原始比例(2:3)算出绘制区，底部贴齐热区底边、水平居中，
         -- 这样人物是"站在地上"而不是悬在热区中央，且不依赖 backgroundPosition 取值支持。
