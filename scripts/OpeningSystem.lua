@@ -28,6 +28,7 @@ M.ui = {
     shotB = nil,
     shotFront = nil,
     shotBack = nil,
+    dateCard = nil,
 }
 
 -- 默认镜头切换时长（秒）
@@ -165,6 +166,10 @@ function M.BuildLocationUI()
 end
 
 function M.DestroyUI()
+    if M.ui.dateCard then
+        pcall(function() M.ui.dateCard:Destroy() end)
+        M.ui.dateCard = nil
+    end
     if M._skipBtn then
         M._skipBtn:Destroy()
         M._skipBtn = nil
@@ -176,6 +181,33 @@ function M.DestroyUI()
     M.DestroyShotPanels()
     M.ui.timeLabel = nil
     M.ui.locationLabel = nil
+end
+
+function M.ShowDateCard(text, duration, nextStep)
+    if M.ui.dateCard then
+        pcall(function() M.ui.dateCard:Destroy() end)
+    end
+    local card = UI.Panel {
+        position = "absolute",
+        top = 0, left = 0, right = 0, bottom = 0,
+        backgroundColor = { 0, 0, 0, 255 },
+        flexDirection = "column",
+        alignItems = "center",
+        justifyContent = "center",
+        zIndex = 9000,
+        pointerEvents = false,
+    }
+    card:AddChild(UI.Label {
+        text = text,
+        fontSize = 30,
+        fontColor = { 235, 235, 235, 255 },
+        textAlign = "center",
+        fontWeight = "bold",
+    })
+    local uiRoot = UI.GetRoot()
+    if uiRoot then uiRoot:AddChild(card) end
+    M.ui.dateCard = card
+    M.state.dateCard = { timer = 0, duration = duration or 3.0, nextStep = nextStep }
 end
 
 -- ============================================================================
@@ -503,6 +535,19 @@ function M.Update(deltaTime)
     end
 
     if M.state.phase == "dialogue" then
+        if M.state.dateCard then
+            local card = M.state.dateCard
+            card.timer = card.timer + deltaTime
+            if card.timer >= card.duration then
+                local nextStep = card.nextStep
+                M.state.dateCard = nil
+                if M.ui.dateCard then
+                    pcall(function() M.ui.dateCard:Destroy() end)
+                    M.ui.dateCard = nil
+                end
+                if nextStep then nextStep() end
+            end
+        end
         -- 对话由 DialogueSystem 驱动，这里等待回调
         return
     end
@@ -524,6 +569,17 @@ function M.PlayNextDialogue()
 
     local dialogueId = dialogues[M.state.dialogueIndex]
     M.state.dialogueIndex = M.state.dialogueIndex + 1
+
+    -- 回忆切入使用独立黑屏时间卡，不显示普通对话框中的说明文字。
+    if dialogueId == "opening_prologue_3" then
+        M.ShowDateCard("2036年8月8日 14:20", 3.0, function()
+            M.TransitionToShot(dialogueId)
+            DialogueSystem.Start(dialogueId, function()
+                M.PlayNextDialogue()
+            end, false, 2)
+        end)
+        return
+    end
 
     -- 镜头切到该分镜：背景 + 角色站位，交叉淡入淡出
     M.TransitionToShot(dialogueId)

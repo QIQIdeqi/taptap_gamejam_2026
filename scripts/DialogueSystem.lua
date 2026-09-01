@@ -52,7 +52,7 @@ M.portraitMap = {
 -- 开始对话
 -- ============================================================================
 
-function M.Start(dialogueId, onComplete, showSkip)
+function M.Start(dialogueId, onComplete, showSkip, startLine)
     local GameData = require("scripts.GameData")
     local dialogue
     if type(dialogueId) == "table" then
@@ -74,7 +74,7 @@ function M.Start(dialogueId, onComplete, showSkip)
     M.state.dialogue = dialogue
     -- 记录对话 id 供 VoiceSystem 定位台词音频（table 形式传入时无 id，配音自动跳过）
     M.state.dialogueId = (type(dialogueId) == "string") and dialogueId or nil
-    M.state.lineIndex = 1
+    M.state.lineIndex = startLine or 1
     M.state.isActive = true
     M.state.charIndex = 0
     M.state.displayText = ""
