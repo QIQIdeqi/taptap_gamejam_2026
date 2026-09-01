@@ -19,6 +19,7 @@ local NoteSystem = require("scripts.NoteSystem")
 local OpeningSystem = require("scripts.OpeningSystem")
 local InterrogationSystem = require("scripts.InterrogationSystem")
 local VideoCGSystem = require("scripts.VideoCGSystem")
+local MusicSystem = require("scripts.MusicSystem")
 
 -- ============================================================================
 -- 游戏模式
@@ -153,6 +154,7 @@ end
 function EnterMainMenu()
     print("[MAIN DEBUG] EnterMainMenu start; uiRoot=" .. tostring(UI.GetRoot()))
     currentMode = GameMode.MainMenu
+    MusicSystem.Stop()
     DialogueSystem.Stop()
     InterrogationSystem.Close()
     VideoCGSystem.Stop()
@@ -200,6 +202,7 @@ function StartNewGame()
 
     GameData.GameState.currentChapter = "prologue"
     GameData.GameState.currentScene = "office"
+    MusicSystem.PlayFirstStage()
 
     -- 序章走「静态分镜 + 立绘对话」（OpeningSystem）。
     -- 曾用 Seedance CG 视频替代，但那样 opening_prologue_1~5 不经过 DialogueSystem，
@@ -211,6 +214,8 @@ end
 
 -- 进入序章场景（新手引导：书柜/衣柜/床铺）
 function EnterPrologueScene()
+    -- 序章对话结束、进入可调查线索场景时让背景音乐柔和淡出。
+    MusicSystem.FadeOut(1.8)
     -- 初始人物名录
     GameData.CollectClue("char_lizhi")
     GameData.CollectClue("char_wenyin")
@@ -637,6 +642,8 @@ end
 function HandleUpdate(eventType, eventData)
     local deltaTime = eventData["TimeStep"]:GetFloat()
     HandleInput()
+
+    MusicSystem.Update(deltaTime)
 
     if currentMode == GameMode.Playing then
         playTimer = playTimer + deltaTime
