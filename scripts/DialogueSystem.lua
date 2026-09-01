@@ -108,6 +108,7 @@ function M.BuildUI(showSkip)
     local panel = UI.Panel {
         width = "100%",
         height = 240,
+        zIndex = 100,
         backgroundColor = { 15, 12, 25, 220 },
         borderTopWidth = 2,
         borderTopColor = { 180, 160, 120, 200 },
@@ -147,14 +148,15 @@ function M.BuildUI(showSkip)
     }
     panel:AddChild(M.ui.continueHint)
 
-    -- 对话立绘：保持完整比例放大，贴屏幕底部；下半身自然被底部对话面板遮住。
+    -- 对话立绘：放大 1.5 倍并下移半个增量；对话面板 zIndex 更高，始终盖在立绘上方。
     M.ui.portrait = UI.Panel {
         id = "dialoguePortrait",
-        width = 320,
-        height = 540,
+        width = 480,
+        height = 810,
         position = "absolute",
         left = 24,
-        bottom = 0,
+        bottom = -135,
+        zIndex = 10,
         backgroundColor = { 0, 0, 0, 0 },
         backgroundFit = "contain",
         backgroundImageOpacity = 1,
