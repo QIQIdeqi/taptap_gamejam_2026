@@ -147,18 +147,16 @@ function M.BuildUI(showSkip)
     }
     panel:AddChild(M.ui.continueHint)
 
-    -- 角色半身立绘：用顶部裁切显示全身资源的头肩到腰部，不占满对话框。
+    -- 对话立绘：保持完整比例放大，贴屏幕底部；下半身自然被底部对话面板遮住。
     M.ui.portrait = UI.Panel {
         id = "dialoguePortrait",
-        width = 260,
-        height = 360,
+        width = 320,
+        height = 540,
         position = "absolute",
-        left = 28,
-        bottom = 230,
-        overflow = "hidden",
+        left = 24,
+        bottom = 0,
         backgroundColor = { 0, 0, 0, 0 },
-        backgroundFit = "cover",
-        backgroundPosition = "center top",
+        backgroundFit = "contain",
         backgroundImageOpacity = 1,
         visible = false,
         pointerEvents = false,
