@@ -783,8 +783,8 @@ M.OpeningShots = {
         actors = {
             { sprite = "assets/image/char_yanchengfeng.png",  x = 0.30, y = 0.94, h = 0.58, ratio = 0.671 },
             { sprite = "assets/image/char_zhaoheng.png",      x = 0.42, y = 0.94, h = 0.54, ratio = 0.671 },
-            { sprite = "assets/image/char_technician.png",    x = 0.54, y = 0.94, h = 0.46, ratio = 0.671 },
-            { sprite = "assets/image/char_technician.png",    x = 0.64, y = 0.94, h = 0.46, ratio = 0.671 },
+            { sprite = "assets/image/char_pangan_employee_a.png", x = 0.54, y = 0.94, h = 0.46, ratio = 0.671 },
+            { sprite = "assets/image/char_pangan_employee_b.png", x = 0.64, y = 0.94, h = 0.46, ratio = 0.671 },
             { sprite = "assets/image/char_zhouwen.png",       x = 0.76, y = 0.94, h = 0.48, ratio = 0.671 },
         },
     },
