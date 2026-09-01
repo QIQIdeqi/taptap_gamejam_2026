@@ -63,7 +63,8 @@ end
 function M.ShowMainMenu()
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
-        backgroundColor = { 15, 10, 20, 255 },
+        backgroundImage = "image/bg_main_menu_detective_board.png",
+        backgroundFit = "cover",
         flexDirection = "column",
         justifyContent = "center",
         alignItems = "center",
@@ -75,13 +76,6 @@ function M.ShowMainMenu()
         text = "异视",
         fontSize = 56,
         fontColor = { 220, 200, 160, 255 },
-        textAlign = "center",
-    })
-
-    M.ui.root:AddChild(UI.Label {
-        text = "黄昏事务所 · 2D横板推理游戏",
-        fontSize = 18,
-        fontColor = { 160, 160, 160, 255 },
         textAlign = "center",
     })
 
