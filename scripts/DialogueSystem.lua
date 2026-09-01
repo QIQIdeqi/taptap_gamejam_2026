@@ -147,16 +147,18 @@ function M.BuildUI(showSkip)
     }
     panel:AddChild(M.ui.continueHint)
 
-    -- 角色立绘（左下角，透明背景，绝对定位堆叠在对话框之上）
+    -- 角色半身立绘：用顶部裁切显示全身资源的头肩到腰部，不占满对话框。
     M.ui.portrait = UI.Panel {
         id = "dialoguePortrait",
-        width = 220,
-        height = 340,
+        width = 260,
+        height = 360,
         position = "absolute",
-        left = 40,
+        left = 28,
         bottom = 230,
+        overflow = "hidden",
         backgroundColor = { 0, 0, 0, 0 },
-        backgroundFit = "contain",
+        backgroundFit = "cover",
+        backgroundPosition = "center top",
         backgroundImageOpacity = 1,
         visible = false,
         pointerEvents = false,
