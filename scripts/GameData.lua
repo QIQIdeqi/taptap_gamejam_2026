@@ -866,52 +866,93 @@ M.SceneObjects = {
         },
     },
 
-    -- ===== 第二段：1F 酒店大堂与前台区 · 连续横版卷轴 =====
+    -- ===== 第二段：1F 酒店大堂与前台区 · 五页横版翻页 =====
     hotel_lobby = {
         title = "酒店大堂与前台区",
-        mode = "parallax",
-        worldWidth = 9700,
-        groundY = 0.82,
-        spawnX = 520,
-        layers = {
-            background = {
-                image = "assets/image/lobby_scroll_panorama.png",
-                parallax = 1.0,
+        mode = "screens",
+        minimap = {
+            nodes = {
+                { id = "s1", label = "正门", nx = 0.10, ny = 0.56 },
+                { id = "s2", label = "前台", nx = 0.30, ny = 0.40 },
+                { id = "s3", label = "假山", nx = 0.50, ny = 0.56 },
+                { id = "s4", label = "电梯", nx = 0.70, ny = 0.40 },
+                { id = "s5", label = "安全通道", nx = 0.90, ny = 0.56 },
             },
+            edges = { { "s1", "s2" }, { "s2", "s3" }, { "s3", "s4" }, { "s4", "s5" } },
+            start = "s1",
         },
-        items = {
-            -- 左段：旋转门入口与雨伞架
-            { id = "umbrella", name = "雨伞架", x = 220, y = 0.48, w = 240, h = 0.30,
-              interactText = "门厅雨伞架里插着几把长伞，伞尖还在滴水。" },
-            -- 第一段：峰会展架；第二段：前台、外卖柜与签到簿
-            { id = "stand", name = "峰会展架", x = 900, y = 0.34, w = 420, h = 0.42,
-              clueId = "lobby_stand", interactText = "展架上挂着磐安智能的标志和严成峰的商务肖像。" },
-            { id = "signbook", name = "VIP签到簿与房卡盒", x = 2850, y = 0.50, w = 340, h = 0.24,
-              clueId = "lobby_signbook", interactText = "前台桌面摆着VIP签到簿与房卡盒，非授权人员无法查看。" },
-            { id = "delivery", name = "外卖暂存柜", x = 3420, y = 0.34, w = 300, h = 0.42,
-              clueId = "lobby_delivery", interactText = "蜂巢式恒温配送柜的扫码屏残留着几条取件记录。" },
-            -- 第三段：中央流水假山
-            { id = "fountain", name = "室内流水假山", x = 4400, y = 0.36, w = 720, h = 0.42,
-              clueId = "lobby_fountain", interactText = "太湖石循环水景的水声很大，足以掩盖近距离的低声交谈。" },
-            -- 第四段：三部电梯与两只垃圾桶；第五段：安全通道
-            { id = "lobby_elevator_upper", name = "左侧电梯", x = 6020, y = 0.22, w = 260, h = 0.58,
-              interactText = "电梯门紧闭，顶部楼层指示灯保持待机。" },
-            { id = "lobby_trash_upper", name = "垃圾桶", x = 6340, y = 0.48, w = 170, h = 0.26,
-              interactText = "酒店大堂的分类垃圾桶，桶内只有几张揉皱的纸巾。" },
-            { id = "lobby_elevator_middle", name = "中间电梯", x = 6550, y = 0.22, w = 260, h = 0.58,
-              interactText = "中间电梯的门缝里映着大堂灯光，暂时没有停靠提示。" },
-            { id = "lobby_trash_lower", name = "垃圾桶", x = 6870, y = 0.48, w = 170, h = 0.26,
-              interactText = "另一只垃圾桶靠在电梯厅墙边，外壳上有清洁记录贴纸。" },
-            { id = "lobby_elevator_lower", name = "右侧电梯", x = 7080, y = 0.22, w = 260, h = 0.58,
-              interactText = "右侧电梯直通酒店各楼层，门旁的呼叫按钮亮着。" },
-            { id = "lobby_safety_door", name = "安全通道", x = 8140, y = 0.26, w = 300, h = 0.56,
-              interactText = "安全通道门通向楼梯间，门上方的绿色出口灯持续亮着。" },
-        },
-        exits = {
-            -- 出口热区放在电梯/安全门底部，避免覆盖整扇门的调查热区
-            { id = "to_corridor", label = "电梯→25F", targetScene = "hotel_corridor", x = 6100, y = 0.72, w = 180, h = 0.12 },
-            { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 2650, y = 0.20, w = 280, h = 0.58 },
-            { id = "to_corridor_stairs", label = "安全通道→25F", targetScene = "hotel_corridor", x = 8200, y = 0.74, w = 180, h = 0.12 },
+        screens = {
+            {
+                id = "s1", title = "正门与展架",
+                image = "assets/image/lobby_scroll_01_entrance_20260902131008.png",
+                bgColor = { 150, 120, 70, 255 },
+                left = nil, right = "s2",
+                items = {
+                    { id = "umbrella", name = "雨伞架", x = 0.08, y = 0.52, w = 0.18, h = 0.30,
+                      interactText = "门厅雨伞架里插着几把长伞，伞尖还在滴水。" },
+                    { id = "stand", name = "峰会展架", x = 0.42, y = 0.30, w = 0.28, h = 0.46,
+                      clueId = "lobby_stand", interactText = "展架上挂着磐安智能的标志和严成峰的商务肖像。" },
+                },
+            },
+            {
+                id = "s2", title = "前台与露天庭院入口",
+                image = "assets/image/lobby_scroll_02_frontdesk_20260902131008.png",
+                bgColor = { 160, 130, 75, 255 },
+                left = "s1", right = "s3",
+                items = {
+                    { id = "signbook", name = "VIP签到簿与房卡盒", x = 0.34, y = 0.50, w = 0.28, h = 0.24,
+                      clueId = "lobby_signbook", interactText = "前台桌面摆着VIP签到簿与房卡盒，非授权人员无法查看。" },
+                    { id = "delivery", name = "外卖暂存柜", x = 0.76, y = 0.30, w = 0.18, h = 0.44,
+                      clueId = "lobby_delivery", interactText = "蜂巢式恒温配送柜的扫码屏残留着几条取件记录。" },
+                },
+                exits = {
+                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.66, y = 0.08, w = 0.22, h = 0.26 },
+                },
+            },
+            {
+                id = "s3", title = "中央流水假山",
+                image = "assets/image/lobby_scroll_03_fountain_20260902131008.png",
+                bgColor = { 140, 115, 65, 255 },
+                left = "s2", right = "s4",
+                items = {
+                    { id = "fountain", name = "室内流水假山", x = 0.34, y = 0.34, w = 0.34, h = 0.44,
+                      clueId = "lobby_fountain", interactText = "太湖石循环水景的水声很大，足以掩盖近距离的低声交谈。" },
+                },
+            },
+            {
+                id = "s4", title = "电梯厅与垃圾桶",
+                image = "assets/image/lobby_scroll_04_elevators_20260902131008.png",
+                bgColor = { 135, 115, 75, 255 },
+                left = "s3", right = "s5",
+                items = {
+                    { id = "lobby_elevator_upper", name = "左侧电梯", x = 0.16, y = 0.20, w = 0.18, h = 0.60,
+                      interactText = "电梯门紧闭，顶部楼层指示灯保持待机。" },
+                    { id = "lobby_trash_upper", name = "垃圾桶", x = 0.37, y = 0.52, w = 0.12, h = 0.24,
+                      interactText = "酒店大堂的分类垃圾桶，桶内只有几张揉皱的纸巾。" },
+                    { id = "lobby_elevator_middle", name = "中间电梯", x = 0.48, y = 0.20, w = 0.18, h = 0.60,
+                      interactText = "中间电梯的门缝里映着大堂灯光，暂时没有停靠提示。" },
+                    { id = "lobby_trash_lower", name = "垃圾桶", x = 0.69, y = 0.52, w = 0.12, h = 0.24,
+                      interactText = "另一只垃圾桶靠在电梯厅墙边，外壳上有清洁记录贴纸。" },
+                    { id = "lobby_elevator_lower", name = "右侧电梯", x = 0.80, y = 0.20, w = 0.18, h = 0.60,
+                      interactText = "右侧电梯直通酒店各楼层，门旁的呼叫按钮亮着。" },
+                },
+                exits = {
+                    { id = "to_corridor", label = "电梯→25F", targetScene = "hotel_corridor", x = 0.18, y = 0.80, w = 0.16, h = 0.12 },
+                },
+            },
+            {
+                id = "s5", title = "安全通道",
+                image = "assets/image/lobby_scroll_05_safety_20260902131008.png",
+                bgColor = { 120, 105, 70, 255 },
+                left = "s4", right = nil,
+                items = {
+                    { id = "lobby_safety_door", name = "安全通道", x = 0.60, y = 0.24, w = 0.26, h = 0.56,
+                      interactText = "安全通道门通向楼梯间，门上方的绿色出口灯持续亮着。" },
+                },
+                exits = {
+                    { id = "to_corridor_stairs", label = "安全通道→25F", targetScene = "hotel_corridor", x = 0.62, y = 0.80, w = 0.20, h = 0.12 },
+                },
+            },
         },
     },
 
