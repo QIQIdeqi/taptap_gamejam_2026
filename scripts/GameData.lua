@@ -866,72 +866,37 @@ M.SceneObjects = {
         },
     },
 
-    -- ===== 第二段：1F 酒店大堂与前台区 · 整图切换（环形4屏）=====
+    -- ===== 第二段：1F 酒店大堂与前台区 · 连续横版卷轴 =====
     hotel_lobby = {
         title = "酒店大堂与前台区",
-        mode = "screens",
-        minimap = {
-            nodes = {
-                { id = "s1", label = "旋转门", nx = 0.18, ny = 0.55 },
-                { id = "s2", label = "外卖柜", nx = 0.42, ny = 0.35 },
-                { id = "s3", label = "前台",   nx = 0.66, ny = 0.55 },
-                { id = "s4", label = "闸机",   nx = 0.86, ny = 0.72 },
+        mode = "parallax",
+        worldWidth = 5820,
+        groundY = 0.82,
+        spawnX = 520,
+        layers = {
+            background = {
+                image = "assets/image/lobby_scroll_panorama.png",
+                parallax = 1.0,
             },
-            edges = { { "s1", "s2" }, { "s2", "s3" }, { "s3", "s4" }, { "s4", "s1" } },
-            start = "s1",
         },
-        screens = {
-            {
-                id = "s1", title = "旋转门入口",
-                image = "assets/image/lobby_screen1.png",
-                bgColor = { 150, 120, 70, 255 },
-                charPos = { x = 0.62, y = 0.78, scale = 0.60 },
-                left = nil, right = "s2",
-                items = {
-                    { id = "umbrella", name = "雨伞架", x = 0.02, y = 0.50, w = 0.12, h = 0.35,
-                      interactText = "门前雨伞架里插着几把长伞。" },
-                },
-                exits = {
-                    { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 0.02, y = 0.12, w = 0.14, h = 0.35 },
-                },
-            },
-            {
-                id = "s2", title = "外卖柜与假山",
-                image = "assets/image/lobby_screen2.png",
-                bgColor = { 140, 115, 65, 255 },
-                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
-                left = "s1", right = "s3",
-                items = {
-                    { id = "delivery", name = "外卖暂存柜", x = 0.06, y = 0.32, w = 0.18, h = 0.46,
-                      clueId = "lobby_delivery", interactText = "蜂巢式恒温配送柜，扫码屏残留取件记录。" },
-                    { id = "fountain", name = "室内流水假山", x = 0.44, y = 0.28, w = 0.30, h = 0.50,
-                      clueId = "lobby_fountain", interactText = "太湖石循环水景，水声足以掩盖低声交谈。" },
-                },
-            },
-            {
-                id = "s3", title = "展架与前台",
-                image = "assets/image/lobby_screen3.png",
-                bgColor = { 160, 130, 75, 255 },
-                charPos = { x = 0.60, y = 0.78, scale = 0.58 },
-                left = "s2", right = "s4",
-                items = {
-                    { id = "stand", name = "峰会展架", x = 0.06, y = 0.30, w = 0.20, h = 0.48,
-                      clueId = "lobby_stand", interactText = "磐安智能峰会特制展架。" },
-                    { id = "signbook", name = "VIP签到簿", x = 0.56, y = 0.46, w = 0.30, h = 0.32,
-                      clueId = "lobby_signbook", interactText = "前台礼貌表示无法查看。" },
-                },
-            },
-            {
-                id = "s4", title = "安检闸机",
-                image = "assets/image/lobby_screen4.png",
-                bgColor = { 120, 100, 60, 255 },
-                charPos = { x = 0.50, y = 0.78, scale = 0.58 },
-                left = "s3", right = "s1",
-                items = {},
-                exits = {
-                    { id = "to_corridor", label = "电梯→25F", targetScene = "hotel_corridor", x = 0.10, y = 0.30, w = 0.16, h = 0.45 },
-                },
-            },
+        items = {
+            -- 左段：旋转门入口与雨伞架
+            { id = "umbrella", name = "雨伞架", x = 220, y = 0.48, w = 240, h = 0.30,
+              interactText = "门厅雨伞架里插着几把长伞，伞尖还在滴水。" },
+            -- 中段：中央流水假山与峰会展架
+            { id = "fountain", name = "室内流水假山", x = 2250, y = 0.36, w = 720, h = 0.42,
+              clueId = "lobby_fountain", interactText = "太湖石循环水景的水声很大，足以掩盖近距离的低声交谈。" },
+            { id = "stand", name = "峰会展架", x = 3120, y = 0.34, w = 420, h = 0.42,
+              clueId = "lobby_stand", interactText = "展架上挂着磐安智能的标志和严成峰的商务肖像。" },
+            -- 右段：前台、外卖柜与庭院入口
+            { id = "delivery", name = "外卖暂存柜", x = 4210, y = 0.34, w = 360, h = 0.42,
+              clueId = "lobby_delivery", interactText = "蜂巢式恒温配送柜的扫码屏残留着几条取件记录。" },
+            { id = "signbook", name = "VIP签到簿与房卡盒", x = 4770, y = 0.50, w = 420, h = 0.24,
+              clueId = "lobby_signbook", interactText = "前台桌面摆着VIP签到簿与房卡盒，非授权人员无法查看。" },
+        },
+        exits = {
+            { id = "to_corridor", label = "电梯→25F", targetScene = "hotel_corridor", x = 3910, y = 0.22, w = 260, h = 0.52 },
+            { id = "to_courtyard", label = "露天庭院", targetScene = "hotel_courtyard", x = 5480, y = 0.20, w = 300, h = 0.58 },
         },
     },
 

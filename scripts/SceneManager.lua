@@ -60,6 +60,9 @@ M._btnLeft = nil
 M._btnRight = nil
 M._minimap = nil
 M._mmNodes = {}
+M._worldWidgets = {}
+M._scrollTrack = nil
+M._scrollMarker = nil
 M._tutPanel = nil
 
 local function _rgba(t)
@@ -133,19 +136,19 @@ function M.EnterScene(sceneId, onExit)
     M.screenW = sw
     M.screenH = sh
 
-    -- 公共 HUD：标题（右上角，避开 DialogueSystem 跳过按钮）+ 悬停名称
+    -- 公共 HUD：标题固定在左上，底部中央留给卷轴提示，避免遮挡右上角系统按钮
     M.titleLabel = Label(root, {
-        right = 12, top = 10, width = sw - 180, height = 32,
+        left = 18, top = 12, width = math.min(sw * 0.55, 560), height = 34,
         text = sceneData.title or sceneId, fontSize = 16,
         fontColor = "rgba(255,255,255,230)",
-        backgroundColor = "rgba(0,0,0,140)",
+        backgroundColor = "rgba(0,0,0,150)",
         borderRadius = 6,
         padding = { 6, 10, 4, 10 },
-        textAlign = "right",
+        textAlign = "left",
         zIndex = 2000,
     })
     M.hoverNameLabel = Label(UI.GetRoot(), {
-        left = 0, top = sh - 48, width = sw, height = 32,
+        left = 0, bottom = 70, width = sw, height = 32,
         text = "", fontSize = 16, fontColor = "rgba(255,255,255,240)", textAlign = "center",
         zIndex = 99998,
         backgroundColor = "rgba(0,0,0,160)",
@@ -171,8 +174,9 @@ function M:_EnterParallax(sceneData, root, sw, sh)
     M.worldWidth = sceneData.worldWidth
     M.groundY = sceneData.groundY or 0.78
     M.spawnX = sceneData.spawnX or 520
+    M._worldWidgets = {}
 
-    local ldefs = sceneData.layers
+    local ldefs = sceneData.layers or {}
     local layerDefs = {
         { key = "background", def = ldefs.background, z = 1 },
         { key = "midground",  def = ldefs.midground,  z = 2 },
@@ -192,18 +196,10 @@ function M:_EnterParallax(sceneData, root, sw, sh)
         end
     end
 
-    -- 主角
-    local charH = sh * 0.52
-    local charY = sh * M.groundY - charH  -- 脚底站在 groundY 比例高度处
-    M.charSprite = Panel(root, {
-        backgroundImage = "assets/image/char_lizhi.png",
-        backgroundFit = "contain",
-        backgroundColor = "rgba(0,0,0,0)",
-        left = M.spawnX, top = charY, width = charH * 0.5, height = charH,
-        zIndex = 5,
-    })
+    -- 主角不显示立绘，保留世界层顺序供后续角色接入。
+    M.charSprite = nil
 
-    -- 交互物件
+    -- 交互物件与出口均使用世界坐标，随镜头一起移动。
     if sceneData.items then
         for _, item in ipairs(sceneData.items) do
             M:_makeItemBtn(item, sw, sh, false)
@@ -215,11 +211,23 @@ function M:_EnterParallax(sceneData, root, sw, sh)
         end
     end
 
-    -- 滚动提示
+    -- 固定 HUD：左下是卷轴进度，中央是操作提示，右下保留笔记入口。
+    local trackW = math.min(300, math.max(220, sw * 0.26))
+    M._scrollTrack = Panel(root, {
+        position = "absolute",
+        left = 18, bottom = 20, width = trackW, height = 8,
+        backgroundColor = "rgba(0,0,0,170)", borderRadius = 4, zIndex = 2000,
+    })
+    M._scrollMarker = Panel(M._scrollTrack, {
+        position = "absolute",
+        left = 0, top = 0, width = 18, height = 8,
+        backgroundColor = "rgba(255,200,90,255)", borderRadius = 4, zIndex = 2001,
+    })
     M.scrollHint = Label(root, {
-        left = 0, top = sh - 48, width = sw, height = 24,
-        text = "◀ ← 移动视角 → ▶", fontSize = 14, fontColor = "rgba(255,255,255,170)", textAlign = "center",
-        zIndex = 2000,
+        position = "absolute",
+        left = trackW + 34, right = 120, bottom = 12, height = 24,
+        text = "◀ / ▶ 移动视角 · 点击高亮区域调查", fontSize = 14,
+        fontColor = "rgba(255,255,255,185)", textAlign = "center", zIndex = 2000,
     })
 
     M.cameraX = 0
@@ -234,6 +242,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
+    local worldLeft = left
     -- NPC/物件立绘：item.sprite 存在时把角色画像渲染到场景上（站在热区底部居中）。
     -- 必须 pointerEvents="none"，否则立绘会吃掉点击、热区收不到 onClick。
     -- zIndex 需低于热区按钮(100)，保证立绘在按钮下方。
@@ -246,7 +255,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         local ratio = item.spriteRatio or (2.0 / 3.0)
         local ph, pw = h * s, h * s * ratio
         if pw > w then pw, ph = w, w / ratio end
-        Panel(parent, {
+        local spritePanel = Panel(parent, {
             position = "absolute",
             left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
             backgroundImage = item.sprite,
@@ -255,6 +264,9 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
             zIndex = 50,
             pointerEvents = "none",
         })
+        if not isScreenMode then
+            table.insert(M._worldWidgets, { widget = spritePanel, worldLeft = left + (w - pw) / 2 })
+        end
     end
 
     -- 有立绘时平时不画边框（立绘本身就是视觉标识），hover 时才亮金框
@@ -282,6 +294,9 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     btn.props.onClick = function()
         print(string.format("[SM DEBUG] item clicked: %s", tostring(item.id)))
         M:_onItemInteract(item)
+    end
+    if not isScreenMode then
+        table.insert(M._worldWidgets, { widget = btn, worldLeft = worldLeft })
     end
     return btn
 end
@@ -315,6 +330,9 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     btn.props.onClick = function()
         print(string.format("[SM DEBUG] exit clicked: %s -> %s", tostring(ex.id), tostring(ex.targetScene)))
         if M.onExit then M.onExit(ex.targetScene) end
+    end
+    if not isScreenMode then
+        table.insert(M._worldWidgets, { widget = btn, worldLeft = left })
     end
     return btn
 end
@@ -663,6 +681,20 @@ function M:_ApplyCamera()
     if M.charSprite then
         M.charSprite:SetStyle({ left = M.spawnX - M.cameraX })
     end
+    if M._worldWidgets then
+        for _, entry in ipairs(M._worldWidgets) do
+            if entry.widget and entry.widget.SetStyle then
+                entry.widget:SetStyle({ left = entry.worldLeft - M.cameraX })
+            end
+        end
+    end
+    if M._scrollTrack and M._scrollMarker and M.worldWidth > M.screenW then
+        local maxCamera = M.worldWidth - M.screenW
+        local trackW = M._scrollTrack.props and M._scrollTrack.props.width or 300
+        local markerW = M._scrollMarker.props and M._scrollMarker.props.width or 18
+        local maxLeft = math.max(0, trackW - markerW)
+        M._scrollMarker:SetStyle({ left = maxLeft * (M.cameraX / maxCamera) })
+    end
 end
 
 -- ============================================================
@@ -747,6 +779,9 @@ function M.ExitScene()
     M.ui = { root = nil }
     M.bgFixed = {}
     M.layers = {}
+    M._worldWidgets = {}
+    M._scrollTrack = nil
+    M._scrollMarker = nil
     -- 重置防抖状态，避免切场景后残留导致新场景首次点击被误拦截
     M._itemLastId, M._itemLastTime = nil, nil
     M._lastSwitch = nil
