@@ -60,7 +60,7 @@ M._btnLeft = nil
 M._btnRight = nil
 M._minimap = nil
 M._mmNodes = {}
-M._worldWidgets = {}
+M._worldLayer = nil
 M._scrollTrack = nil
 M._scrollMarker = nil
 M._tutPanel = nil
@@ -168,13 +168,12 @@ function M.EnterScene(sceneId, onExit)
 end
 
 -- ============================================================
--- 模式 A：视差三层（仅 office 序章场景）
+-- 模式 A：连续横版卷轴（酒店大堂）
 -- ============================================================
 function M:_EnterParallax(sceneData, root, sw, sh)
     M.worldWidth = sceneData.worldWidth
     M.groundY = sceneData.groundY or 0.78
     M.spawnX = sceneData.spawnX or 520
-    M._worldWidgets = {}
 
     local ldefs = sceneData.layers or {}
     local layerDefs = {
@@ -196,18 +195,25 @@ function M:_EnterParallax(sceneData, root, sw, sh)
         end
     end
 
+    -- 单独的世界层承载所有物件和出口；镜头只移动这一层，避免逐个修正热区坐标造成漂移。
+    M._worldLayer = Panel(root, {
+        position = "absolute",
+        left = 0, top = 0, width = M.worldWidth, height = sh,
+        overflow = "hidden", pointerEvents = "box-none", zIndex = 10,
+    })
+
     -- 主角不显示立绘，保留世界层顺序供后续角色接入。
     M.charSprite = nil
 
-    -- 交互物件与出口均使用世界坐标，随镜头一起移动。
+    -- 交互物件与出口均使用世界坐标，随世界层一起移动。
     if sceneData.items then
         for _, item in ipairs(sceneData.items) do
-            M:_makeItemBtn(item, sw, sh, false)
+            M:_makeItemBtn(item, sw, sh, false, M._worldLayer)
         end
     end
     if sceneData.exits then
         for _, ex in ipairs(sceneData.exits) do
-            M:_makeExitBtn(ex, sw, sh, false)
+            M:_makeExitBtn(ex, sw, sh, false, M._worldLayer)
         end
     end
 
@@ -242,7 +248,6 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
-    local worldLeft = left
     -- NPC/物件立绘：item.sprite 存在时把角色画像渲染到场景上（站在热区底部居中）。
     -- 必须 pointerEvents="none"，否则立绘会吃掉点击、热区收不到 onClick。
     -- zIndex 需低于热区按钮(100)，保证立绘在按钮下方。
@@ -255,7 +260,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         local ratio = item.spriteRatio or (2.0 / 3.0)
         local ph, pw = h * s, h * s * ratio
         if pw > w then pw, ph = w, w / ratio end
-        local spritePanel = Panel(parent, {
+        Panel(parent, {
             position = "absolute",
             left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
             backgroundImage = item.sprite,
@@ -264,9 +269,6 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
             zIndex = 50,
             pointerEvents = "none",
         })
-        if not isScreenMode then
-            table.insert(M._worldWidgets, { widget = spritePanel, worldLeft = left + (w - pw) / 2 })
-        end
     end
 
     -- 有立绘时平时不画边框（立绘本身就是视觉标识），hover 时才亮金框
@@ -294,9 +296,6 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     btn.props.onClick = function()
         print(string.format("[SM DEBUG] item clicked: %s", tostring(item.id)))
         M:_onItemInteract(item)
-    end
-    if not isScreenMode then
-        table.insert(M._worldWidgets, { widget = btn, worldLeft = worldLeft })
     end
     return btn
 end
@@ -330,9 +329,6 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     btn.props.onClick = function()
         print(string.format("[SM DEBUG] exit clicked: %s -> %s", tostring(ex.id), tostring(ex.targetScene)))
         if M.onExit then M.onExit(ex.targetScene) end
-    end
-    if not isScreenMode then
-        table.insert(M._worldWidgets, { widget = btn, worldLeft = left })
     end
     return btn
 end
@@ -681,12 +677,8 @@ function M:_ApplyCamera()
     if M.charSprite then
         M.charSprite:SetStyle({ left = M.spawnX - M.cameraX })
     end
-    if M._worldWidgets then
-        for _, entry in ipairs(M._worldWidgets) do
-            if entry.widget and entry.widget.SetStyle then
-                entry.widget:SetStyle({ left = entry.worldLeft - M.cameraX })
-            end
-        end
+    if M._worldLayer then
+        M._worldLayer:SetStyle({ left = -M.cameraX })
     end
     if M._scrollTrack and M._scrollMarker and M.worldWidth > M.screenW then
         local maxCamera = M.worldWidth - M.screenW
@@ -779,7 +771,7 @@ function M.ExitScene()
     M.ui = { root = nil }
     M.bgFixed = {}
     M.layers = {}
-    M._worldWidgets = {}
+    M._worldLayer = nil
     M._scrollTrack = nil
     M._scrollMarker = nil
     -- 重置防抖状态，避免切场景后残留导致新场景首次点击被误拦截
