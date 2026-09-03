@@ -251,17 +251,42 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     -- 独立交互贴图：物件本体单独渲染，按钮只负责命中点击，不再用框体代替物件。
     -- NPC 立绘仍受 showSceneCharacterSprites 开关控制。
     local spritePanel = nil
+    local highlightPanel = nil
+    local spriteLeft, spriteTop, spriteW, spriteH = left, top, w, h
+    local renderSprite = item.sprite
+    local outlineSprite = nil
+    if item.interactiveSprite == true and type(item.sprite) == "string" then
+        local trimSprite = item.sprite:gsub("%.png$", "_trim.png")
+        local candidateOutline = item.sprite:gsub("%.png$", "_outline.png")
+        if item.spriteTrim and fileSystem and fileSystem:FileExists(trimSprite) then renderSprite = trimSprite end
+        if item.spriteTrim and fileSystem and fileSystem:FileExists(candidateOutline) then outlineSprite = candidateOutline end
+    end
     local hasSprite = ((item.interactiveSprite == true) or M.showSceneCharacterSprites)
         and (type(item.sprite) == "string") and (item.sprite ~= "")
     if hasSprite then
         if item.interactiveSprite == true then
+            spriteLeft = left + (item.spriteOffsetX or 0) * sw
+            spriteTop = top + (item.spriteOffsetY or 0) * sh
+            spriteW = w * (item.spriteScale or 1.0)
+            spriteH = h * (item.spriteScale or 1.0)
             spritePanel = Panel(parent, {
                 position = "absolute",
-                left = left, top = top, width = w, height = h,
-                backgroundImage = item.sprite,
+                left = spriteLeft, top = spriteTop, width = spriteW, height = spriteH,
+                backgroundImage = renderSprite,
                 backgroundFit = "contain",
+                backgroundPosition = item.backgroundPosition or "center bottom",
                 backgroundColor = "rgba(0,0,0,0)",
                 zIndex = 50,
+                pointerEvents = "none",
+            })
+            highlightPanel = Panel(parent, {
+                position = "absolute",
+                left = spriteLeft, top = spriteTop, width = spriteW, height = spriteH,
+                backgroundImage = outlineSprite or "",
+                backgroundFit = "contain",
+                backgroundColor = "rgba(255,220,120,0)",
+                borderWidth = 0, borderColor = "rgba(255,220,120,0)",
+                zIndex = 55,
                 pointerEvents = "none",
             })
         else
@@ -269,11 +294,13 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
             local ratio = item.spriteRatio or (2.0 / 3.0)
             local ph, pw = h * s, h * s * ratio
             if pw > w then pw, ph = w, w / ratio end
+            spriteLeft, spriteTop, spriteW, spriteH = left + (w - pw) / 2, top + (h - ph), pw, ph
             spritePanel = Panel(parent, {
                 position = "absolute",
-                left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
-                backgroundImage = item.sprite,
+                left = spriteLeft, top = spriteTop, width = spriteW, height = spriteH,
+                backgroundImage = renderSprite,
                 backgroundFit = "contain",
+                backgroundPosition = item.backgroundPosition or "center bottom",
                 backgroundColor = "rgba(0,0,0,0)",
                 zIndex = 50,
                 pointerEvents = "none",
@@ -288,14 +315,20 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     local function setInteractionStyle(scale, active)
         local sw2, sh2 = w * scale, h * scale
         if spritePanel and item.interactiveSprite == true then
-            spritePanel:SetStyle({
-                left = left - (sw2 - w) / 2,
-                top = top - (sh2 - h) / 2,
-                width = sw2,
-                height = sh2,
-                borderWidth = active and 3 or 0,
-                borderColor = active and "rgba(255,220,120,235)" or "rgba(255,255,255,0)",
-            })
+            local dx = (spriteW * scale - spriteW) / 2
+            local dy = (spriteH * scale - spriteH) / 2
+            local glowLeft = spriteLeft - dx
+            local glowTop = spriteTop - dy
+            local glowW = spriteW * scale
+            local glowH = spriteH * scale
+            spritePanel:SetStyle({ left = glowLeft, top = glowTop, width = glowW, height = glowH })
+            if highlightPanel then
+                highlightPanel:SetStyle({
+                    left = glowLeft - 4, top = glowTop - 4, width = glowW + 8, height = glowH + 8,
+                    visible = active and true or false,
+                    backgroundColor = active and "rgba(255,220,120,18)" or "rgba(255,220,120,0)",
+                })
+            end
         end
         btn:SetStyle({
             left = left - (sw2 - w) / 2,
