@@ -214,8 +214,7 @@ end
 
 -- 进入序章场景（新手引导：书柜/衣柜/床铺）
 function EnterPrologueScene()
-    -- 序章对话结束、进入可调查线索场景时让背景音乐柔和淡出。
-    MusicSystem.FadeOut(1.8)
+    -- 音乐持续覆盖开场对白和序章探索，直到 opening_prologue_5_after 结束。
     -- 初始人物名录
     GameData.CollectClue("char_lizhi")
     GameData.CollectClue("char_wenyin")
@@ -431,6 +430,7 @@ function HandleSpecialInteract(obj, onComplete)
     if act == "wardrobe" then
         DialogueSystem.Start("opening_prologue_5_after", function()
             GameData.SetFlag("prologue_done", true)
+            MusicSystem.FadeOut(1.8)
             EnterChapter1()
         end)
     -- 命案发现：收录足够探索线索后，点 2501 房门触发

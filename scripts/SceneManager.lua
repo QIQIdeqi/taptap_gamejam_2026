@@ -248,50 +248,91 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
-    -- NPC/物件立绘：item.sprite 存在时把角色画像渲染到场景上（站在热区底部居中）。
-    -- 必须 pointerEvents="none"，否则立绘会吃掉点击、热区收不到 onClick。
-    -- zIndex 需低于热区按钮(100)，保证立绘在按钮下方。
-    local hasSprite = M.showSceneCharacterSprites
+    -- 独立交互贴图：物件本体单独渲染，按钮只负责命中点击，不再用框体代替物件。
+    -- NPC 立绘仍受 showSceneCharacterSprites 开关控制。
+    local spritePanel = nil
+    local hasSprite = ((item.interactiveSprite == true) or M.showSceneCharacterSprites)
         and (type(item.sprite) == "string") and (item.sprite ~= "")
     if hasSprite then
-        -- 按立绘原始比例(2:3)算出绘制区，底部贴齐热区底边、水平居中，
-        -- 这样人物是"站在地上"而不是悬在热区中央，且不依赖 backgroundPosition 取值支持。
-        local s = item.spriteScale or 1.0
-        local ratio = item.spriteRatio or (2.0 / 3.0)
-        local ph, pw = h * s, h * s * ratio
-        if pw > w then pw, ph = w, w / ratio end
-        Panel(parent, {
-            position = "absolute",
-            left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
-            backgroundImage = item.sprite,
-            backgroundFit = "contain",
-            backgroundColor = "rgba(0,0,0,0)",
-            zIndex = 50,
-            pointerEvents = "none",
+        if item.interactiveSprite == true then
+            spritePanel = Panel(parent, {
+                position = "absolute",
+                left = left, top = top, width = w, height = h,
+                backgroundImage = item.sprite,
+                backgroundFit = "contain",
+                backgroundColor = "rgba(0,0,0,0)",
+                zIndex = 50,
+                pointerEvents = "none",
+            })
+        else
+            local s = item.spriteScale or 1.0
+            local ratio = item.spriteRatio or (2.0 / 3.0)
+            local ph, pw = h * s, h * s * ratio
+            if pw > w then pw, ph = w, w / ratio end
+            spritePanel = Panel(parent, {
+                position = "absolute",
+                left = left + (w - pw) / 2, top = top + (h - ph), width = pw, height = ph,
+                backgroundImage = item.sprite,
+                backgroundFit = "contain",
+                backgroundColor = "rgba(0,0,0,0)",
+                zIndex = 50,
+                pointerEvents = "none",
+            })
+        end
+    end
+
+    -- Wolai 修改 5：交互物不再常驻框体；悬停时放大 20% 并显示边缘光，按下恢复原尺寸，松开再放大。
+    local hoverScale = item.hoverScale or 1.2
+    local hovered = false
+    local btn
+    local function setInteractionStyle(scale, active)
+        local sw2, sh2 = w * scale, h * scale
+        if spritePanel and item.interactiveSprite == true then
+            spritePanel:SetStyle({
+                left = left - (sw2 - w) / 2,
+                top = top - (sh2 - h) / 2,
+                width = sw2,
+                height = sh2,
+                borderWidth = active and 3 or 0,
+                borderColor = active and "rgba(255,220,120,235)" or "rgba(255,255,255,0)",
+            })
+        end
+        btn:SetStyle({
+            left = left - (sw2 - w) / 2,
+            top = top - (sh2 - h) / 2,
+            width = sw2,
+            height = sh2,
+            borderWidth = active and 3 or 0,
+            borderColor = active and "rgba(255,220,120,235)" or "rgba(255,255,255,0)",
+            backgroundColor = active and "rgba(255,220,120,24)" or "rgba(255,255,255,0)",
         })
     end
 
-    -- 有立绘时平时不画边框（立绘本身就是视觉标识），hover 时才亮金框
-    local idleBorderW = hasSprite and 0 or 2
-    local idleBorderC = hasSprite and "rgba(255,255,255,0)" or "rgba(255,255,255,55)"
-
-    local btn = Button(parent, {
+    btn = Button(parent, {
         position = "absolute",
         left = left, top = top, width = w, height = h,
         backgroundColor = "rgba(255,255,255,0)",
-        borderWidth = idleBorderW, borderColor = idleBorderC,
+        borderWidth = 0, borderColor = "rgba(255,255,255,0)",
         zIndex = 100,
     })
     btn.props.onPointerEnter = function(event, widget)
-        btn:SetStyle({ borderColor = "rgba(255,220,120,255)", borderWidth = 3, backgroundColor = "rgba(255,220,120,28)" })
+        hovered = true
+        setInteractionStyle(hoverScale, true)
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(item.name)
             M.hoverNameLabel:SetStyle({ visible = true })
         end
     end
     btn.props.onPointerLeave = function(event, widget)
-        btn:SetStyle({ borderColor = idleBorderC, borderWidth = idleBorderW, backgroundColor = "rgba(255,255,255,0)" })
+        hovered = false
+        setInteractionStyle(1.0, false)
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
+    end
+    btn.props.onPointerDown = function(event, widget)
+        setInteractionStyle(1.0, false)
+    end
+    btn.props.onPointerUp = function(event, widget)
+        if hovered then setInteractionStyle(hoverScale, true) end
     end
     btn.props.onClick = function()
         print(string.format("[SM DEBUG] item clicked: %s", tostring(item.id)))
@@ -308,23 +349,45 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = ex.x, ex.y * sh, ex.w, ex.h * sh
     end
+    local hoverScale = 1.12
+    local hovered = false
     local btn = Button(parent, {
         position = "absolute",
         left = left, top = top, width = w, height = h,
-        backgroundColor = "rgba(120,200,255,18)",
-        borderWidth = 2, borderColor = "rgba(120,200,255,55)",
+        backgroundColor = "rgba(120,200,255,0)",
+        borderWidth = 0, borderColor = "rgba(120,200,255,0)",
         zIndex = 100,
     })
+    local function setExitStyle(scale, active)
+        local sw2, sh2 = w * scale, h * scale
+        btn:SetStyle({
+            left = left - (sw2 - w) / 2,
+            top = top - (sh2 - h) / 2,
+            width = sw2,
+            height = sh2,
+            borderWidth = active and 3 or 0,
+            borderColor = active and "rgba(120,200,255,235)" or "rgba(120,200,255,0)",
+            backgroundColor = active and "rgba(120,200,255,28)" or "rgba(120,200,255,0)",
+        })
+    end
     btn.props.onPointerEnter = function(event, widget)
-        btn:SetStyle({ borderColor = "rgba(120,200,255,255)", borderWidth = 3, backgroundColor = "rgba(120,200,255,45)" })
+        hovered = true
+        setExitStyle(hoverScale, true)
         if M.hoverNameLabel then
             M.hoverNameLabel:SetText(ex.label or "前往")
             M.hoverNameLabel:SetStyle({ visible = true })
         end
     end
     btn.props.onPointerLeave = function(event, widget)
-        btn:SetStyle({ borderColor = "rgba(120,200,255,55)", borderWidth = 2, backgroundColor = "rgba(120,200,255,18)" })
+        hovered = false
+        setExitStyle(1.0, false)
         if M.hoverNameLabel then M.hoverNameLabel:SetStyle({ visible = false }) end
+    end
+    btn.props.onPointerDown = function(event, widget)
+        setExitStyle(1.0, false)
+    end
+    btn.props.onPointerUp = function(event, widget)
+        if hovered then setExitStyle(hoverScale, true) end
     end
     btn.props.onClick = function()
         print(string.format("[SM DEBUG] exit clicked: %s -> %s", tostring(ex.id), tostring(ex.targetScene)))

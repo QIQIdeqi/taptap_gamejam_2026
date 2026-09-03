@@ -76,6 +76,7 @@ function M.Start(dialogueId, onComplete, showSkip, startLine)
     M.state.dialogueId = (type(dialogueId) == "string") and dialogueId or nil
     M.state.lineIndex = startLine or 1
     M.state.isActive = true
+    M.state.portraitPosition = 1
     M.state.charIndex = 0
     M.state.displayText = ""
     M.state.timer = 0
@@ -86,7 +87,7 @@ function M.Start(dialogueId, onComplete, showSkip, startLine)
     print(string.format("[DLG DEBUG] Start: id=%s lines=%d uiRoot=%s",
         tostring(type(dialogueId) == "string" and dialogueId or "<table>"),
         dialogue.lines and #dialogue.lines or -1, tostring(M.ui.root ~= nil)))
-    M.StartLine(1)
+    M.StartLine(M.state.lineIndex)
 end
 
 -- ============================================================================
@@ -207,6 +208,16 @@ function M.StartLine(index)
     M.state.charIndex = 0
     M.state.timer = 0
     M.state.isLineComplete = false
+
+    -- Wolai 修改 3：CSV 的 portrait_position=1 放左侧，=2 放右侧。
+    local portraitPosition = tonumber(line.portraitPosition or line.position) == 2 and 2 or 1
+    M.state.portraitPosition = portraitPosition
+    if M.ui.portrait then
+        local sw = graphics and graphics:GetWidth() or 1280
+        local portraitW = 480
+        local portraitLeft = portraitPosition == 2 and (sw - portraitW - 24) or 24
+        M.ui.portrait:SetStyle({ left = portraitLeft, bottom = -135 })
+    end
 
     -- 说话人处理包 pcall：此处报错会被 UI 事件系统静默吞掉，
     -- 表现为"对话框弹出来了但点不动、一片空白"，极难定位。

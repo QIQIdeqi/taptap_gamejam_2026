@@ -1,4 +1,4 @@
-dialogue_id,line_no,speaker,portrait,clue,text,background
+dialogue_id,line_no,speaker,portrait,clue,text,background,portrait_position
 opening_prologue_1,1,,,,事务所内，李志正睡在地铺上。现在已是下午13点，陈雯音此时正坐在李志身，随后打了他一个耳光，李志被吓醒坐起，陈雯音则是迅速的坐到了一旁的凳子上。,assets/image/bg_prologue_living_desk_20260831144801.png
 opening_prologue_1,2,LiZhi,,,几点了？,assets/image/bg_prologue_living_desk_20260831144801.png
 opening_prologue_1,3,,,,李志看了眼墙上的时钟，然后立马爬了起来。,assets/image/bg_prologue_living_desk_20260831144801.png

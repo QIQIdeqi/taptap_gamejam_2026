@@ -123,6 +123,7 @@ function M.LoadDialogues(csvText)
                 text     = row[col.text]     or "",
                 portrait = row[col.portrait] or "",
                 clue     = row[col.clue]     or "",
+                portraitPosition = row[col.portrait_position] or "1",
                 background = bg,
             }
         end

@@ -251,20 +251,15 @@ end
 
 local function _StartCamera(panel, dialogueId, duration, lineShot)
     if not panel then return end
-    local plan = _GetCameraPlan(dialogueId)
-    local from = _CopyCamera(plan.from)
-    local to = _CopyCamera(plan.to)
-    if lineShot then
-        from.zoom = math.max(from.zoom, 1.04)
-        to.zoom = math.max(to.zoom, from.zoom + 0.02)
-    end
+    -- Wolai 修改 4：背景固定展示全景图，不再对背景做推拉、缩放或横向移动。
+    local fixed = { zoom = 1.0, x = 0.5, y = 0.5 }
     panel._camera = {
         t = 0,
-        dur = math.max(duration or 0, lineShot and 2.2 or 3.4),
-        from = from,
-        to = to,
+        dur = 0,
+        from = fixed,
+        to = fixed,
     }
-    _SetCamera(panel, from)
+    _SetCamera(panel, fixed)
 end
 
 local function _UpdateCamera(panel, deltaTime)
@@ -570,9 +565,15 @@ function M.PlayNextDialogue()
     local dialogueId = dialogues[M.state.dialogueIndex]
     M.state.dialogueIndex = M.state.dialogueIndex + 1
 
-    -- 回忆切入使用独立黑屏时间卡，不显示普通对话框中的说明文字。
-    if dialogueId == "opening_prologue_3" then
-        M.ShowDateCard("2036年8月8日 14:20", 3.0, function()
+    -- Wolai 修改 2：凡首句是“黑屏显示：日期时间”的转场描述，统一使用黑底白字时间卡，
+    -- 并跳过该说明句，避免把转场文字显示在普通对话框中。
+    local dlg = GameData.GetDialogue(dialogueId)
+    local firstLine = dlg and dlg.lines and dlg.lines[1]
+    local transitionText = firstLine and firstLine.text or ""
+    local dateText = transitionText:match("黑屏显示[：:]%s*(.-)[）)]")
+        or transitionText:match("黑屏显示[：:]%s*(.+)$")
+    if dateText and dateText ~= "" then
+        M.ShowDateCard(dateText, 3.0, function()
             M.TransitionToShot(dialogueId)
             DialogueSystem.Start(dialogueId, function()
                 M.PlayNextDialogue()
