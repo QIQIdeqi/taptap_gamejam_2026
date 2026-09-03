@@ -61,6 +61,7 @@ end
 -- ============================================================================
 
 function M.ShowMainMenu()
+    -- 以 1528x1029 参考图为设计分辨率，所有尺寸按统一比例随屏幕缩放。
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
         backgroundImage = "image/beijin.png",
@@ -68,11 +69,10 @@ function M.ShowMainMenu()
         pointerEvents = "auto",
     }
 
-    -- 按参考图保持 1528x1029 设计稿的比例布局：左上 Logo，左下纵向菜单。
     local logo = UI.Panel {
         position = "absolute",
-        left = "0%", top = "2.7%",
-        width = "32.8%", height = "24.4%",
+        left = 0, top = 0,
+        width = 501, height = 251,
         backgroundImage = "image/LOGO.png",
         backgroundFit = "contain",
         pointerEvents = "none",
@@ -82,8 +82,8 @@ function M.ShowMainMenu()
     local function createImageButton(normalImage, hoverImage, top, onClick)
         local button = UI.Panel {
             position = "absolute",
-            left = "0%", top = top,
-            width = "23.0%", height = "9.1%",
+            left = 0, top = top,
+            width = 352, height = 94,
             backgroundImage = normalImage,
             backgroundFit = "fill",
             pointerEvents = "auto",
@@ -98,16 +98,16 @@ function M.ShowMainMenu()
         return button
     end
 
-    -- 只在鼠标悬停时切换到对应的 _up 素材，离开后恢复普通素材。
+    -- 从上到下严格对应：开始、读取、设置、退出；悬停只切换同名 _up 资源。
     M.ui.root:AddChild(createImageButton(
-        "image/kaishi.png", "image/kaishi_up.png", "60.7%",
+        "image/kaishi.png", "image/kaishi_up.png", 624,
         function()
             if M.callbacks.onNewGame then M.callbacks.onNewGame() end
         end
     ))
 
     M.ui.root:AddChild(createImageButton(
-        "image/duqu.png", "image/duqu_up.png", "69.9%",
+        "image/duqu.png", "image/duqu_up.png", 719,
         function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Load)
@@ -115,7 +115,7 @@ function M.ShowMainMenu()
     ))
 
     M.ui.root:AddChild(createImageButton(
-        "image/shezhi.png", "image/shezhi_up.png", "79.1%",
+        "image/shezhi.png", "image/shezhi_up.png", 814,
         function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Settings)
@@ -123,7 +123,7 @@ function M.ShowMainMenu()
     ))
 
     M.ui.root:AddChild(createImageButton(
-        "image/tuichu.png", "image/tuichu_up.png", "88.3%",
+        "image/tuichu.png", "image/tuichu_up.png", 909,
         function()
             if M.callbacks.onExitGame then M.callbacks.onExitGame() end
         end

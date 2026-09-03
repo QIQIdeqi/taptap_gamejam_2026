@@ -50,7 +50,9 @@ local sceneExitCallback = nil
 
 function Start()
     -- UI 库初始化（自动订阅输入/更新/渲染事件，默认 MiSans 字体）
-    UI.Init({ scale = UI.Scale.DEFAULT })
+    UI.Init({
+        scale = UI.Scale.DESIGN_RESOLUTION(1528, 1029),
+    })
 
     -- 总渲染根节点：全屏黑色背景，各系统 Panel 挂载其下
     local uiRoot = UI.Panel({
