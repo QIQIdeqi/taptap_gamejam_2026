@@ -63,67 +63,71 @@ end
 function M.ShowMainMenu()
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
-        backgroundImage = "image/bg_main_menu_detective_board.png",
+        backgroundImage = "image/beijin.png",
         backgroundFit = "cover",
-        flexDirection = "column",
-        justifyContent = "center",
-        alignItems = "center",
-        gap = 16,
+        pointerEvents = "auto",
     }
 
-    -- 标题
-    M.ui.root:AddChild(UI.Label {
-        text = "异视",
-        fontSize = 56,
-        fontColor = { 220, 200, 160, 255 },
-        textAlign = "center",
-    })
-
-    -- 按钮容器
-    local btnContainer = UI.Panel {
-        width = 300,
-        flexDirection = "column",
-        gap = 12,
-        padding = 20,
+    -- 按参考图保持 1528x1029 设计稿的比例布局：左上 Logo，左下纵向菜单。
+    local logo = UI.Panel {
+        position = "absolute",
+        left = "0%", top = "2.7%",
+        width = "32.8%", height = "24.4%",
+        backgroundImage = "image/LOGO.png",
+        backgroundFit = "contain",
+        pointerEvents = "none",
     }
-    M.ui.root:AddChild(btnContainer)
+    M.ui.root:AddChild(logo)
 
-    btnContainer:AddChild(UI.Button {
-        text = "开始新游戏",
-        fontSize = 20,
-        width = "100%", height = 45,
-        onClick = function() if M.callbacks.onNewGame then M.callbacks.onNewGame() end end,
-    })
+    local function createImageButton(normalImage, hoverImage, top, onClick)
+        local button = UI.Panel {
+            position = "absolute",
+            left = "0%", top = top,
+            width = "23.0%", height = "9.1%",
+            backgroundImage = normalImage,
+            backgroundFit = "fill",
+            pointerEvents = "auto",
+            onPointerEnter = function(_, widget)
+                widget:SetStyle({ backgroundImage = hoverImage })
+            end,
+            onPointerLeave = function(_, widget)
+                widget:SetStyle({ backgroundImage = normalImage })
+            end,
+            onClick = onClick,
+        }
+        return button
+    end
 
-    btnContainer:AddChild(UI.Button {
-        text = "读取存档",
-        fontSize = 20,
-        width = "100%", height = 45,
-        variant = "secondary",
-        onClick = function()
+    -- 只在鼠标悬停时切换到对应的 _up 素材，离开后恢复普通素材。
+    M.ui.root:AddChild(createImageButton(
+        "image/kaishi.png", "image/kaishi_up.png", "60.7%",
+        function()
+            if M.callbacks.onNewGame then M.callbacks.onNewGame() end
+        end
+    ))
+
+    M.ui.root:AddChild(createImageButton(
+        "image/duqu.png", "image/duqu_up.png", "69.9%",
+        function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Load)
-        end,
-    })
+        end
+    ))
 
-    btnContainer:AddChild(UI.Button {
-        text = "设置",
-        fontSize = 20,
-        width = "100%", height = 45,
-        variant = "secondary",
-        onClick = function()
+    M.ui.root:AddChild(createImageButton(
+        "image/shezhi.png", "image/shezhi_up.png", "79.1%",
+        function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Settings)
-        end,
-    })
+        end
+    ))
 
-    btnContainer:AddChild(UI.Button {
-        text = "退出游戏",
-        fontSize = 20,
-        width = "100%", height = 45,
-        variant = "danger",
-        onClick = function() if M.callbacks.onExitGame then M.callbacks.onExitGame() end end,
-    })
+    M.ui.root:AddChild(createImageButton(
+        "image/tuichu.png", "image/tuichu_up.png", "88.3%",
+        function()
+            if M.callbacks.onExitGame then M.callbacks.onExitGame() end
+        end
+    ))
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
