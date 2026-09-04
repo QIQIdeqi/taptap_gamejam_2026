@@ -4,6 +4,7 @@ dist/
 .cli/
 logs/
 *.log
+public-share-approvals.json
 logs/.nfs*
 .sce/logs/
 .sce/build/build_steps/__pycache__/
