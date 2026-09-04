@@ -77,3 +77,6 @@
 
 ## 可拓展方向（用户授权"自行思考拓展"）
 - 同样模式可把 场景物件交互文字(name/interactText/misleading) 与 角色介绍 也抽出 CSV，loader 按 item id 回填 SceneManager/Characters（当前未做，按需再扩）
+
+## 可视化布局工作流（2026-09-04）
+- 用户希望通过 `tools/scene-ui-editor.html` 自行搭建场景背景、独立线索物件和游戏 UI，完成后导出 JSON；后续收到该 JSON 时，应按 `sceneId/screens/background/entities` 将归一化 `x/y/w/h`、sprite/outline、clue 字段及 UI 状态/适配信息映射回 `GameData.lua`、`SceneManager.lua` 或对应 UI 模块。

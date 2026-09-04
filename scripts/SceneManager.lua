@@ -248,11 +248,16 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
+    local spriteRect = item.spriteRect
+    local renderLeft = spriteRect and spriteRect.x * sw or left
+    local renderTop = spriteRect and spriteRect.y * sh or top
+    local renderW = spriteRect and spriteRect.w * sw or w
+    local renderH = spriteRect and spriteRect.h * sh or h
     -- 独立交互贴图：物件本体单独渲染，按钮只负责命中点击，不再用框体代替物件。
     -- NPC 立绘仍受 showSceneCharacterSprites 开关控制。
     local spritePanel = nil
     local highlightPanel = nil
-    local spriteLeft, spriteTop, spriteW, spriteH = left, top, w, h
+    local spriteLeft, spriteTop, spriteW, spriteH = renderLeft, renderTop, renderW, renderH
     local renderSprite = item.sprite
     local outlineSprite = nil
     if item.interactiveSprite == true and type(item.sprite) == "string" then
@@ -265,10 +270,10 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         and (type(item.sprite) == "string") and (item.sprite ~= "")
     if hasSprite then
         if item.interactiveSprite == true then
-            spriteLeft = left + (item.spriteOffsetX or 0) * sw
-            spriteTop = top + (item.spriteOffsetY or 0) * sh
-            spriteW = w * (item.spriteScale or 1.0)
-            spriteH = h * (item.spriteScale or 1.0)
+            spriteLeft = renderLeft + (item.spriteOffsetX or 0) * sw
+            spriteTop = renderTop + (item.spriteOffsetY or 0) * sh
+            spriteW = renderW * (item.spriteScale or 1.0)
+            spriteH = renderH * (item.spriteScale or 1.0)
             spritePanel = Panel(parent, {
                 position = "absolute",
                 left = spriteLeft, top = spriteTop, width = spriteW, height = spriteH,
@@ -516,7 +521,11 @@ function M:_BuildScreenContent(screenId)
 
     -- 整图背景（兜底底色 + 真实图若存在）
     M._screenPanel:SetStyle({ backgroundColor = _rgba(screen.bgColor) })
-    M._screenPanel:SetStyle({ backgroundImage = screen.image or "" })
+    M._screenPanel:SetStyle({
+        backgroundImage = screen.image or "",
+        backgroundFit = screen.backgroundFit or "cover",
+        backgroundPosition = screen.backgroundPosition or "center center",
+    })
 
     -- 重建承载层
     if M._screenLayer then M._screenLayer:Destroy() end
