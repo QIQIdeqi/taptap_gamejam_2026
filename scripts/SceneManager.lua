@@ -56,6 +56,7 @@ M._screens = nil
 M._curScreenId = nil
 M._screenPanel = nil
 M._screenLayer = nil
+M._screenTransform = nil
 M._btnLeft = nil
 M._btnRight = nil
 M._minimap = nil
@@ -68,6 +69,19 @@ M._tutPanel = nil
 local function _rgba(t)
     if not t then return "rgba(0,0,0,255)" end
     return string.format("rgba(%d,%d,%d,%d)", t[1] or 0, t[2] or 0, t[3] or 0, t[4] or 255)
+end
+
+-- 屏幕模式的背景与物件共用同一套映射：scene.designW/designH 是背景原图尺寸，
+-- 物件坐标均为原图归一化坐标，cover/contain 下不会与背景发生漂移。
+local function _mapScreenRect(x, y, w, h, sw, sh)
+    local tr = M._screenTransform
+    if not tr then
+        return x * sw, y * sh, w * sw, h * sh
+    end
+    return tr.offsetX + x * tr.designW * tr.scaleX,
+        tr.offsetY + y * tr.designH * tr.scaleY,
+        w * tr.designW * tr.scaleX,
+        h * tr.designH * tr.scaleY
 end
 
 -- ============================================================
@@ -244,15 +258,21 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
     parent = parent or M.ui.root
     local left, top, w, h
     if isScreenMode then
-        left, top, w, h = item.x * sw, item.y * sh, item.w * sw, item.h * sh
+        left, top, w, h = _mapScreenRect(item.x, item.y, item.w, item.h, sw, sh)
     else
         left, top, w, h = item.x, item.y * sh, item.w, item.h * sh
     end
     local spriteRect = item.spriteRect
-    local renderLeft = spriteRect and spriteRect.x * sw or left
-    local renderTop = spriteRect and spriteRect.y * sh or top
-    local renderW = spriteRect and spriteRect.w * sw or w
-    local renderH = spriteRect and spriteRect.h * sh or h
+    local renderLeft, renderTop, renderW, renderH
+    if spriteRect and isScreenMode then
+        renderLeft, renderTop, renderW, renderH = _mapScreenRect(
+            spriteRect.x, spriteRect.y, spriteRect.w, spriteRect.h, sw, sh)
+    elseif spriteRect then
+        renderLeft, renderTop = spriteRect.x * sw, spriteRect.y * sh
+        renderW, renderH = spriteRect.w * sw, spriteRect.h * sh
+    else
+        renderLeft, renderTop, renderW, renderH = left, top, w, h
+    end
     -- 独立交互贴图：物件本体单独渲染，按钮只负责命中点击，不再用框体代替物件。
     -- NPC 立绘仍受 showSceneCharacterSprites 开关控制。
     local spritePanel = nil
@@ -270,8 +290,13 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         and (type(item.sprite) == "string") and (item.sprite ~= "")
     if hasSprite then
         if item.interactiveSprite == true then
-            spriteLeft = renderLeft + (item.spriteOffsetX or 0) * sw
-            spriteTop = renderTop + (item.spriteOffsetY or 0) * sh
+            local offsetX, offsetY = (item.spriteOffsetX or 0) * sw, (item.spriteOffsetY or 0) * sh
+            if isScreenMode and M._screenTransform then
+                offsetX = (item.spriteOffsetX or 0) * M._screenTransform.designW * M._screenTransform.scaleX
+                offsetY = (item.spriteOffsetY or 0) * M._screenTransform.designH * M._screenTransform.scaleY
+            end
+            spriteLeft = renderLeft + offsetX
+            spriteTop = renderTop + offsetY
             spriteW = renderW * (item.spriteScale or 1.0)
             spriteH = renderH * (item.spriteScale or 1.0)
             spritePanel = Panel(parent, {
@@ -283,6 +308,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
                 backgroundColor = "rgba(0,0,0,0)",
                 zIndex = 50,
                 pointerEvents = "none",
+                transformOrigin = "center",
             })
             highlightPanel = Panel(parent, {
                 position = "absolute",
@@ -293,6 +319,8 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
                 borderWidth = 0, borderColor = "rgba(255,220,120,0)",
                 zIndex = 55,
                 pointerEvents = "none",
+                opacity = 0,
+                transformOrigin = "center",
             })
         else
             local s = item.spriteScale or 1.0
@@ -309,40 +337,35 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
                 backgroundColor = "rgba(0,0,0,0)",
                 zIndex = 50,
                 pointerEvents = "none",
+                transformOrigin = "center",
             })
         end
     end
 
-    -- Wolai 修改 5：交互物不再常驻框体；悬停时放大 20% 并显示边缘光，按下恢复原尺寸，松开再放大。
-    local hoverScale = item.hoverScale or 1.2
+    -- 交互物不再常驻框体；悬停时轻微放大并显示边缘光，按下恢复原尺寸，松开再放大。
+    -- 有独立 outline 贴图时不再绘制矩形边框，避免大热区压住物件；无 outline 的旧物件保留细边框兜底。
+    local hoverScale = item.hoverScale or 1.08
     local hovered = false
     local btn
     local function setInteractionStyle(scale, active)
-        local sw2, sh2 = w * scale, h * scale
-        if spritePanel and item.interactiveSprite == true then
-            local dx = (spriteW * scale - spriteW) / 2
-            local dy = (spriteH * scale - spriteH) / 2
-            local glowLeft = spriteLeft - dx
-            local glowTop = spriteTop - dy
-            local glowW = spriteW * scale
-            local glowH = spriteH * scale
-            spritePanel:SetStyle({ left = glowLeft, top = glowTop, width = glowW, height = glowH })
-            if highlightPanel then
-                highlightPanel:SetStyle({
-                    left = glowLeft - 4, top = glowTop - 4, width = glowW + 8, height = glowH + 8,
-                    visible = active and true or false,
-                    backgroundColor = active and "rgba(255,220,120,18)" or "rgba(255,220,120,0)",
-                })
-            end
+        if spritePanel then
+            spritePanel:SetStyle({ scale = scale, transformOrigin = "center" })
         end
+        if highlightPanel then
+            highlightPanel:SetStyle({
+                scale = scale,
+                opacity = active and 1 or 0,
+                backgroundColor = active and "rgba(255,220,120,18)" or "rgba(255,220,120,0)",
+            })
+        end
+        local fallbackBorder = (outlineSprite == nil) and 2 or 0
         btn:SetStyle({
-            left = left - (sw2 - w) / 2,
-            top = top - (sh2 - h) / 2,
-            width = sw2,
-            height = sh2,
-            borderWidth = active and 3 or 0,
+            scale = scale,
+            transformOrigin = "center",
+            borderWidth = active and fallbackBorder or 0,
             borderColor = active and "rgba(255,220,120,235)" or "rgba(255,255,255,0)",
-            backgroundColor = active and "rgba(255,220,120,24)" or "rgba(255,255,255,0)",
+            backgroundColor = (active and outlineSprite == nil)
+                and "rgba(255,220,120,24)" or "rgba(255,255,255,0)",
         })
     end
 
@@ -352,6 +375,7 @@ function M:_makeItemBtn(item, sw, sh, isScreenMode, parent)
         backgroundColor = "rgba(255,255,255,0)",
         borderWidth = 0, borderColor = "rgba(255,255,255,0)",
         zIndex = 100,
+        transformOrigin = "center",
     })
     btn.props.onPointerEnter = function(event, widget)
         hovered = true
@@ -395,15 +419,13 @@ function M:_makeExitBtn(ex, sw, sh, isScreenMode, parent)
         backgroundColor = "rgba(120,200,255,0)",
         borderWidth = 0, borderColor = "rgba(120,200,255,0)",
         zIndex = 100,
+        transformOrigin = "center",
     })
     local function setExitStyle(scale, active)
-        local sw2, sh2 = w * scale, h * scale
         btn:SetStyle({
-            left = left - (sw2 - w) / 2,
-            top = top - (sh2 - h) / 2,
-            width = sw2,
-            height = sh2,
-            borderWidth = active and 3 or 0,
+            scale = scale,
+            transformOrigin = "center",
+            borderWidth = active and 2 or 0,
             borderColor = active and "rgba(120,200,255,235)" or "rgba(120,200,255,0)",
             backgroundColor = active and "rgba(120,200,255,28)" or "rgba(120,200,255,0)",
         })
@@ -443,42 +465,45 @@ function M:_EnterScreens(sceneData, root, sw, sh)
 
     -- 整图背景面板（backgroundImage 若不存在则显示 backgroundColor 兜底，绝不黑屏）
     M._screenPanel = Panel(root, {
-        left = 0, top = 0, width = sw, height = sh,
+        left = 0, top = 0, width = "100%", height = "100%",
         backgroundImage = "", backgroundColor = "rgba(20,20,30,255)",
         overflow = "hidden", backgroundPosition = "center center",
         pointerEvents = "box-none",
     })
     -- 承载当前 screen 的物件/出口/主角
     M._screenLayer = Panel(M._screenPanel, {
-        left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+        left = 0, top = 0, width = "100%", height = "100%", overflow = "hidden",
         pointerEvents = "box-none",
     })
 
     -- 翻页按钮（◀ ▶）— 挂到 _screenPanel（与 _screenLayer 同容器，已验证可渲染且命中测试能穿透到其子节点）；
     -- position:absolute 脱离布局流，zIndex 高于物件层确保位于最上层可点击
+    local navSize = math.max(42, math.min(58, math.floor(math.min(sw, sh) * 0.07)))
+    local navMargin = math.max(12, math.min(28, math.floor(sw * 0.018)))
+    M._navSize = navSize
     M._btnLeft = Button(M._screenPanel, {
         position = "absolute",
-        left = 18, top = sh / 2 - 30, width = 56, height = 56,
+        left = navMargin, top = sh / 2 - navSize / 2, width = navSize, height = navSize,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
         borderWidth = 2, borderColor = "rgba(255,210,120,230)",
         zIndex = 2001, hoverCursor = "pointer",
     })
     Label(M._btnLeft, {
-        left = 0, top = 0, width = 56, height = 56,
-        text = "◀", fontSize = 30, fontColor = "rgba(255,255,255,255)",
+        left = 0, top = 0, width = navSize, height = navSize,
+        text = "◀", fontSize = math.max(22, math.floor(navSize * 0.52)), fontColor = "rgba(255,255,255,255)",
         textAlign = "center", alignItems = "center", justifyContent = "center",
     })
     M._btnLeft.props.onClick = function() print("[SM DEBUG] btnLeft clicked"); M:_SwitchScreen("left") end
     M._btnRight = Button(M._screenPanel, {
         position = "absolute",
-        left = sw - 18 - 56, top = sh / 2 - 30, width = 56, height = 56,
+        left = sw - navMargin - navSize, top = sh / 2 - navSize / 2, width = navSize, height = navSize,
         backgroundColor = "rgba(18,16,30,235)", borderRadius = 12,
         borderWidth = 2, borderColor = "rgba(255,210,120,230)",
         zIndex = 2001, hoverCursor = "pointer",
     })
     Label(M._btnRight, {
-        left = 0, top = 0, width = 56, height = 56,
-        text = "▶", fontSize = 30, fontColor = "rgba(255,255,255,255)",
+        left = 0, top = 0, width = navSize, height = navSize,
+        text = "▶", fontSize = math.max(22, math.floor(navSize * 0.52)), fontColor = "rgba(255,255,255,255)",
         textAlign = "center", alignItems = "center", justifyContent = "center",
     })
     M._btnRight.props.onClick = function() print("[SM DEBUG] btnRight clicked"); M:_SwitchScreen("right") end
@@ -519,6 +544,34 @@ function M:_BuildScreenContent(screenId)
     M._curScreenId = screenId
     local sw, sh = M.screenW, M.screenH
 
+    -- 以背景原图尺寸建立 cover/contain 映射；未声明 design 尺寸的旧场景继续沿用
+    -- 视口归一化坐标，避免一次改动影响第一章已有布局。
+    local designW = tonumber(screen.designW)
+    local designH = tonumber(screen.designH)
+    if designW and designH and designW > 0 and designH > 0 then
+        local fit = screen.backgroundFit or "cover"
+        local sx, sy
+        if fit == "fill" then
+            sx, sy = sw / designW, sh / designH
+        else
+            local fitScale = (fit == "contain")
+                and math.min(sw / designW, sh / designH)
+                or math.max(sw / designW, sh / designH)
+            sx, sy = fitScale, fitScale
+        end
+        M._screenTransform = {
+            designW = designW, designH = designH,
+            scaleX = sx, scaleY = sy,
+            offsetX = (sw - designW * sx) * 0.5,
+            offsetY = (sh - designH * sy) * 0.5,
+        }
+    else
+        M._screenTransform = {
+            designW = 1, designH = 1, scaleX = sw, scaleY = sh,
+            offsetX = 0, offsetY = 0,
+        }
+    end
+
     -- 整图背景（兜底底色 + 真实图若存在）
     M._screenPanel:SetStyle({ backgroundColor = _rgba(screen.bgColor) })
     M._screenPanel:SetStyle({
@@ -530,7 +583,7 @@ function M:_BuildScreenContent(screenId)
     -- 重建承载层
     if M._screenLayer then M._screenLayer:Destroy() end
     M._screenLayer = Panel(M._screenPanel, {
-        left = 0, top = 0, width = sw, height = sh, overflow = "hidden",
+        left = 0, top = 0, width = "100%", height = "100%", overflow = "hidden",
         pointerEvents = "box-none",
     })
 
@@ -623,7 +676,8 @@ end
 function M:_BuildMinimap(sceneData, root, sw, sh)
     local mmData = sceneData.minimap
     if not mmData then return end
-    local mw, mh = 130, 90
+    local mw = math.max(108, math.min(160, math.floor(sw * 0.14)))
+    local mh = math.max(76, math.floor(mw * 0.68))
     M._minimap = Panel(root, {
         right = 12, top = 48, width = mw, height = mh,
         backgroundColor = "rgba(12,10,20,200)", borderRadius = 8,
@@ -662,13 +716,15 @@ end
 -- 新手引导浮窗（非阻塞，点击任意处关闭）
 function M:_ShowTutorial(root, sw, sh, text, onClose)
     if M._tutPanel then M._tutPanel:Destroy() end
+    local tw = math.min(400, math.max(280, sw - 32))
+    local th = math.min(100, math.max(86, sh * 0.16))
     M._tutPanel = Panel(root, {
-        left = sw / 2 - 200, top = sh / 2 - 50, width = 400, height = 100,
+        left = (sw - tw) / 2, top = (sh - th) / 2, width = tw, height = th,
         backgroundColor = "rgba(20,18,30,235)", borderRadius = 12,
         borderWidth = 1, borderColor = "rgba(255,255,255,30)", zIndex = 100,
     })
     local tip = Label(M._tutPanel, {
-        left = 16, top = 16, width = 368, height = 68,
+        left = 16, top = 12, width = tw - 32, height = th - 24,
         text = text, fontSize = 15, fontColor = "rgba(255,255,255,235)", textAlign = "center",
     })
     local overlay = Button(root, {
@@ -735,20 +791,21 @@ function M:ShowClueBanner(name, text)
         M._activeBanner = nil
     end
 
+    local bannerW = math.min(520, math.max(300, (M.screenW or 520) - 32))
     local banner = UI.Panel({
         position = "absolute",
-        left = "calc(50% - 260px)", top = "calc(50% - 80px)", width = 520, height = 160,
+        left = "calc(50% - " .. math.floor(bannerW / 2) .. "px)", top = "calc(50% - 80px)", width = bannerW, height = 160,
         backgroundColor = { 20, 16, 8, 245 }, borderRadius = 14,
         borderWidth = 3, borderColor = { 255, 200, 80, 255 }, zIndex = 99999,
     })
     banner:AddChild(UI.Label({
         position = "absolute",
-        left = 0, top = 22, width = 520, height = 36,
+        left = 0, top = 22, width = bannerW, height = 36,
         text = "【" .. (name or "") .. "】", fontSize = 22, fontColor = { 255, 200, 80, 255 }, textAlign = "center",
     }))
     banner:AddChild(UI.Label({
         position = "absolute",
-        left = 24, top = 70, width = 472, height = 64,
+        left = 24, top = 70, width = bannerW - 48, height = 64,
         text = text or "", fontSize = 17, fontColor = { 255, 245, 225, 255 }, textAlign = "center",
     }))
     root:AddChild(banner)
@@ -888,6 +945,7 @@ function M.ExitScene()
     M.charNameLabel = nil
     M._screenPanel = nil
     M._screenLayer = nil
+    M._screenTransform = nil
     M._btnLeft = nil
     M._btnRight = nil
     M._minimap = nil

@@ -51,7 +51,9 @@ local sceneExitCallback = nil
 function Start()
     -- UI 库初始化（自动订阅输入/更新/渲染事件，默认 MiSans 字体）
     UI.Init({
-        scale = UI.Scale.DESIGN_RESOLUTION(1528, 1029),
+        -- 使用 DPR + 小屏密度自适应；场景与 UI 的百分比/归一化坐标才能在
+        -- 1920×1080、窗口缩放和移动端横屏下保持一致的视觉比例。
+        scale = UI.Scale.DEFAULT,
     })
 
     -- 总渲染根节点：全屏黑色背景，各系统 Panel 挂载其下
