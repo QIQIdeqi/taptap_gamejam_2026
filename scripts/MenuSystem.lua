@@ -61,7 +61,7 @@ end
 -- ============================================================================
 
 function M.ShowMainMenu()
-    -- 以 1528x1029 参考图为设计分辨率，所有尺寸按统一比例随屏幕缩放。
+    -- 设计分辨率为 1528x1029；菜单整体固定在左侧安全区，避免按钮落到背景人物和照片上。
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
         backgroundImage = "image/beijin.png",
@@ -71,8 +71,8 @@ function M.ShowMainMenu()
 
     local logo = UI.Panel {
         position = "absolute",
-        left = 0, top = 0,
-        width = 501, height = 251,
+        left = 28, top = 18,
+        width = 350, height = 176,
         backgroundImage = "image/LOGO.png",
         backgroundFit = "contain",
         pointerEvents = "none",
@@ -82,48 +82,47 @@ function M.ShowMainMenu()
     local function createImageButton(normalImage, hoverImage, top, onClick)
         local button = UI.Panel {
             position = "absolute",
-            left = 0, top = top,
-            width = 352, height = 94,
+            left = 34, top = top,
+            width = 280, height = 72,
             backgroundImage = normalImage,
-            backgroundFit = "fill",
+            backgroundFit = "contain",
+            backgroundPosition = "left center",
+            backgroundColor = { 0, 0, 0, 0 },
             pointerEvents = "auto",
-            onPointerEnter = function(_, widget)
-                widget:SetStyle({ backgroundImage = hoverImage })
-            end,
-            onPointerLeave = function(_, widget)
-                widget:SetStyle({ backgroundImage = normalImage })
-            end,
-            onClick = onClick,
         }
+        button.props.onPointerEnter = function(_, widget)
+            widget:SetStyle({ backgroundImage = hoverImage })
+        end
+        button.props.onPointerLeave = function(_, widget)
+            widget:SetStyle({ backgroundImage = normalImage })
+        end
+        button.props.onClick = onClick
         return button
     end
 
-    -- 从上到下严格对应：开始、读取、设置、退出；悬停只切换同名 _up 资源。
+    -- 四个按钮间隔 18px，不再互相覆盖；按钮高度按素材内容比例收敛。
     M.ui.root:AddChild(createImageButton(
-        "image/kaishi.png", "image/kaishi_up.png", 624,
+        "image/kaishi.png", "image/kaishi_up.png", 420,
         function()
             if M.callbacks.onNewGame then M.callbacks.onNewGame() end
         end
     ))
-
     M.ui.root:AddChild(createImageButton(
-        "image/duqu.png", "image/duqu_up.png", 719,
+        "image/duqu.png", "image/duqu_up.png", 510,
         function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Load)
         end
     ))
-
     M.ui.root:AddChild(createImageButton(
-        "image/shezhi.png", "image/shezhi_up.png", 814,
+        "image/shezhi.png", "image/shezhi_up.png", 600,
         function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Settings)
         end
     ))
-
     M.ui.root:AddChild(createImageButton(
-        "image/tuichu.png", "image/tuichu_up.png", 909,
+        "image/tuichu.png", "image/tuichu_up.png", 690,
         function()
             if M.callbacks.onExitGame then M.callbacks.onExitGame() end
         end
