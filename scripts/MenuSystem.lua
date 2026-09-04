@@ -61,7 +61,7 @@ end
 -- ============================================================================
 
 function M.ShowMainMenu()
-    -- 设计分辨率为 1528x1029；菜单整体固定在左侧安全区，避免按钮落到背景人物和照片上。
+    -- 菜单使用百分比布局，避免把 1528x1029 的设计坐标直接照搬到横屏窗口。
     M.ui.root = UI.Panel {
         width = "100%", height = "100%",
         backgroundImage = "image/beijin.png",
@@ -71,62 +71,72 @@ function M.ShowMainMenu()
 
     local logo = UI.Panel {
         position = "absolute",
-        left = 28, top = 18,
-        width = 350, height = 176,
+        left = "1.8%", top = "1.8%",
+        width = "33%", height = "25%",
         backgroundImage = "image/LOGO.png",
         backgroundFit = "contain",
+        backgroundPosition = "left top",
         pointerEvents = "none",
+        zIndex = 10,
     }
     M.ui.root:AddChild(logo)
 
-    local function createImageButton(normalImage, hoverImage, top, onClick)
-        local button = UI.Panel {
-            position = "absolute",
-            left = 34, top = top,
-            width = 280, height = 72,
+    -- 面板高度和四个按钮统一由 Yoga 分配；按钮态由 Button 单独渲染，
+    -- 不再通过 Panel 手动替换图片，避免默认态与悬停/按下态残留叠加。
+    local menuPanel = UI.Panel {
+        position = "absolute",
+        left = "1.8%", top = "59%",
+        width = "25%", height = "39%",
+        flexDirection = "column",
+        gap = 4,
+        overflow = "hidden",
+        zIndex = 20,
+    }
+
+    local function createImageButton(normalImage, hoverImage, onClick)
+        return UI.Button {
+            width = "100%", flexGrow = 1, flexShrink = 1, flexBasis = 0,
+            minHeight = 0,
             backgroundImage = normalImage,
+            hoverBackgroundImage = hoverImage,
+            pressedBackgroundImage = hoverImage,
             backgroundFit = "contain",
             backgroundPosition = "left center",
             backgroundColor = { 0, 0, 0, 0 },
+            borderWidth = 0,
+            boxShadow = false,
             pointerEvents = "auto",
+            onClick = onClick,
         }
-        button.props.onPointerEnter = function(_, widget)
-            widget:SetStyle({ backgroundImage = hoverImage })
-        end
-        button.props.onPointerLeave = function(_, widget)
-            widget:SetStyle({ backgroundImage = normalImage })
-        end
-        button.props.onClick = onClick
-        return button
     end
 
-    -- 四个按钮间隔 18px，不再互相覆盖；按钮高度按素材内容比例收敛。
-    M.ui.root:AddChild(createImageButton(
-        "image/kaishi.png", "image/kaishi_up.png", 420,
+    menuPanel:AddChild(createImageButton(
+        "image/kaishi.png", "image/kaishi_up.png",
         function()
             if M.callbacks.onNewGame then M.callbacks.onNewGame() end
         end
     ))
-    M.ui.root:AddChild(createImageButton(
-        "image/duqu.png", "image/duqu_up.png", 510,
+    menuPanel:AddChild(createImageButton(
+        "image/duqu.png", "image/duqu_up.png",
         function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Load)
         end
     ))
-    M.ui.root:AddChild(createImageButton(
-        "image/shezhi.png", "image/shezhi_up.png", 600,
+    menuPanel:AddChild(createImageButton(
+        "image/shezhi.png", "image/shezhi_up.png",
         function()
             M.previousMenu = M.MenuType.Main
             M.ShowMenu(M.MenuType.Settings)
         end
     ))
-    M.ui.root:AddChild(createImageButton(
-        "image/tuichu.png", "image/tuichu_up.png", 690,
+    menuPanel:AddChild(createImageButton(
+        "image/tuichu.png", "image/tuichu_up.png",
         function()
             if M.callbacks.onExitGame then M.callbacks.onExitGame() end
         end
     ))
+    M.ui.root:AddChild(menuPanel)
 
     local uiRoot = UI.GetRoot()
     if uiRoot then uiRoot:AddChild(M.ui.root) end
