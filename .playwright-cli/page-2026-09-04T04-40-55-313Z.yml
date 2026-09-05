@@ -1,0 +1,108 @@
+- generic [ref=e2]:
+  - banner [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e5]: "Y"
+      - generic [ref=e6]: 异视布局编辑器
+    - generic [ref=e7]:
+      - button "新建" [ref=e8] [cursor=pointer]
+      - button "导入 JSON" [ref=e9] [cursor=pointer]
+      - button "导入台词 CSV" [ref=e10] [cursor=pointer]
+      - button "导出台词 JSON" [ref=e11] [cursor=pointer]
+      - button "导出 JSON" [ref=e12] [cursor=pointer]
+    - generic [ref=e13]:
+      - button "↶" [ref=e14] [cursor=pointer]
+      - button "↷" [ref=e15] [cursor=pointer]
+      - button "⧉" [ref=e16] [cursor=pointer]
+      - button "×" [ref=e17] [cursor=pointer]
+    - generic [ref=e18]:
+      - combobox "预览分辨率" [ref=e19]:
+        - option "设计分辨率 1528×1029" [selected]
+        - option "横屏 1920×1080"
+        - option "横屏 1280×720"
+        - option "截图 1080×606"
+        - option "平板 1366×768"
+        - option "手机横屏 844×390"
+        - option "手机竖屏 390×844"
+      - button "#" [ref=e20] [cursor=pointer]
+      - button "⌁" [ref=e21] [cursor=pointer]
+      - button "□" [ref=e22] [cursor=pointer]
+    - generic [ref=e23]:
+      - generic [ref=e24]: 39%
+      - slider [ref=e25]: "39"
+      - button "适合窗口" [ref=e26] [cursor=pointer]
+    - generic [ref=e27]:
+      - button "保存到浏览器" [ref=e28] [cursor=pointer]
+      - button "读取浏览器" [ref=e29] [cursor=pointer]
+  - complementary [ref=e30]:
+    - generic [ref=e31]:
+      - generic [ref=e32]: 层级
+      - generic [ref=e33]:
+        - button "＋物件" [ref=e34] [cursor=pointer]
+        - button "＋UI" [ref=e35] [cursor=pointer]
+    - generic [ref=e36]:
+      - combobox [ref=e37]:
+        - option "页面 1 · s1" [selected]
+      - button "＋" [ref=e38] [cursor=pointer]
+      - button "⧉" [ref=e39] [cursor=pointer]
+      - button "×" [ref=e40] [cursor=pointer]
+    - searchbox "搜索层级名称或 ID" [ref=e42]
+    - generic [ref=e43]:
+      - generic [ref=e149] [cursor=pointer]:
+        - generic [ref=e150]: BG
+        - generic [ref=e151]: 背景 · 未设置
+      - generic [ref=e152] [cursor=pointer]:
+        - generic [ref=e153]: ▾
+        - generic [ref=e154]: 线索物件
+        - generic [ref=e155]: "0"
+      - generic [ref=e156] [cursor=pointer]:
+        - generic [ref=e157]: ▾
+        - generic [ref=e158]: UI
+        - generic [ref=e159]: "1"
+      - generic [ref=e161] [cursor=pointer]:
+        - generic [ref=e162]: ▣
+        - generic [ref=e163]: 新 UI
+        - button "◉" [ref=e164]
+        - button "◆" [ref=e165]
+    - generic [ref=e55]:
+      - generic [ref=e56]: 素材库
+      - button "导入图片" [ref=e57] [cursor=pointer]
+    - generic [ref=e58]: 导入 PNG/JPG/WebP 后，可双击素材添加物件。也可以在 Inspector 直接输入项目资源路径。
+  - main [ref=e60]:
+    - generic [ref=e61]:
+      - generic [ref=e62]: 新场景 / 页面 1
+      - button "预览状态：正常" [ref=e63] [cursor=pointer]
+      - generic [ref=e64]: 拖拽移动 · 四角缩放 · 方向键微调
+    - generic [ref=e67]:
+      - generic: SAFE
+      - generic [ref=e167]:
+        - text: UI 文本
+        - generic [ref=e168]: 新 UI
+  - complementary [ref=e68]:
+    - generic [ref=e69]:
+      - button "Inspector" [ref=e70] [cursor=pointer]
+      - button "台词" [active] [ref=e71] [cursor=pointer]
+      - button "JSON" [ref=e72] [cursor=pointer]
+    - text: ▾ ▾ ▾ ▾ ▾
+    - generic [ref=e296]:
+      - generic [ref=e297]:
+        - searchbox "搜索对话 ID、角色或文本" [ref=e298]
+        - button "＋台词" [ref=e299] [cursor=pointer]
+      - table [ref=e301]:
+        - rowgroup [ref=e302]:
+          - row [ref=e303]:
+            - columnheader "ID" [ref=e304]
+            - columnheader "序" [ref=e305]
+            - columnheader "角色" [ref=e306]
+            - columnheader "文本" [ref=e307]
+            - columnheader "线索" [ref=e308]
+            - columnheader [ref=e309]
+        - rowgroup [ref=e310]:
+          - row [ref=e311]:
+            - cell "还没有台词。点击“导入台词 CSV”开始。" [ref=e312]
+      - generic [ref=e313]: CSV 字段：dialogue_id,line_no,speaker,portrait,clue,text,background。修改会同步到项目 JSON。
+  - contentinfo [ref=e143]:
+    - generic [ref=e144]: 未保存更改
+    - generic [ref=e145]: 0 个元素
+    - generic [ref=e146]: X 0 · Y 0
+    - generic [ref=e147]: 删除 Del
+    - generic [ref=e148]: 撤销 Ctrl Z

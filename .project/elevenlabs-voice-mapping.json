@@ -1,0 +1,96 @@
+{
+  "version": "1.0",
+  "provider": "elevenlabs",
+  "characters": {
+    "LiZhi": {
+      "provider": "elevenlabs",
+      "voice_id": "aGRdbNHXW05mMlCkLb2o",
+      "voice_name": "LiZhi_voice",
+      "description": "Voice Design - A young Chinese man around 30 years old, a down-on-his-luck private detective. Warm mid-to-low baritone with a slightly husky, sleep-deprived texture. Relaxed unhurried pace with natural pauses, casual dry self-deprecating everyday tone with streetwise humor, tightening into a focused lower register when serious. Clean close-mic studio recording, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:10:48.685Z",
+      "last_used": "2026-08-30T13:10:48.685Z"
+    },
+    "ChenWenyin": {
+      "provider": "elevenlabs",
+      "voice_id": "J7xVlOIVntXu03bSpLxP",
+      "voice_name": "ChenWenyin_voice",
+      "description": "Voice Design - A clear, light, gentle young female voice with a soft mid-to-high pitch. Calm and reserved delivery, slightly slow pacing with thoughtful pauses, quiet and understated rather than expressive. Warm, sincere and a little shy in tone. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:12:01.656Z",
+      "last_used": "2026-08-30T13:12:01.656Z"
+    },
+    "XuQinglan": {
+      "provider": "elevenlabs",
+      "voice_id": "z710sHcPP4Jz9mLxawYF",
+      "voice_name": "XuQinglan_voice",
+      "description": "Voice Design - A confident Chinese woman around 29 years old, a sharp-tongued corporate business representative. Bright, clear mid-high female voice with a polished and slightly smoky edge. Fast self-assured pacing with crisp articulation and clipped, precise phrasing. The tone is witty, teasing and sarcastic with a cool professional mask, but warms into genuine blunt loyalty when she is being sincere. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:12:35.910Z",
+      "last_used": "2026-08-30T13:12:35.910Z"
+    },
+    "YanChengfeng": {
+      "provider": "elevenlabs",
+      "voice_id": "XQIYgL9ckUWh8X2r7dLQ",
+      "voice_name": "YanChengfeng_voice",
+      "description": "Voice Design - A mature Chinese man around 51 years old, a powerful corporate executive. Deep, resonant low baritone with a rough authoritative grain and a faintly asthmatic breathiness, as if his breathing is slightly labored. Deliberate, slow and controlled pacing with heavy pauses used to dominate a conversation. The tone is cold, arrogant and condescending, smooth and polished in public but turning sharp and cutting when he loses patience. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:13:13.631Z",
+      "last_used": "2026-08-30T13:13:13.631Z"
+    },
+    "ZhaoHeng": {
+      "provider": "elevenlabs",
+      "voice_id": "yP8bfZaoLUjuGPVpQeLM",
+      "voice_name": "ZhaoHeng_voice",
+      "description": "Voice Design - A middle-aged Chinese man around 45 years old, a smooth-talking sales executive. Pleasant mid-range male voice, polished and sociable, with an oily ingratiating smoothness and a slightly thin, nervous quality underneath. Quick, fluent pacing that speeds up when he is flattering or covering for someone, and stumbles into broken fragments when he panics. The tone is ingratiating and diplomatic on the surface, but cracks into anxious, flustered pleading under pressure. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:13:51.037Z",
+      "last_used": "2026-08-30T13:13:51.037Z"
+    },
+    "ZhouWen": {
+      "provider": "elevenlabs",
+      "voice_id": "FxiOGcqJEHkEcnpzFAFu",
+      "voice_name": "ZhouWen_voice",
+      "description": "Voice Design - A Chinese man around 30 years old, a brilliant engineer who has been demoted and cast aside. A calm, cool low-mid male voice with a flat restrained quality and very little outward emotion, like someone who has learned to keep everything locked inside. Slow, measured and precise pacing with careful exact wording, only faint tremors of suppressed anger breaking through. The tone is composed, quiet and intellectual on the surface, with a cold undercurrent beneath it. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:14:39.076Z",
+      "last_used": "2026-08-30T13:14:39.076Z"
+    },
+    "ZhangChengyu": {
+      "provider": "elevenlabs",
+      "voice_id": "c3GmFOuRVKVLdm11f9Ru",
+      "voice_name": "ZhangChengyu_voice",
+      "description": "Voice Design - A Chinese man around 30 years old, a homicide squad captain and an old college classmate. Strong, grounded low male voice with a broad confident chest resonance and a slightly rough edge. Brisk, no-nonsense pacing with clipped authoritative phrasing. The tone is blunt, sarcastic and teasing toward people he knows, loudly dismissive on the surface while actually being reliable and steady underneath, snapping into formal professional command when he is working a case. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:15:14.936Z",
+      "last_used": "2026-08-30T13:15:14.936Z"
+    },
+    "LiZhiSister": {
+      "provider": "elevenlabs",
+      "voice_id": "8Zkf7Sh9gZEve0ImTNit",
+      "voice_name": "LiZhiSister_voice",
+      "description": "Voice Design - A Chinese woman in her early thirties, the protagonist's older sister. Bright, brisk mid-high female voice with a warm but no-nonsense practical tone. Fast confident pacing and crisp decisive phrasing, like someone used to arranging everything for everyone else. Playful and teasing with her younger brother, but firm and matter-of-fact when laying down terms. Clean close-mic studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:27:59.811Z",
+      "last_used": "2026-08-30T13:27:59.811Z"
+    },
+    "NewsAnchor": {
+      "provider": "elevenlabs",
+      "voice_id": "NUqzMfbW4Zw0zsDorHiC",
+      "voice_name": "NewsAnchor_voice",
+      "description": "Voice Design - A professional female news anchor voice for an AI news broadcast. Clear, neutral mid-range female voice with the polished measured delivery of a television newsreader. Steady even pacing with precise standard pronunciation and minimal emotional coloring. Calm, authoritative and slightly synthetic in tone. Clean studio recording, dry, no reverb.",
+      "language": "cmn",
+      "stability": 0.5,
+      "created_at": "2026-08-30T13:28:15.387Z",
+      "last_used": "2026-08-30T13:28:15.387Z"
+    }
+  }
+}

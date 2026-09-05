@@ -1,0 +1,146 @@
+- generic [ref=f1e2]:
+  - banner [ref=f1e3]:
+    - generic [ref=f1e4]:
+      - generic [ref=f1e5]: "Y"
+      - generic [ref=f1e6]: 异视布局编辑器
+    - generic [ref=f1e7]:
+      - button "新建" [ref=f1e8] [cursor=pointer]
+      - button "导入 JSON" [ref=f1e9] [cursor=pointer]
+      - button "导出 JSON" [ref=f1e10] [cursor=pointer]
+    - generic [ref=f1e11]:
+      - button "↶" [ref=f1e12] [cursor=pointer]
+      - button "↷" [ref=f1e13] [cursor=pointer]
+      - button "⧉" [ref=f1e14] [cursor=pointer]
+      - button "×" [ref=f1e15] [cursor=pointer]
+    - generic [ref=f1e16]:
+      - combobox "预览分辨率" [ref=f1e17]:
+        - option "设计分辨率 1528×1029" [selected]
+        - option "横屏 1920×1080"
+        - option "横屏 1280×720"
+        - option "截图 1080×606"
+        - option "平板 1366×768"
+        - option "手机横屏 844×390"
+        - option "手机竖屏 390×844"
+      - button "#" [ref=f1e18] [cursor=pointer]
+      - button "⌁" [ref=f1e19] [cursor=pointer]
+      - button "□" [ref=f1e20] [cursor=pointer]
+    - generic [ref=f1e21]:
+      - generic [ref=f1e22]: 100%
+      - slider [ref=f1e23]: "100"
+      - button "适合窗口" [ref=f1e24] [cursor=pointer]
+    - generic [ref=f1e25]:
+      - button "保存到浏览器" [ref=f1e26] [cursor=pointer]
+      - button "读取浏览器" [ref=f1e27] [cursor=pointer]
+  - complementary [ref=f1e28]:
+    - generic [ref=f1e29]:
+      - generic [ref=f1e30]: 层级
+      - generic [ref=f1e31]:
+        - button "＋物件" [ref=f1e32] [cursor=pointer]
+        - button "＋UI" [ref=f1e33] [cursor=pointer]
+    - generic [ref=f1e34]:
+      - combobox [ref=f1e35]:
+        - option "页面 1 · s1" [selected]
+      - button "＋" [ref=f1e36] [cursor=pointer]
+      - button "⧉" [ref=f1e37] [cursor=pointer]
+      - button "×" [ref=f1e38] [cursor=pointer]
+    - searchbox "搜索层级名称或 ID" [ref=f1e40]
+    - generic [ref=f1e41]:
+      - generic [ref=f1e42] [cursor=pointer]:
+        - generic [ref=f1e43]: BG
+        - generic [ref=f1e44]: 背景 · 未设置
+      - generic [ref=f1e45] [cursor=pointer]:
+        - generic [ref=f1e46]: ▾
+        - generic [ref=f1e47]: 线索物件
+        - generic [ref=f1e48]: "0"
+      - generic [ref=f1e49] [cursor=pointer]:
+        - generic [ref=f1e50]: ▾
+        - generic [ref=f1e51]: UI
+        - generic [ref=f1e52]: "0"
+    - generic [ref=f1e53]:
+      - generic [ref=f1e54]: 素材库
+      - button "导入图片" [ref=f1e55] [cursor=pointer]
+    - generic [ref=f1e56]: 导入 PNG/JPG/WebP 后，可双击素材添加物件。也可以在 Inspector 直接输入项目资源路径。
+  - main [ref=f1e58]:
+    - generic [ref=f1e59]:
+      - generic [ref=f1e60]: 新场景 / 页面 1
+      - button "预览状态：正常" [ref=f1e61] [cursor=pointer]
+      - generic [ref=f1e62]: 拖拽移动 · 四角缩放 · 方向键微调
+    - generic [ref=f1e63]: SAFE
+  - complementary [ref=f1e66]:
+    - generic [ref=f1e67]:
+      - button "Inspector" [ref=f1e68] [cursor=pointer]
+      - button "JSON" [ref=f1e69] [cursor=pointer]
+    - generic [ref=f1e70]:
+      - generic [ref=f1e71]:
+        - generic [ref=f1e72] [cursor=pointer]: ▾ 项目
+        - generic [ref=f1e73]:
+          - generic [ref=f1e74]:
+            - generic [ref=f1e75]: 项目名
+            - textbox [ref=f1e77]: 未命名布局
+          - generic [ref=f1e78]:
+            - generic [ref=f1e79]: 场景 ID
+            - textbox [ref=f1e81]: scene_id
+          - generic [ref=f1e82]:
+            - generic [ref=f1e83]: 场景标题
+            - textbox [ref=f1e85]: 新场景
+      - generic [ref=f1e86]:
+        - generic [ref=f1e87] [cursor=pointer]: ▾ 当前页面
+        - generic [ref=f1e88]:
+          - generic [ref=f1e89]:
+            - generic [ref=f1e90]: 页面 ID
+            - textbox [ref=f1e92]: s1
+          - generic [ref=f1e93]:
+            - generic [ref=f1e94]: 页面标题
+            - textbox [ref=f1e96]: 页面 1
+      - generic [ref=f1e97]:
+        - generic [ref=f1e98] [cursor=pointer]: ▾ 背景
+        - generic [ref=f1e99]:
+          - generic [ref=f1e100]:
+            - generic [ref=f1e101]: 图片路径
+            - generic [ref=f1e103]:
+              - textbox [ref=f1e104]
+              - button "选择" [ref=f1e105] [cursor=pointer]
+          - generic [ref=f1e106]:
+            - generic [ref=f1e107]: 填充
+            - combobox [ref=f1e109]:
+              - option "Cover" [selected]
+              - option "Contain"
+              - option "Fill"
+          - generic [ref=f1e110]:
+            - generic [ref=f1e111]: 对齐
+            - combobox [ref=f1e113]:
+              - option "居中" [selected]
+              - option "左中"
+              - option "右中"
+              - option "中上"
+              - option "中下"
+          - generic [ref=f1e114]:
+            - generic [ref=f1e115]: 底色
+            - textbox [ref=f1e117]: "#252a33"
+      - generic [ref=f1e118]:
+        - generic [ref=f1e119] [cursor=pointer]: ▾ 画布与适配
+        - generic [ref=f1e120]:
+          - generic [ref=f1e121]:
+            - generic [ref=f1e122]: 设计尺寸
+            - generic [ref=f1e123]:
+              - spinbutton [ref=f1e124]: "1528"
+              - spinbutton [ref=f1e125]: "1029"
+          - generic [ref=f1e126]:
+            - generic [ref=f1e127]: 网格
+            - spinbutton [ref=f1e129]: "16"
+          - generic [ref=f1e130]:
+            - generic [ref=f1e131]: 安全区 L / T
+            - generic [ref=f1e132]:
+              - spinbutton [ref=f1e133]: "0.03"
+              - spinbutton [ref=f1e134]: "0.04"
+          - generic [ref=f1e135]:
+            - generic [ref=f1e136]: 安全区 R / B
+            - generic [ref=f1e137]:
+              - spinbutton [ref=f1e138]: "0.03"
+              - spinbutton [ref=f1e139]: "0.04"
+  - contentinfo [ref=f1e140]:
+    - generic [ref=f1e141]: 已就绪
+    - generic [ref=f1e142]: 0 个元素
+    - generic [ref=f1e143]: X 0 · Y 0
+    - generic [ref=f1e144]: 删除 Del
+    - generic [ref=f1e145]: 撤销 Ctrl Z

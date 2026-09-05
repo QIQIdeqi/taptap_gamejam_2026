@@ -1,0 +1,39 @@
+{
+  "version": "2.0",
+  "provider": "elevenlabs",
+  "character_name": "李志",
+  "character_description": "28-30岁中国年轻男性。略带慵懒和市井气，语速中等偏低，带点无奈的幽默。独居的中年未婚舅舅，临时照顾外甥女。声音自然平实，不要播音腔，带一点沙哑的中低音质感。",
+  "audition_line": "几点了…1点？雯雯你是不是饿了？热水器就在这，自己泡面都不会？你以前还会叫我舅舅的…现在怎么不说话了呢？老姐，你真放心把女儿交给我带？遵命！雯雯就放心交给我吧。",
+  "created_at": "2026-08-30T13:00:40.108Z",
+  "recommended_index": 1,
+  "candidates": [
+    {
+      "index": 1,
+      "provider": "elevenlabs",
+      "generated_voice_id": "SvqSSp4zaN8xiVKkMboV",
+      "audio_url": "https://tapcode-sce.spark.xd.com/assets/audio/audition/4acaafd8dc3e2334_9509eb14208e98e2_candidate_1_1788094786104.mp3",
+      "oss_path": "audio/audition/4acaafd8dc3e2334_9509eb14208e98e2_candidate_1_1788094786104.mp3",
+      "duration_seconds": 51.95941666666667,
+      "description": "28-30岁中国年轻男性。略带慵懒和市井气，语速中等偏低，带点无奈的幽默。独居的中年未婚舅舅，临时照顾外甥女。声音自然平实，不要播音腔，带一点沙哑的中低音质感。"
+    },
+    {
+      "index": 2,
+      "provider": "elevenlabs",
+      "generated_voice_id": "n1B1UBu2wJpRFCSAAVts",
+      "audio_url": "https://tapcode-sce.spark.xd.com/assets/audio/audition/4acaafd8dc3e2334_9509eb14208e98e2_candidate_2_1788094811901.mp3",
+      "oss_path": "audio/audition/4acaafd8dc3e2334_9509eb14208e98e2_candidate_2_1788094811901.mp3",
+      "duration_seconds": 47.49245833333333,
+      "description": "28-30岁中国年轻男性。略带慵懒和市井气，语速中等偏低，带点无奈的幽默。独居的中年未婚舅舅，临时照顾外甥女。声音自然平实，不要播音腔，带一点沙哑的中低音质感。"
+    },
+    {
+      "index": 3,
+      "provider": "elevenlabs",
+      "generated_voice_id": "9T68S5oJjXBz3cXqti1C",
+      "audio_url": "https://tapcode-sce.spark.xd.com/assets/audio/audition/4acaafd8dc3e2334_9509eb14208e98e2_candidate_3_1788094838895.mp3",
+      "oss_path": "audio/audition/4acaafd8dc3e2334_9509eb14208e98e2_candidate_3_1788094838895.mp3",
+      "duration_seconds": 50.75779166666667,
+      "description": "28-30岁中国年轻男性。略带慵懒和市井气，语速中等偏低，带点无奈的幽默。独居的中年未婚舅舅，临时照顾外甥女。声音自然平实，不要播音腔，带一点沙哑的中低音质感。"
+    }
+  ],
+  "use_voice_design": true
+}

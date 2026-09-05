@@ -1,0 +1,48 @@
+{
+  "$schema": "../schemas/project.schema.json",
+  "project_id": "m_fpf3",
+  "author": {
+    "id": "405832367"
+  },
+  "entry": "main.lua",
+  "version": "1.0.2",
+  "taptap_publish": {
+    "title": "异视",
+    "description": "<game description>",
+    "category": "puzzle",
+    "screen_orientation": "landscape",
+    "collection_type": "sce",
+    "trial_note": "<developer's note>",
+    "app_platforms": "1,2",
+    "developer_id": 428634,
+    "app_id": 916773,
+    "miniapp_id": "tapmc9vfitzqs26pih"
+  },
+  "assets": {
+    "icon": "./game_material/ICON_2026-08-24T15-32-48_01.png",
+    "screenshots": [
+      "./game_material/SCREENSHOT_2026-08-24T15-32-48_01.png",
+      "./game_material/SCREENSHOT_2026-08-24T15-32-48_02.png",
+      "./game_material/SCREENSHOT_2026-08-24T15-32-48_03.png"
+    ],
+    "promotional_image": "./game_material/PROMO_2026-08-24T15-32-48_01.jpg",
+    "icon_url": "https://tapcode-sce.spark.xd.com/assets/game_material/异视/ICON_2026-08-24T15-32-48_01.png",
+    "screenshot_urls": [
+      "https://tapcode-sce.spark.xd.com/assets/game_material/异视/SCREENSHOT_2026-08-24T15-32-48_01.png",
+      "https://tapcode-sce.spark.xd.com/assets/game_material/异视/SCREENSHOT_2026-08-24T15-32-48_02.png",
+      "https://tapcode-sce.spark.xd.com/assets/game_material/异视/SCREENSHOT_2026-08-24T15-32-48_03.png"
+    ],
+    "promotional_image_url": "https://tapcode-sce.spark.xd.com/assets/game_material/异视/PROMO_2026-08-24T15-32-48_01.jpg",
+    "cover_horizontal": "./game_material/COVER_HORIZONTAL_2026-08-24T15-34-58_01.png",
+    "cover_horizontal_url": "https://tapcode-sce.spark.xd.com/assets/game_material/异视/COVER_HORIZONTAL_2026-08-24T15-34-58_01.png",
+    "cover_vertical": "./game_material/COVER_VERTICAL_2026-08-24T15-35-19_01.png",
+    "cover_vertical_url": "https://tapcode-sce.spark.xd.com/assets/game_material/异视/COVER_VERTICAL_2026-08-24T15-35-19_01.png"
+  },
+  "metadata": {
+    "updated_at": "2026-08-30T13:55:05.347Z"
+  },
+  "test_qrcode": {
+    "url": "https://tapcode-sce.spark.xd.com/qrcode/m_fpf3_1788098105239.png",
+    "generated_at": "2026-08-30T13:55:05.347Z"
+  }
+}
